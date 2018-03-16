@@ -8,7 +8,7 @@
 
  /*
  No SIP criar os recursos md_abc_processo_processar, md_abc_documento_processar e md_abc_andamento_lancar e adicionar em um novo perfil chamado MD_ABC_Básico.
-*/
+  */
 
 class MdEstatisticas extends SeiIntegracao{
 
@@ -32,7 +32,7 @@ class MdEstatisticas extends SeiIntegracao{
     if (substr($strVersaoSEI, 0, 2) != '3.'){
       die('Módulo "'.$this->getNome().'" ('.$this->getVersao().') não é compatível com esta versão do SEI ('.$strVersaoSEI.').');
     }
-    */
+     */
   }
 }
 ?>

@@ -112,17 +112,17 @@ class MdEstatisticasVersaoRN extends InfraRN {
 
       //busca atividades de concessão de credencial para assinatura onde não existem mais os documentos
       $sql = 'select atividade.id_atividade, protocolo.protocolo_formatado,' . BancoSEI::getInstance()->formatarSelecaoDbl('atividade', 'id_protocolo', null) . ',atividade.id_usuario,atividade.id_unidade, atributo_andamento.id_origem
-              from atividade, atributo_andamento, protocolo, acesso
-              where atividade.id_atividade=atributo_andamento.id_atividade
-              and atividade.id_tarefa=' . TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA . '
-              and atributo_andamento.nome=' . BancoSEI::getInstance()->formatarGravacaoStr('DOCUMENTO') . '
-              and not exists (select documento.id_documento from documento where documento.id_documento=atributo_andamento.id_origem)
-              and atividade.id_protocolo=protocolo.id_protocolo
-              and protocolo.sta_nivel_acesso_global=' . BancoSEI::getInstance()->formatarGravacaoStr(ProtocoloRN::$NA_SIGILOSO) . '
-              and acesso.id_protocolo=atividade.id_protocolo
-              and acesso.id_unidade=atividade.id_unidade
-              and acesso.id_usuario=atividade.id_usuario
-              and acesso.sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO);
+        from atividade, atributo_andamento, protocolo, acesso
+        where atividade.id_atividade=atributo_andamento.id_atividade
+        and atividade.id_tarefa=' . TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA . '
+        and atributo_andamento.nome=' . BancoSEI::getInstance()->formatarGravacaoStr('DOCUMENTO') . '
+        and not exists (select documento.id_documento from documento where documento.id_documento=atributo_andamento.id_origem)
+        and atividade.id_protocolo=protocolo.id_protocolo
+        and protocolo.sta_nivel_acesso_global=' . BancoSEI::getInstance()->formatarGravacaoStr(ProtocoloRN::$NA_SIGILOSO) . '
+        and acesso.id_protocolo=atividade.id_protocolo
+        and acesso.id_unidade=atividade.id_unidade
+        and acesso.id_usuario=atividade.id_usuario
+        and acesso.sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO);
 
       $rs1 = BancoSEI::getInstance()->consultarSql($sql);
 
@@ -141,14 +141,14 @@ class MdEstatisticasVersaoRN extends InfraRN {
           //verificando se o usuario/unidade possui outras credenciais de assinatura em documentos existentes do processo
 
           $sql = 'select count(*) as total
-                  from atividade, atributo_andamento
-                  where atividade.id_atividade=atributo_andamento.id_atividade
-                  and atividade.id_tarefa=' . TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA . '
-                  and atributo_andamento.nome=' . BancoSEI::getInstance()->formatarGravacaoStr('DOCUMENTO') . '
-                  and exists (select documento.id_documento from documento where documento.id_documento=atributo_andamento.id_origem)
-                  and atividade.id_protocolo=' . $dblIdProtocolo . '
-                  and atividade.id_usuario=' . $numIdUsuario . '
-                  and atividade.id_unidade=' . $numIdUnidade;
+            from atividade, atributo_andamento
+            where atividade.id_atividade=atributo_andamento.id_atividade
+            and atividade.id_tarefa=' . TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA . '
+            and atributo_andamento.nome=' . BancoSEI::getInstance()->formatarGravacaoStr('DOCUMENTO') . '
+            and exists (select documento.id_documento from documento where documento.id_documento=atributo_andamento.id_origem)
+            and atividade.id_protocolo=' . $dblIdProtocolo . '
+            and atividade.id_usuario=' . $numIdUsuario . '
+            and atividade.id_unidade=' . $numIdUnidade;
 
           $rs2 = BancoSEI::getInstance()->consultarSql($sql);
 
@@ -160,33 +160,33 @@ class MdEstatisticasVersaoRN extends InfraRN {
 
 
             BancoSEI::getInstance()->executarSql('delete from acesso
-                                              where id_usuario=' . $numIdUsuario . '
-                                              and id_unidade=' . $numIdUnidade . '
-                                              and (id_protocolo=' . $dblIdProtocolo . ' or id_protocolo in (select id_documento from documento where id_procedimento=' . $dblIdProtocolo . '))
-                                              and sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO));
+              where id_usuario=' . $numIdUsuario . '
+              and id_unidade=' . $numIdUnidade . '
+              and (id_protocolo=' . $dblIdProtocolo . ' or id_protocolo in (select id_documento from documento where id_procedimento=' . $dblIdProtocolo . '))
+              and sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO));
 
 
             //busca identificador da última atividade do usuário no processo
             $rs3 = BancoSEI::getInstance()->consultarSql('select max(id_atividade) as ultima
-                                                      from atividade
-                                                      where id_usuario=' . $numIdUsuario . '
-                                                      and id_unidade=' . $numIdUnidade . '
-                                                      and id_protocolo=' . $dblIdProtocolo);
+              from atividade
+              where id_usuario=' . $numIdUsuario . '
+              and id_unidade=' . $numIdUnidade . '
+              and id_protocolo=' . $dblIdProtocolo);
 
             if ($rs3[0]['ultima']) {
 
               //busca dados da ultima atividade
               $rs4 = BancoSEI::getInstance()->consultarSql('select id_atividade, id_tarefa, dth_abertura, dth_conclusao, id_usuario, id_unidade
-                                                        from atividade
-                                                        where id_atividade=' . $rs3[0]['ultima']);
+                from atividade
+                where id_atividade=' . $rs3[0]['ultima']);
 
               //se a última ação do usuário foi renúnciar ao processo mas ele continua aberto no Controle de Processos
               if ($rs4[0]['id_tarefa'] == TarefaRN::$TI_PROCESSO_RENUNCIA_CREDENCIAL && BancoSEI::getInstance()->formatarLeituraDth($rs4[0]['dth_conclusao']) == null) {
 
                 //finaliza pendencia para sumir do controle de processos
                 BancoSEI::getInstance()->executarSql('update atividade
-                    set dth_conclusao=' . BancoSEI::getInstance()->formatarGravacaoDth(BancoSEI::getInstance()->formatarLeituraDth($rs4[0]['dth_abertura'])) . '
-                    where id_atividade=' . $rs4[0]['id_atividade']);
+                  set dth_conclusao=' . BancoSEI::getInstance()->formatarGravacaoDth(BancoSEI::getInstance()->formatarLeituraDth($rs4[0]['dth_abertura'])) . '
+                  where id_atividade=' . $rs4[0]['id_atividade']);
               }
             }
           }
@@ -243,15 +243,15 @@ class MdEstatisticasVersaoRN extends InfraRN {
 
       //busca atividades de concessão de credencial para assinatura onde o usuário não tem credencial no processo
       $sql = 'select atividade.id_atividade, protocolo.protocolo_formatado,' . BancoSEI::getInstance()->formatarSelecaoDbl('atividade', 'id_protocolo', null) . ',atividade.id_usuario,atividade.id_unidade
-              from atividade, protocolo, acesso
-              where atividade.id_tarefa=' . TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA . '
-              and not exists (select acesso.id_protocolo from acesso where acesso.id_protocolo=atividade.id_protocolo and acesso.id_usuario=atividade.id_usuario and acesso.id_unidade=atividade.id_unidade and acesso.sta_tipo='.BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_PROCESSO).')
-              and atividade.id_protocolo=protocolo.id_protocolo
-              and protocolo.sta_nivel_acesso_global=' . BancoSEI::getInstance()->formatarGravacaoStr(ProtocoloRN::$NA_SIGILOSO) . '
-              and acesso.id_protocolo=atividade.id_protocolo
-              and acesso.id_unidade=atividade.id_unidade
-              and acesso.id_usuario=atividade.id_usuario
-              and acesso.sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO);
+        from atividade, protocolo, acesso
+        where atividade.id_tarefa=' . TarefaRN::$TI_CONCESSAO_CREDENCIAL_ASSINATURA . '
+        and not exists (select acesso.id_protocolo from acesso where acesso.id_protocolo=atividade.id_protocolo and acesso.id_usuario=atividade.id_usuario and acesso.id_unidade=atividade.id_unidade and acesso.sta_tipo='.BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_PROCESSO).')
+        and atividade.id_protocolo=protocolo.id_protocolo
+        and protocolo.sta_nivel_acesso_global=' . BancoSEI::getInstance()->formatarGravacaoStr(ProtocoloRN::$NA_SIGILOSO) . '
+        and acesso.id_protocolo=atividade.id_protocolo
+        and acesso.id_unidade=atividade.id_unidade
+        and acesso.id_usuario=atividade.id_usuario
+        and acesso.sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO);
 
       $rs1 = BancoSEI::getInstance()->consultarSql($sql);
 
@@ -270,10 +270,10 @@ class MdEstatisticasVersaoRN extends InfraRN {
 
           //busca identificador da última atividade do usuário no processo
           $rs2 = BancoSEI::getInstance()->consultarSql('select max(id_atividade) as ultima
-                                                      from atividade
-                                                      where id_usuario=' . $numIdUsuario . '
-                                                      and id_unidade=' . $numIdUnidade . '
-                                                      and id_protocolo=' . $dblIdProtocolo);
+            from atividade
+            where id_usuario=' . $numIdUsuario . '
+            and id_unidade=' . $numIdUnidade . '
+            and id_protocolo=' . $dblIdProtocolo);
 
           if ($rs2[0]['ultima']) {
 
@@ -298,16 +298,16 @@ class MdEstatisticasVersaoRN extends InfraRN {
 
               //finaliza pendencia para sumir do controle de processos
               BancoSEI::getInstance()->executarSql('update atividade
-                    set dth_conclusao=' . BancoSEI::getInstance()->formatarGravacaoDth($objAtividadeDTOUltima->getDthAbertura()) . '
-                    where id_atividade=' . $objAtividadeDTOUltima->getNumIdAtividade());
+                set dth_conclusao=' . BancoSEI::getInstance()->formatarGravacaoDth($objAtividadeDTOUltima->getDthAbertura()) . '
+                where id_atividade=' . $objAtividadeDTOUltima->getNumIdAtividade());
 
 
               //remove registros de acesso associados com credencial de assinatura para o usuario/unidade/processo
               BancoSEI::getInstance()->executarSql('delete from acesso
-                                              where id_usuario=' . $numIdUsuario . '
-                                              and id_unidade=' . $numIdUnidade . '
-                                              and (id_protocolo=' . $dblIdProtocolo . ' or id_protocolo in (select id_documento from documento where id_procedimento=' . $dblIdProtocolo . '))
-                                              and sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO));
+                where id_usuario=' . $numIdUsuario . '
+                and id_unidade=' . $numIdUnidade . '
+                and (id_protocolo=' . $dblIdProtocolo . ' or id_protocolo in (select id_documento from documento where id_procedimento=' . $dblIdProtocolo . '))
+                and sta_tipo=' . BancoSEI::getInstance()->formatarGravacaoStr(AcessoRN::$TA_CREDENCIAL_ASSINATURA_PROCESSO));
 
 
               //anular a credencial de assinatura
@@ -387,13 +387,13 @@ class MdEstatisticasVersaoRN extends InfraRN {
       InfraDebug::getInstance()->gravar('ATUALIZANDO USUÁRIOS SEM CONTATO...');
 
       $rs = BancoSEI::getInstance()->consultarSql('select '.
-BancoSEI::getInstance()->formatarSelecaoNum('usuario','id_usuario ','idusuario') .','.
-BancoSEI::getInstance()->formatarSelecaoStr('usuario','sigla','siglausuario') .','.
-BancoSEI::getInstance()->formatarSelecaoStr('usuario','nome','nomeusuario') .','.
-BancoSEI::getInstance()->formatarSelecaoDbl('usuario', 'cpf', 'cpfusuario') .','.
-BancoSEI::getInstance()->formatarSelecaoStr('usuario','sta_tipo','statipousuario') .','.
-BancoSEI::getInstance()->formatarSelecaoStr('orgao','sigla','siglaorgao') .
-' from usuario, orgao where usuario.id_orgao=orgao.id_orgao and usuario.id_contato is null');
+        BancoSEI::getInstance()->formatarSelecaoNum('usuario','id_usuario ','idusuario') .','.
+        BancoSEI::getInstance()->formatarSelecaoStr('usuario','sigla','siglausuario') .','.
+        BancoSEI::getInstance()->formatarSelecaoStr('usuario','nome','nomeusuario') .','.
+        BancoSEI::getInstance()->formatarSelecaoDbl('usuario', 'cpf', 'cpfusuario') .','.
+        BancoSEI::getInstance()->formatarSelecaoStr('usuario','sta_tipo','statipousuario') .','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao','sigla','siglaorgao') .
+        ' from usuario, orgao where usuario.id_orgao=orgao.id_orgao and usuario.id_contato is null');
 
       $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
@@ -620,49 +620,49 @@ BancoSEI::getInstance()->formatarSelecaoStr('orgao','sigla','siglaorgao') .
       InfraDebug::getInstance()->gravar('ATUALIZANDO CONTATOS DE UNIDADES...');
 
       $rs = BancoSEI::getInstance()->consultarSql('select '.
-          BancoSEI::getInstance()->formatarSelecaoNum('unidade', 'id_contato', 'idcontatounidade').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'endereco', 'enderecounidade').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'complemento', 'complementounidade').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'bairro', 'bairrounidade').','.
-          BancoSEI::getInstance()->formatarSelecaoNum('unidade', 'id_uf', 'idufunidade').','.
-          BancoSEI::getInstance()->formatarSelecaoNum('unidade', 'id_cidade', 'idcidadeunidade').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'cep', 'cepunidade').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'telefone', 'telefoneunidade').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'sitio_internet', 'sitiointernetunidade').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'observacao', 'observacaounidade').
-          ' from unidade');
+        BancoSEI::getInstance()->formatarSelecaoNum('unidade', 'id_contato', 'idcontatounidade').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'endereco', 'enderecounidade').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'complemento', 'complementounidade').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'bairro', 'bairrounidade').','.
+        BancoSEI::getInstance()->formatarSelecaoNum('unidade', 'id_uf', 'idufunidade').','.
+        BancoSEI::getInstance()->formatarSelecaoNum('unidade', 'id_cidade', 'idcidadeunidade').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'cep', 'cepunidade').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'telefone', 'telefoneunidade').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'sitio_internet', 'sitiointernetunidade').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('unidade', 'observacao', 'observacaounidade').
+        ' from unidade');
 
-        $objPaisDTO = new PaisDTO();
-        $objPaisDTO->retNumIdPais();
-        $objPaisDTO->retStrNome();
+      $objPaisDTO = new PaisDTO();
+      $objPaisDTO->retNumIdPais();
+      $objPaisDTO->retStrNome();
 
-        $objPaisRN = new PaisRN();
-        $arrObjPaisDTO = $objPaisRN->listar($objPaisDTO);
+      $objPaisRN = new PaisRN();
+      $arrObjPaisDTO = $objPaisRN->listar($objPaisDTO);
 
-        $numIdPaisBrasil = null;
-        foreach($arrObjPaisDTO as $objPaisDTO){
-          if (InfraString::transformarCaixaAlta($objPaisDTO->getStrNome())=='BRASIL'){
-            $numIdPaisBrasil = $objPaisDTO->getNumIdPais();
-            break;
-          }
+      $numIdPaisBrasil = null;
+      foreach($arrObjPaisDTO as $objPaisDTO){
+        if (InfraString::transformarCaixaAlta($objPaisDTO->getStrNome())=='BRASIL'){
+          $numIdPaisBrasil = $objPaisDTO->getNumIdPais();
+          break;
         }
+      }
 
-        InfraDebug::getInstance()->setBolDebugInfra(false);
-        foreach($rs as $unidade){
-          BancoSEI::getInstance()->executarSql('update contato set '.
-  'endereco='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['enderecounidade'])).','.
-  'complemento='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['complementounidade'])).','.
-  'bairro='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['bairrounidade'])).','.
-  'id_uf='.BancoSEI::getInstance()->formatarGravacaoNum(BancoSEI::getInstance()->formatarLeituraNum($unidade['idufunidade'])).','.
-  'id_cidade='.BancoSEI::getInstance()->formatarGravacaoNum(BancoSEI::getInstance()->formatarLeituraNum($unidade['idcidadeunidade'])).','.
-  'id_pais='.BancoSEI::getInstance()->formatarGravacaoNum($numIdPaisBrasil).','.
-  'cep='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['cepunidade'])).','.
-  'telefone_fixo='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['telefoneunidade'])).','.
-  'sitio_internet='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['sitiointernetunidade'])).','.
-  'observacao='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['observacaounidade'])).
-              ' where id_contato='.BancoSEI::getInstance()->formatarLeituraNum($unidade['idcontatounidade']));
-        }
-        InfraDebug::getInstance()->setBolDebugInfra(true);
+      InfraDebug::getInstance()->setBolDebugInfra(false);
+      foreach($rs as $unidade){
+        BancoSEI::getInstance()->executarSql('update contato set '.
+          'endereco='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['enderecounidade'])).','.
+          'complemento='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['complementounidade'])).','.
+          'bairro='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['bairrounidade'])).','.
+          'id_uf='.BancoSEI::getInstance()->formatarGravacaoNum(BancoSEI::getInstance()->formatarLeituraNum($unidade['idufunidade'])).','.
+          'id_cidade='.BancoSEI::getInstance()->formatarGravacaoNum(BancoSEI::getInstance()->formatarLeituraNum($unidade['idcidadeunidade'])).','.
+          'id_pais='.BancoSEI::getInstance()->formatarGravacaoNum($numIdPaisBrasil).','.
+          'cep='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['cepunidade'])).','.
+          'telefone_fixo='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['telefoneunidade'])).','.
+          'sitio_internet='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['sitiointernetunidade'])).','.
+          'observacao='.BancoSEI::getInstance()->formatarGravacaoStr(BancoSEI::getInstance()->formatarLeituraStr($unidade['observacaounidade'])).
+          ' where id_contato='.BancoSEI::getInstance()->formatarLeituraNum($unidade['idcontatounidade']));
+      }
+      InfraDebug::getInstance()->setBolDebugInfra(true);
 
     }catch(Exception $e){
       throw new InfraException('Erro atualizando contatos de unidades.', $e);
@@ -674,19 +674,19 @@ BancoSEI::getInstance()->formatarSelecaoStr('orgao','sigla','siglaorgao') .
       InfraDebug::getInstance()->gravar('CRIANDO CONTATOS PARA ORGAOS...');
 
       $rs = BancoSEI::getInstance()->consultarSql('select '.
-          BancoSEI::getInstance()->formatarSelecaoNum('orgao', 'id_orgao', 'idorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'sigla', 'siglaorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'descricao', 'descricaoorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'endereco', 'enderecoorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'complemento', 'complementoorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'bairro', 'bairroorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoNum('uf', 'id_uf', 'iduforgao').','.
-          BancoSEI::getInstance()->formatarSelecaoNum('cidade', 'id_cidade', 'idcidadeorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'cep', 'ceporgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'telefone', 'telefoneorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'email', 'emailorgao').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'sitio_internet', 'sitiointernetorgao').
-          ' from orgao left join (cidade left join uf on cidade.id_uf=uf.id_uf) on orgao.id_cidade=cidade.id_cidade');
+        BancoSEI::getInstance()->formatarSelecaoNum('orgao', 'id_orgao', 'idorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'sigla', 'siglaorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'descricao', 'descricaoorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'endereco', 'enderecoorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'complemento', 'complementoorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'bairro', 'bairroorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoNum('uf', 'id_uf', 'iduforgao').','.
+        BancoSEI::getInstance()->formatarSelecaoNum('cidade', 'id_cidade', 'idcidadeorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'cep', 'ceporgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'telefone', 'telefoneorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'email', 'emailorgao').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('orgao', 'sitio_internet', 'sitiointernetorgao').
+        ' from orgao left join (cidade left join uf on cidade.id_uf=uf.id_uf) on orgao.id_cidade=cidade.id_cidade');
 
       $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
 
@@ -780,11 +780,11 @@ BancoSEI::getInstance()->formatarSelecaoStr('orgao','sigla','siglaorgao') .
       InfraDebug::getInstance()->gravar('ATUALIZANDO CIDADE, UF E PAIS EM CONTATOS...');
 
       $rs = BancoSEI::getInstance()->consultarSql('select '.
-          BancoSEI::getInstance()->formatarSelecaoNum('contato', 'id_contato', 'idcontato').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('contato', 'nome_cidade', 'nomecidadecontato').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('contato', 'sigla_estado', 'siglaestadocontato').','.
-          BancoSEI::getInstance()->formatarSelecaoStr('contato', 'nome_pais', 'nomepaiscontato').
-          ' from contato');
+        BancoSEI::getInstance()->formatarSelecaoNum('contato', 'id_contato', 'idcontato').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('contato', 'nome_cidade', 'nomecidadecontato').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('contato', 'sigla_estado', 'siglaestadocontato').','.
+        BancoSEI::getInstance()->formatarSelecaoStr('contato', 'nome_pais', 'nomepaiscontato').
+        ' from contato');
 
       $objPaisDTO = new PaisDTO();
       $objPaisDTO->retNumIdPais();
@@ -928,49 +928,49 @@ BancoSEI::getInstance()->formatarSelecaoStr('orgao','sigla','siglaorgao') .
   }
 
   protected function fixAssociarUnidadesOrgaosControlado(){
-        try {
-            InfraDebug::getInstance()->gravar('ASSOCIANDO CONTATOS DE ORGAOS E UNIDADES...');
+    try {
+      InfraDebug::getInstance()->gravar('ASSOCIANDO CONTATOS DE ORGAOS E UNIDADES...');
 
-            $objUnidadeDTO = new UnidadeDTO();
-            $objUnidadeDTO->setBolExclusaoLogica(false);
-            $objUnidadeDTO->retNumIdOrgao();
-            $objUnidadeDTO->retNumIdContato();
+      $objUnidadeDTO = new UnidadeDTO();
+      $objUnidadeDTO->setBolExclusaoLogica(false);
+      $objUnidadeDTO->retNumIdOrgao();
+      $objUnidadeDTO->retNumIdContato();
 
-            $objUnidadeRN = new UnidadeRN();
-            $arrObjUnidadeDTO = $objUnidadeRN->listarRN0127($objUnidadeDTO);
+      $objUnidadeRN = new UnidadeRN();
+      $arrObjUnidadeDTO = $objUnidadeRN->listarRN0127($objUnidadeDTO);
 
-            $objOrgaoDTO = new OrgaoDTO();
-            $objOrgaoDTO->setBolExclusaoLogica(false);
-            $objOrgaoDTO->retNumIdOrgao();
-            $objOrgaoDTO->retNumIdContato();
+      $objOrgaoDTO = new OrgaoDTO();
+      $objOrgaoDTO->setBolExclusaoLogica(false);
+      $objOrgaoDTO->retNumIdOrgao();
+      $objOrgaoDTO->retNumIdContato();
 
-            $objOrgaoRN = new OrgaoRN();
-            $arrObjOrgaoDTO = InfraArray::indexarArrInfraDTO($objOrgaoRN->listarRN1353($objOrgaoDTO),'IdOrgao');
+      $objOrgaoRN = new OrgaoRN();
+      $arrObjOrgaoDTO = InfraArray::indexarArrInfraDTO($objOrgaoRN->listarRN1353($objOrgaoDTO),'IdOrgao');
 
-            $objContatoBD = new ContatoBD(BancoSEI::getInstance());
+      $objContatoBD = new ContatoBD(BancoSEI::getInstance());
 
-            $numRegistros = count($arrObjUnidadeDTO);
-            $n = 0;
+      $numRegistros = count($arrObjUnidadeDTO);
+      $n = 0;
 
-            InfraDebug::getInstance()->setBolDebugInfra(false);
-            foreach($arrObjUnidadeDTO as $objUnidadeDTO) {
+      InfraDebug::getInstance()->setBolDebugInfra(false);
+      foreach($arrObjUnidadeDTO as $objUnidadeDTO) {
 
-                if ((++$n >=100 && $n%100==0) || $n==$numRegistros){
-                    InfraDebug::getInstance()->gravar('UNIDADES: '.$n.' DE '.$numRegistros);
-                }
-
-                $dto = new ContatoDTO();
-                $dto->setNumIdContatoAssociado($arrObjOrgaoDTO[$objUnidadeDTO->getNumIdOrgao()]->getNumIdContato());
-                $dto->setStrSinEnderecoAssociado('N');
-                $dto->setNumIdContato($objUnidadeDTO->getNumIdContato());
-                $objContatoBD->alterar($dto);
-            }
-            InfraDebug::getInstance()->setBolDebugInfra(true);
-
-        }catch(Exception $e){
-            throw new InfraException('Erro associando contatos de unidades com órgãos.', $e);
+        if ((++$n >=100 && $n%100==0) || $n==$numRegistros){
+          InfraDebug::getInstance()->gravar('UNIDADES: '.$n.' DE '.$numRegistros);
         }
+
+        $dto = new ContatoDTO();
+        $dto->setNumIdContatoAssociado($arrObjOrgaoDTO[$objUnidadeDTO->getNumIdOrgao()]->getNumIdContato());
+        $dto->setStrSinEnderecoAssociado('N');
+        $dto->setNumIdContato($objUnidadeDTO->getNumIdContato());
+        $objContatoBD->alterar($dto);
+      }
+      InfraDebug::getInstance()->setBolDebugInfra(true);
+
+    }catch(Exception $e){
+      throw new InfraException('Erro associando contatos de unidades com órgãos.', $e);
     }
+  }
 
   public function fixControleInterno(){
     try {
@@ -1232,172 +1232,172 @@ BancoSEI::getInstance()->formatarSelecaoStr('orgao','sigla','siglaorgao') .
 
       InfraDebug::getInstance()->setBolDebugInfra(false);
 
-    $strConteudo = 'A Sua Excelência o Senhor;Almirante da Marinha do Brasil;Senhor Almirante;M
-A Sua Excelência o Senhor;Brigadeiro da Força Aérea Brasileira;Senhor Brigadeiro;M
-Ao Senhor;Chefe de Gabinete;Senhor Chefe de Gabinete;M
-Ao Senhor;Cidadão;Senhor;M
-A Senhora;Cidadão;Senhora;F
-A Sua Excelência o Senhor;Cônsul;Senhor Cônsul;M
-A Sua Excelência a Senhora;Consulesa;Senhora Consulesa;F
-Ao Senhor;Coordenador;Senhor Coordenador;M
-A Senhora;Coordenadora;Senhora Coordenadora;F
-A Senhora;Coordenadora-Geral;Senhora Coordenadora-Geral;F
-Ao Senhor;Coordenador-Geral;Senhor Coordenador-Geral;M
-A Sua Excelência a Senhora;Delegada de Polícia;Senhora Delegada;F
-A Sua Excelência a Senhora;Delegada de Polícia Federal;Senhora Delegada;F
-A Sua Excelência o Senhor;Delegado de Polícia;Senhor Delegado;M
-A Sua Excelência o Senhor;Delegado de Polícia Federal;Senhor Delegado;M
-A Sua Excelência a Senhora;Deputada Estadual;Senhora Deputada;F
-A Sua Excelência a Senhora;Deputada Federal;Senhora Deputada;F
-A Sua Excelência o Senhor;Deputado Estadual;Senhor Deputado;M
-A Sua Excelência o Senhor;Deputado Federal;Senhor Deputado;M
-A Sua Excelência o Senhor;Desembargador de Justiça;Senhor Desembargador;M
-A Sua Excelência o Senhor;Desembargador Federal;Senhor Desembargador;M
-A Sua Excelência a Senhora;Desembargadora de Justiça;Senhora Desembargadora;F
-A Sua Excelência a Senhora;Desembargadora Federal;Senhora Desembargadora;F
-Ao Senhor;Diretor;Senhor Diretor;M
-A Senhora;Diretora;Senhora Diretora;F
-A Sua Excelência o Senhor;Embaixador;Senhor Embaixador;M
-A Sua Excelência a Senhora;Embaixadora;Senhora Embaixadora;F
-A Sua Excelência o Senhor;General do Exército Brasileiro;Senhor General;M
-A Sua Excelência o Senhor;Governador;Senhor Governador;M
-A Sua Excelência a Senhora;Governadora;Senhora Governadora;F
-A Sua Excelência o Senhor;Juiz de Direito;Senhor Juiz;M
-A Sua Excelência o Senhor;Juiz Federal;Senhor Juiz;M
-A Sua Excelência a Senhora;Juíza de Direito;Senhora Juíza;F
-A Sua Excelência a Senhora;Juíza Federal;Senhora Juíza;F
-A Sua Excelência o Senhor;Marechal do Exército Brasileiro;Senhor Marechal;M
-A Sua Excelência a Senhora;Ministra de Estado;Senhora Ministra;F
-A Sua Excelência o Senhor;Ministro de Estado;Senhor Chefe da Casa Militar;M
-A Sua Excelência o Senhor;Ministro de Estado;Senhor Ministro;M
-A Sua Excelência a Senhora;Prefeita Municipal;Senhora Prefeita;F
-A Sua Excelência o Senhor;Prefeito Municipal;Senhor Prefeito;M
-A Senhora;Presidenta;Senhora Presidenta;F
-A Sua Excelência a Senhora;Presidenta da Assembleia Legislativa;Senhora Presidenta da Assembleia Legislativa;F
-A Sua Excelência a Senhora;Presidenta da Câmara Legislativa;Senhora Presidenta da Câmara Legislativa;F
-A Sua Excelência a Senhora;Presidenta da Câmara Municipal;Senhora Presidenta da Câmara Municipal;F
-A Sua Excelência a Senhora;Presidenta da República;Excelentíssima Senhora Presidenta da República;F
-A Sua Excelência a Senhora;Presidenta do Congresso Nacional;Excelentíssima Senhora Presidenta;F
-A Sua Excelência a Senhora;Presidenta do Supremo Tribunal Federal;Excelentíssima Senhora Presidenta;F
-Ao Senhor;Presidente;Senhor Presidente;M
-A Sua Excelência o Senhor;Presidente da Assembleia Legislativa;Senhor Presidente da Assembleia Legislativa;M
-A Sua Excelência o Senhor;Presidente da Câmara Legislativa;Senhor Presidente da Câmara Legislativa;M
-A Sua Excelência o Senhor;Presidente da Câmara Municipal;Senhor Presidente da Câmara Municipal;M
-A Sua Excelência o Senhor;Presidente da República;Excelentíssimo Senhor Presidente da República;M
-A Sua Excelência o Senhor;Presidente do Congresso Nacional;Excelentíssimo Senhor Presidente;M
-A Sua Excelência o Senhor;Presidente do Supremo Tribunal Federal;Excelentíssimo Senhor Presidente;M
-A Sua Excelência o Senhor;Procurador da República;Senhor Procurador;M
-A Sua Excelência a Senhora;Procuradora da República;Senhora Procuradora;F
-A Sua Excelência o Senhor;Procurador do Estado;Senhor Procurador;M
-A Sua Excelência a Senhora;Procuradora do Estado;Senhora Procuradora;F
-A Sua Excelência o Senhor;Promotor de Justiça;Senhor Promotor;M
-A Sua Excelência a Senhora;Promotora de Justiça;Senhora Promotora;F
-Ao Senhor;Reitor;Magnífico Reitor;M
-A Senhora;Reitora;Magnífica Reitora;F
-A Senhora;Secretária;Senhora Secretária;F
-A Sua Excelência a Senhora;Secretária de Estado;Senhora Secretária;F
-Ao Senhor;Secretário;Senhor Secretário;M
-A Sua Excelência o Senhor;Secretário de Estado;Senhor Secretário;M
-A Sua Excelência o Senhor;Secretário-Adjunto;Senhor Secretário;M
-A Sua Excelência o Senhor;Secretário-Executivo;Senhor Secretário;M
-A Sua Excelência o Senhor;Secretário-Executivo Adjunto;Senhor Secretário;M
-A Sua Excelência o Senhor;Secretário-Executivo Substituto;Senhor Secretário;M
-A Sua Excelência o Senhor;Senador da República;Senhor Senador;M
-A Sua Excelência a Senhora;Senadora da República;Senhora Senadora;F
-Ao Senhor;Superintendente;Senhor Superintendente;M
-A Senhora;Superintendente;Senhora Superintendente;F
-Ao Senhor;Vereador;Senhor Vereador;M
-A Senhora;Vereadora;Senhora Vereadora;F
-Ao Senhor;Vice-Presidente;Senhor Vice-Presidente;M
-A Sua Excelência o Senhor;Vice-Presidente da República;Senhor Vice-Presidente da República;M
-Ao Senhor;Vice-Reitor;Senhor Vice-Reitor;M
-A Senhora;Vice-Reitora;Senhora Vice-Reitora;F
-Ao Senhor;Gerente;Senhor Gerente;M
-A Senhora;Gerente;Senhora Gerente;F';
+      $strConteudo = 'A Sua Excelência o Senhor;Almirante da Marinha do Brasil;Senhor Almirante;M
+        A Sua Excelência o Senhor;Brigadeiro da Força Aérea Brasileira;Senhor Brigadeiro;M
+        Ao Senhor;Chefe de Gabinete;Senhor Chefe de Gabinete;M
+        Ao Senhor;Cidadão;Senhor;M
+        A Senhora;Cidadão;Senhora;F
+        A Sua Excelência o Senhor;Cônsul;Senhor Cônsul;M
+        A Sua Excelência a Senhora;Consulesa;Senhora Consulesa;F
+        Ao Senhor;Coordenador;Senhor Coordenador;M
+        A Senhora;Coordenadora;Senhora Coordenadora;F
+        A Senhora;Coordenadora-Geral;Senhora Coordenadora-Geral;F
+        Ao Senhor;Coordenador-Geral;Senhor Coordenador-Geral;M
+        A Sua Excelência a Senhora;Delegada de Polícia;Senhora Delegada;F
+        A Sua Excelência a Senhora;Delegada de Polícia Federal;Senhora Delegada;F
+        A Sua Excelência o Senhor;Delegado de Polícia;Senhor Delegado;M
+        A Sua Excelência o Senhor;Delegado de Polícia Federal;Senhor Delegado;M
+        A Sua Excelência a Senhora;Deputada Estadual;Senhora Deputada;F
+        A Sua Excelência a Senhora;Deputada Federal;Senhora Deputada;F
+        A Sua Excelência o Senhor;Deputado Estadual;Senhor Deputado;M
+        A Sua Excelência o Senhor;Deputado Federal;Senhor Deputado;M
+        A Sua Excelência o Senhor;Desembargador de Justiça;Senhor Desembargador;M
+        A Sua Excelência o Senhor;Desembargador Federal;Senhor Desembargador;M
+        A Sua Excelência a Senhora;Desembargadora de Justiça;Senhora Desembargadora;F
+        A Sua Excelência a Senhora;Desembargadora Federal;Senhora Desembargadora;F
+        Ao Senhor;Diretor;Senhor Diretor;M
+        A Senhora;Diretora;Senhora Diretora;F
+        A Sua Excelência o Senhor;Embaixador;Senhor Embaixador;M
+        A Sua Excelência a Senhora;Embaixadora;Senhora Embaixadora;F
+        A Sua Excelência o Senhor;General do Exército Brasileiro;Senhor General;M
+        A Sua Excelência o Senhor;Governador;Senhor Governador;M
+        A Sua Excelência a Senhora;Governadora;Senhora Governadora;F
+        A Sua Excelência o Senhor;Juiz de Direito;Senhor Juiz;M
+        A Sua Excelência o Senhor;Juiz Federal;Senhor Juiz;M
+        A Sua Excelência a Senhora;Juíza de Direito;Senhora Juíza;F
+        A Sua Excelência a Senhora;Juíza Federal;Senhora Juíza;F
+        A Sua Excelência o Senhor;Marechal do Exército Brasileiro;Senhor Marechal;M
+        A Sua Excelência a Senhora;Ministra de Estado;Senhora Ministra;F
+        A Sua Excelência o Senhor;Ministro de Estado;Senhor Chefe da Casa Militar;M
+        A Sua Excelência o Senhor;Ministro de Estado;Senhor Ministro;M
+        A Sua Excelência a Senhora;Prefeita Municipal;Senhora Prefeita;F
+        A Sua Excelência o Senhor;Prefeito Municipal;Senhor Prefeito;M
+        A Senhora;Presidenta;Senhora Presidenta;F
+        A Sua Excelência a Senhora;Presidenta da Assembleia Legislativa;Senhora Presidenta da Assembleia Legislativa;F
+        A Sua Excelência a Senhora;Presidenta da Câmara Legislativa;Senhora Presidenta da Câmara Legislativa;F
+        A Sua Excelência a Senhora;Presidenta da Câmara Municipal;Senhora Presidenta da Câmara Municipal;F
+        A Sua Excelência a Senhora;Presidenta da República;Excelentíssima Senhora Presidenta da República;F
+        A Sua Excelência a Senhora;Presidenta do Congresso Nacional;Excelentíssima Senhora Presidenta;F
+        A Sua Excelência a Senhora;Presidenta do Supremo Tribunal Federal;Excelentíssima Senhora Presidenta;F
+        Ao Senhor;Presidente;Senhor Presidente;M
+        A Sua Excelência o Senhor;Presidente da Assembleia Legislativa;Senhor Presidente da Assembleia Legislativa;M
+        A Sua Excelência o Senhor;Presidente da Câmara Legislativa;Senhor Presidente da Câmara Legislativa;M
+        A Sua Excelência o Senhor;Presidente da Câmara Municipal;Senhor Presidente da Câmara Municipal;M
+        A Sua Excelência o Senhor;Presidente da República;Excelentíssimo Senhor Presidente da República;M
+        A Sua Excelência o Senhor;Presidente do Congresso Nacional;Excelentíssimo Senhor Presidente;M
+        A Sua Excelência o Senhor;Presidente do Supremo Tribunal Federal;Excelentíssimo Senhor Presidente;M
+        A Sua Excelência o Senhor;Procurador da República;Senhor Procurador;M
+        A Sua Excelência a Senhora;Procuradora da República;Senhora Procuradora;F
+        A Sua Excelência o Senhor;Procurador do Estado;Senhor Procurador;M
+        A Sua Excelência a Senhora;Procuradora do Estado;Senhora Procuradora;F
+        A Sua Excelência o Senhor;Promotor de Justiça;Senhor Promotor;M
+        A Sua Excelência a Senhora;Promotora de Justiça;Senhora Promotora;F
+        Ao Senhor;Reitor;Magnífico Reitor;M
+        A Senhora;Reitora;Magnífica Reitora;F
+        A Senhora;Secretária;Senhora Secretária;F
+        A Sua Excelência a Senhora;Secretária de Estado;Senhora Secretária;F
+        Ao Senhor;Secretário;Senhor Secretário;M
+        A Sua Excelência o Senhor;Secretário de Estado;Senhor Secretário;M
+        A Sua Excelência o Senhor;Secretário-Adjunto;Senhor Secretário;M
+        A Sua Excelência o Senhor;Secretário-Executivo;Senhor Secretário;M
+        A Sua Excelência o Senhor;Secretário-Executivo Adjunto;Senhor Secretário;M
+        A Sua Excelência o Senhor;Secretário-Executivo Substituto;Senhor Secretário;M
+        A Sua Excelência o Senhor;Senador da República;Senhor Senador;M
+        A Sua Excelência a Senhora;Senadora da República;Senhora Senadora;F
+        Ao Senhor;Superintendente;Senhor Superintendente;M
+        A Senhora;Superintendente;Senhora Superintendente;F
+        Ao Senhor;Vereador;Senhor Vereador;M
+        A Senhora;Vereadora;Senhora Vereadora;F
+        Ao Senhor;Vice-Presidente;Senhor Vice-Presidente;M
+        A Sua Excelência o Senhor;Vice-Presidente da República;Senhor Vice-Presidente da República;M
+        Ao Senhor;Vice-Reitor;Senhor Vice-Reitor;M
+        A Senhora;Vice-Reitora;Senhora Vice-Reitora;F
+        Ao Senhor;Gerente;Senhor Gerente;M
+        A Senhora;Gerente;Senhora Gerente;F';
 
-      $arrLinhas = explode("\n",$strConteudo);
+$arrLinhas = explode("\n",$strConteudo);
 
-      $objTratamentoRN = new TratamentoRN();
-      $objCargoRN = new CargoRN();
-      $objVocativoRN = new VocativoRN();
-      
-      $arrIdTratamento = array();
-      $arrIdVocativo = array();
-      
-      foreach($arrLinhas as $strLinha){
-        $arrColunas = explode(';', $strLinha);
+$objTratamentoRN = new TratamentoRN();
+$objCargoRN = new CargoRN();
+$objVocativoRN = new VocativoRN();
 
-        $arrColunas[0] = trim($arrColunas[0]);
-        $arrColunas[1] = trim($arrColunas[1]);
-        $arrColunas[2] = trim($arrColunas[2]);
-        $arrColunas[3] = trim($arrColunas[3]);
+$arrIdTratamento = array();
+$arrIdVocativo = array();
 
-        $objCargoDTO = new CargoDTO();
-        $objCargoDTO->setBolExclusaoLogica(false);
-        $objCargoDTO->retNumIdCargo();
-        $objCargoDTO->setStrExpressao($arrColunas[1]);
+foreach($arrLinhas as $strLinha){
+  $arrColunas = explode(';', $strLinha);
 
-        $objCargoDTO->adicionarCriterio(array('StaGenero','StaGenero'),
-                                        array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
-                                        array(null, $arrColunas[3]),
-                                        InfraDTO::$OPER_LOGICO_OR);
+  $arrColunas[0] = trim($arrColunas[0]);
+  $arrColunas[1] = trim($arrColunas[1]);
+  $arrColunas[2] = trim($arrColunas[2]);
+  $arrColunas[3] = trim($arrColunas[3]);
 
-        $objCargoDTO->setNumMaxRegistrosRetorno(1);
+  $objCargoDTO = new CargoDTO();
+  $objCargoDTO->setBolExclusaoLogica(false);
+  $objCargoDTO->retNumIdCargo();
+  $objCargoDTO->setStrExpressao($arrColunas[1]);
 
-        if ($objCargoRN->consultarRN0301($objCargoDTO) == null) {
+  $objCargoDTO->adicionarCriterio(array('StaGenero','StaGenero'),
+    array(InfraDTO::$OPER_IGUAL, InfraDTO::$OPER_IGUAL),
+    array(null, $arrColunas[3]),
+    InfraDTO::$OPER_LOGICO_OR);
 
-          if (!isset($arrIdTratamento[$arrColunas[0]])) {
+  $objCargoDTO->setNumMaxRegistrosRetorno(1);
 
-            $objTratamentoDTO = new TratamentoDTO();
-            $objTratamentoDTO->setBolExclusaoLogica(false);
-            $objTratamentoDTO->retNumIdTratamento();
-            $objTratamentoDTO->setStrExpressao($arrColunas[0]);
-            $objTratamentoDTO->setNumMaxRegistrosRetorno(1);
-            $objTratamentoDTO = $objTratamentoRN->consultarRN0317($objTratamentoDTO);
+  if ($objCargoRN->consultarRN0301($objCargoDTO) == null) {
 
-            if ($objTratamentoDTO == null) {
-              $objTratamentoDTO = new TratamentoDTO();
-              $objTratamentoDTO->setNumIdTratamento(null);
-              $objTratamentoDTO->setStrExpressao($arrColunas[0]);
-              $objTratamentoDTO->setStrSinAtivo('S');
-              $objTratamentoDTO = $objTratamentoRN->cadastrarRN0315($objTratamentoDTO);
-            }
+    if (!isset($arrIdTratamento[$arrColunas[0]])) {
 
-            $arrIdTratamento[$arrColunas[0]] = $objTratamentoDTO->getNumIdTratamento();
-          }
+      $objTratamentoDTO = new TratamentoDTO();
+      $objTratamentoDTO->setBolExclusaoLogica(false);
+      $objTratamentoDTO->retNumIdTratamento();
+      $objTratamentoDTO->setStrExpressao($arrColunas[0]);
+      $objTratamentoDTO->setNumMaxRegistrosRetorno(1);
+      $objTratamentoDTO = $objTratamentoRN->consultarRN0317($objTratamentoDTO);
 
-          if (!isset($arrIdVocativo[$arrColunas[2]])) {
-
-            $objVocativoDTO = new VocativoDTO();
-            $objVocativoDTO->setBolExclusaoLogica(false);
-            $objVocativoDTO->retNumIdVocativo();
-            $objVocativoDTO->setStrExpressao($arrColunas[2]);
-            $objVocativoDTO->setNumMaxRegistrosRetorno(1);
-            $objVocativoDTO = $objVocativoRN->consultarRN0309($objVocativoDTO);
-
-            if ($objVocativoDTO == null) {
-              $objVocativoDTO = new VocativoDTO();
-              $objVocativoDTO->setNumIdVocativo(null);
-              $objVocativoDTO->setStrExpressao($arrColunas[2]);
-              $objVocativoDTO->setStrSinAtivo('S');
-              $objVocativoDTO = $objVocativoRN->cadastrarRN0307($objVocativoDTO);
-            }
-
-            $arrIdVocativo[$arrColunas[2]] = $objVocativoDTO->getNumIdVocativo();
-          }
-
-          $objCargoDTO = new CargoDTO();
-          $objCargoDTO->setNumIdCargo(null);
-          $objCargoDTO->setStrExpressao($arrColunas[1]);
-          $objCargoDTO->setNumIdTratamento($arrIdTratamento[$arrColunas[0]]);
-          $objCargoDTO->setNumIdVocativo($arrIdVocativo[$arrColunas[2]]);
-          $objCargoDTO->setStrStaGenero($arrColunas[3]);
-          $objCargoDTO->setStrSinAtivo('S');
-          $objCargoRN->cadastrarRN0299($objCargoDTO);
-        }
+      if ($objTratamentoDTO == null) {
+        $objTratamentoDTO = new TratamentoDTO();
+        $objTratamentoDTO->setNumIdTratamento(null);
+        $objTratamentoDTO->setStrExpressao($arrColunas[0]);
+        $objTratamentoDTO->setStrSinAtivo('S');
+        $objTratamentoDTO = $objTratamentoRN->cadastrarRN0315($objTratamentoDTO);
       }
 
-      InfraDebug::getInstance()->setBolDebugInfra(true);
+      $arrIdTratamento[$arrColunas[0]] = $objTratamentoDTO->getNumIdTratamento();
+    }
+
+    if (!isset($arrIdVocativo[$arrColunas[2]])) {
+
+      $objVocativoDTO = new VocativoDTO();
+      $objVocativoDTO->setBolExclusaoLogica(false);
+      $objVocativoDTO->retNumIdVocativo();
+      $objVocativoDTO->setStrExpressao($arrColunas[2]);
+      $objVocativoDTO->setNumMaxRegistrosRetorno(1);
+      $objVocativoDTO = $objVocativoRN->consultarRN0309($objVocativoDTO);
+
+      if ($objVocativoDTO == null) {
+        $objVocativoDTO = new VocativoDTO();
+        $objVocativoDTO->setNumIdVocativo(null);
+        $objVocativoDTO->setStrExpressao($arrColunas[2]);
+        $objVocativoDTO->setStrSinAtivo('S');
+        $objVocativoDTO = $objVocativoRN->cadastrarRN0307($objVocativoDTO);
+      }
+
+      $arrIdVocativo[$arrColunas[2]] = $objVocativoDTO->getNumIdVocativo();
+    }
+
+    $objCargoDTO = new CargoDTO();
+    $objCargoDTO->setNumIdCargo(null);
+    $objCargoDTO->setStrExpressao($arrColunas[1]);
+    $objCargoDTO->setNumIdTratamento($arrIdTratamento[$arrColunas[0]]);
+    $objCargoDTO->setNumIdVocativo($arrIdVocativo[$arrColunas[2]]);
+    $objCargoDTO->setStrStaGenero($arrColunas[3]);
+    $objCargoDTO->setStrSinAtivo('S');
+    $objCargoRN->cadastrarRN0299($objCargoDTO);
+  }
+}
+
+InfraDebug::getInstance()->setBolDebugInfra(true);
 
     }catch(Exception $e){
       throw new InfraException('Erro populando dados de Cargo, Tratamento e Vocativo.', $e);
@@ -1430,11 +1430,11 @@ A Senhora;Gerente;Senhora Gerente;F';
         }
 
         $rs = BancoSEI::getInstance()->consultarSql('select '.
-            BancoSEI::getInstance()->formatarSelecaoNum('documento', 'conteudo', 'documentoconteudo').','.
-            BancoSEI::getInstance()->formatarSelecaoStr('documento', 'conteudo_assinatura', 'conteudoassinatura').','.
-            BancoSEI::getInstance()->formatarSelecaoStr('documento', 'crc_assinatura', 'crcassinatura').','.
-            BancoSEI::getInstance()->formatarSelecaoStr('documento', 'qr_code_assinatura', 'qrcodeassinatura').
-            ' from documento where id_documento='.BancoSEI::getInstance()->formatarGravacaoDbl($dblIdProtocolo));
+          BancoSEI::getInstance()->formatarSelecaoNum('documento', 'conteudo', 'documentoconteudo').','.
+          BancoSEI::getInstance()->formatarSelecaoStr('documento', 'conteudo_assinatura', 'conteudoassinatura').','.
+          BancoSEI::getInstance()->formatarSelecaoStr('documento', 'crc_assinatura', 'crcassinatura').','.
+          BancoSEI::getInstance()->formatarSelecaoStr('documento', 'qr_code_assinatura', 'qrcodeassinatura').
+          ' from documento where id_documento='.BancoSEI::getInstance()->formatarGravacaoDbl($dblIdProtocolo));
 
 
         if (count($rs)==1) {
@@ -1620,17 +1620,17 @@ A Senhora;Gerente;Senhora Gerente;F';
       InfraDebug::getInstance()->gravar('ATUALIZANDO ASSUNTOS...');
 
       $rs = BancoSEI::getInstance()->consultarSql('select '.
-          BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'id_assunto', null).','.
-          BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'maior_tempo_corrente', null).','.
-          BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'menor_tempo_corrente', null).','.
-          BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_maior_corrente', null).','.
-          BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_menor_corrente', null).','.
-          BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'maior_tempo_intermediario', null).','.
-          BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'menor_tempo_intermediario', null).','.
-          BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_menor_intermed', null).','.
-          BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_maior_intermed', null).','.
-          BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_suficiente', null).
-          ' from assunto');
+        BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'id_assunto', null).','.
+        BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'maior_tempo_corrente', null).','.
+        BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'menor_tempo_corrente', null).','.
+        BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_maior_corrente', null).','.
+        BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_menor_corrente', null).','.
+        BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'maior_tempo_intermediario', null).','.
+        BancoSEI::getInstance()->formatarSelecaoNum('assunto', 'menor_tempo_intermediario', null).','.
+        BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_menor_intermed', null).','.
+        BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_elimina_maior_intermed', null).','.
+        BancoSEI::getInstance()->formatarSelecaoStr('assunto', 'sin_suficiente', null).
+        ' from assunto');
 
       $numRegistros = count($rs);
       $n = 0;
@@ -1946,82 +1946,82 @@ A Senhora;Gerente;Senhora Gerente;F';
 
   public function atualizarSequenciasMySql(){
     $arrSequencias = array(
-        'seq_acesso',
-        'seq_acesso_externo',
-        'seq_acompanhamento',
-        'seq_anexo',
-        'seq_anotacao',
-        'seq_arquivo_extensao',
-        'seq_assinante',
-        'seq_assinatura',
-        'seq_assunto',
-        'seq_atividade',
-        'seq_atributo_andamento',
-        'seq_base_conhecimento',
-        'seq_bloco',
-        'seq_cargo',
-        'seq_cidade',
-        'seq_conjunto_estilos',
-        'seq_conjunto_estilos_item',
-        'seq_contato',
-        'seq_controle_interno',
-        'seq_email_grupo_email',
-        'seq_email_unidade',
-        'seq_estilo',
-        'seq_feed',
-        'seq_feriado',
-        'seq_grupo_acompanhamento',
-        'seq_grupo_contato',
-        'seq_grupo_email',
-        'seq_grupo_protocolo_modelo',
-        'seq_grupo_serie',
-        'seq_hipotese_legal',
-        'seq_imagem_formato',
-        'seq_localizador',
-        'seq_lugar_localizador',
-        'seq_modelo',
-        'seq_nivel_acesso_permitido',
-        'seq_novidade',
-        'seq_numeracao',
-        'seq_observacao',
-        'seq_operacao_servico',
-        'seq_ordenador_despesa',
-        'seq_pais',
-        'seq_participante',
-        'seq_protocolo_modelo',
-        'seq_publicacao',
-        'seq_rel_protocolo_protocolo',
-        'seq_retorno_programado',
-        'seq_secao_documento',
-        'seq_secao_imprensa_nacional',
-        'seq_secao_modelo',
-        'seq_serie',
-        'seq_serie_publicacao',
-        'seq_servico',
-        'seq_texto_padrao_interno',
-        'seq_tipo_conferencia',
-        'seq_tipo_contexto_contato',
-        'seq_tipo_localizador',
-        'seq_tipo_procedimento',
-        'seq_tipo_suporte',
-        'seq_tratamento',
-        'seq_uf',
-        'seq_unidade_publicacao',
-        'seq_veiculo_imprensa_nacional',
-        'seq_veiculo_publicacao',
-        'seq_vocativo',
-        'seq_grupo_unidade',
-        'seq_email_utilizado',
-        'seq_andamento_situacao',
-        'seq_situacao',
-        'seq_auditoria_protocolo',
-        'seq_estatisticas',
-        'seq_infra_auditoria',
-        'seq_infra_log',
-        'seq_infra_navegador',
-        'seq_protocolo',
-        'seq_versao_secao_documento',
-        'seq_controle_unidade');
+      'seq_acesso',
+      'seq_acesso_externo',
+      'seq_acompanhamento',
+      'seq_anexo',
+      'seq_anotacao',
+      'seq_arquivo_extensao',
+      'seq_assinante',
+      'seq_assinatura',
+      'seq_assunto',
+      'seq_atividade',
+      'seq_atributo_andamento',
+      'seq_base_conhecimento',
+      'seq_bloco',
+      'seq_cargo',
+      'seq_cidade',
+      'seq_conjunto_estilos',
+      'seq_conjunto_estilos_item',
+      'seq_contato',
+      'seq_controle_interno',
+      'seq_email_grupo_email',
+      'seq_email_unidade',
+      'seq_estilo',
+      'seq_feed',
+      'seq_feriado',
+      'seq_grupo_acompanhamento',
+      'seq_grupo_contato',
+      'seq_grupo_email',
+      'seq_grupo_protocolo_modelo',
+      'seq_grupo_serie',
+      'seq_hipotese_legal',
+      'seq_imagem_formato',
+      'seq_localizador',
+      'seq_lugar_localizador',
+      'seq_modelo',
+      'seq_nivel_acesso_permitido',
+      'seq_novidade',
+      'seq_numeracao',
+      'seq_observacao',
+      'seq_operacao_servico',
+      'seq_ordenador_despesa',
+      'seq_pais',
+      'seq_participante',
+      'seq_protocolo_modelo',
+      'seq_publicacao',
+      'seq_rel_protocolo_protocolo',
+      'seq_retorno_programado',
+      'seq_secao_documento',
+      'seq_secao_imprensa_nacional',
+      'seq_secao_modelo',
+      'seq_serie',
+      'seq_serie_publicacao',
+      'seq_servico',
+      'seq_texto_padrao_interno',
+      'seq_tipo_conferencia',
+      'seq_tipo_contexto_contato',
+      'seq_tipo_localizador',
+      'seq_tipo_procedimento',
+      'seq_tipo_suporte',
+      'seq_tratamento',
+      'seq_uf',
+      'seq_unidade_publicacao',
+      'seq_veiculo_imprensa_nacional',
+      'seq_veiculo_publicacao',
+      'seq_vocativo',
+      'seq_grupo_unidade',
+      'seq_email_utilizado',
+      'seq_andamento_situacao',
+      'seq_situacao',
+      'seq_auditoria_protocolo',
+      'seq_estatisticas',
+      'seq_infra_auditoria',
+      'seq_infra_log',
+      'seq_infra_navegador',
+      'seq_protocolo',
+      'seq_versao_secao_documento',
+      'seq_controle_unidade');
 
     foreach($arrSequencias as $strSequencia){
 
@@ -2176,7 +2176,7 @@ A Senhora;Gerente;Senhora Gerente;F';
 
     $n = 0;
     foreach($arrObjAcessoExternoDTO as $objAcessoExternoDTO){
-      
+
       $objAtributoAndamentoDTO = new AtributoAndamentoDTO();
       $objAtributoAndamentoDTO->setNumIdAtributoAndamento(null);
       $objAtributoAndamentoDTO->setNumIdAtividade($objAcessoExternoDTO->getNumIdAtividade());
@@ -2287,88 +2287,88 @@ A Senhora;Gerente;Senhora Gerente;F';
       InfraDebug::getInstance()->gravar('Atualizar Sequencias - Iniciando...');
 
       $arrSequencias = array(
-          'seq_acesso',
-          'seq_acesso_externo',
-          'seq_acompanhamento',
-          'seq_anexo',
-          'seq_anotacao',
-          'seq_arquivo_extensao',
-          'seq_assinante',
-          'seq_assinatura',
-          'seq_assunto',
-          'seq_atividade',
-          'seq_atributo',
-          'seq_atributo_andamento',
-          'seq_base_conhecimento',
-          'seq_bloco',
-          'seq_cargo',
-          'seq_cidade',
-          'seq_conjunto_estilos',
-          'seq_conjunto_estilos_item',
-          'seq_contato',
-          'seq_controle_interno',
-          'seq_dominio',
-          'seq_email_grupo_email',
-          'seq_email_unidade',
-          'seq_estilo',
-          'seq_feed',
-          'seq_feriado',
-          'seq_grupo_acompanhamento',
-          'seq_grupo_contato',
-          'seq_grupo_email',
-          'seq_grupo_protocolo_modelo',
-          'seq_grupo_serie',
-          'seq_hipotese_legal',
-          'seq_imagem_formato',
-          'seq_localizador',
-          'seq_lugar_localizador',
-          'seq_modelo',
-          'seq_nivel_acesso_permitido',
-          'seq_novidade',
-          'seq_numeracao',
-          'seq_observacao',
-          'seq_operacao_servico',
-          'seq_ordenador_despesa',
-          'seq_pais',
-          'seq_participante',
-          'seq_protocolo_modelo',
-          'seq_publicacao',
-          'seq_rel_protocolo_protocolo',
-          'seq_retorno_programado',
-          'seq_secao_documento',
-          'seq_secao_imprensa_nacional',
-          'seq_secao_modelo',
-          'seq_serie',
-          'seq_serie_publicacao',
-          'seq_servico',
-          'seq_texto_padrao_interno',
-          'seq_tipo_conferencia',
-          'seq_tipo_localizador',
-          'seq_tipo_procedimento',
-          'seq_tipo_suporte',
-          'seq_tratamento',
-          'seq_uf',
-          'seq_unidade_publicacao',
-          'seq_veiculo_imprensa_nacional',
-          'seq_veiculo_publicacao',
-          'seq_vocativo',
-          'seq_grupo_unidade',
-          'seq_email_utilizado',
-          'seq_andamento_situacao',
-          'seq_situacao',
-          'seq_tarefa',
-          'seq_email_sistema',
-          'seq_tipo_formulario',
-          'seq_tarja_assinatura',
-          'seq_monitoramento_servico',
-          'seq_tipo_contato',
-          'seq_rel_unidade_tipo_contato',
-          'seq_marcador',
-          'seq_andamento_marcador',
-          'seq_assunto_proxy',
-          'seq_tabela_assuntos',
-          'seq_serie_restricao',
-          'seq_tipo_proced_restricao');
+        'seq_acesso',
+        'seq_acesso_externo',
+        'seq_acompanhamento',
+        'seq_anexo',
+        'seq_anotacao',
+        'seq_arquivo_extensao',
+        'seq_assinante',
+        'seq_assinatura',
+        'seq_assunto',
+        'seq_atividade',
+        'seq_atributo',
+        'seq_atributo_andamento',
+        'seq_base_conhecimento',
+        'seq_bloco',
+        'seq_cargo',
+        'seq_cidade',
+        'seq_conjunto_estilos',
+        'seq_conjunto_estilos_item',
+        'seq_contato',
+        'seq_controle_interno',
+        'seq_dominio',
+        'seq_email_grupo_email',
+        'seq_email_unidade',
+        'seq_estilo',
+        'seq_feed',
+        'seq_feriado',
+        'seq_grupo_acompanhamento',
+        'seq_grupo_contato',
+        'seq_grupo_email',
+        'seq_grupo_protocolo_modelo',
+        'seq_grupo_serie',
+        'seq_hipotese_legal',
+        'seq_imagem_formato',
+        'seq_localizador',
+        'seq_lugar_localizador',
+        'seq_modelo',
+        'seq_nivel_acesso_permitido',
+        'seq_novidade',
+        'seq_numeracao',
+        'seq_observacao',
+        'seq_operacao_servico',
+        'seq_ordenador_despesa',
+        'seq_pais',
+        'seq_participante',
+        'seq_protocolo_modelo',
+        'seq_publicacao',
+        'seq_rel_protocolo_protocolo',
+        'seq_retorno_programado',
+        'seq_secao_documento',
+        'seq_secao_imprensa_nacional',
+        'seq_secao_modelo',
+        'seq_serie',
+        'seq_serie_publicacao',
+        'seq_servico',
+        'seq_texto_padrao_interno',
+        'seq_tipo_conferencia',
+        'seq_tipo_localizador',
+        'seq_tipo_procedimento',
+        'seq_tipo_suporte',
+        'seq_tratamento',
+        'seq_uf',
+        'seq_unidade_publicacao',
+        'seq_veiculo_imprensa_nacional',
+        'seq_veiculo_publicacao',
+        'seq_vocativo',
+        'seq_grupo_unidade',
+        'seq_email_utilizado',
+        'seq_andamento_situacao',
+        'seq_situacao',
+        'seq_tarefa',
+        'seq_email_sistema',
+        'seq_tipo_formulario',
+        'seq_tarja_assinatura',
+        'seq_monitoramento_servico',
+        'seq_tipo_contato',
+        'seq_rel_unidade_tipo_contato',
+        'seq_marcador',
+        'seq_andamento_marcador',
+        'seq_assunto_proxy',
+        'seq_tabela_assuntos',
+        'seq_serie_restricao',
+        'seq_tipo_proced_restricao');
 
       foreach($arrSequencias as $strSequencia){
 
@@ -2396,15 +2396,15 @@ A Senhora;Gerente;Senhora Gerente;F';
       }
 
       $arrSequencias = array(
-          'seq_auditoria_protocolo',
-          'seq_estatisticas',
-          'seq_infra_auditoria',
-          'seq_infra_log',
-          'seq_infra_navegador',
-          'seq_protocolo',
-          'seq_versao_secao_documento',
-          'seq_controle_unidade',
-          'seq_monitoramento_servico');
+        'seq_auditoria_protocolo',
+        'seq_estatisticas',
+        'seq_infra_auditoria',
+        'seq_infra_log',
+        'seq_infra_navegador',
+        'seq_protocolo',
+        'seq_versao_secao_documento',
+        'seq_controle_unidade',
+        'seq_monitoramento_servico');
 
       foreach($arrSequencias as $strSequencia){
 
