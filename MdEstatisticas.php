@@ -6,9 +6,6 @@
  *
  */
 
- /*
- No SIP criar os recursos md_abc_processo_processar, md_abc_documento_processar e md_abc_andamento_lancar e adicionar em um novo perfil chamado MD_ABC_Básico.
-  */
 
 class MdEstatisticas extends SeiIntegracao{
 
