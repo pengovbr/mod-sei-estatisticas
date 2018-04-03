@@ -27,6 +27,8 @@ class MdEstatisticasColetarRN extends InfraRN {
 
       //2) Preencher cada indicador do sistema
       $objIndicadoresDTO->setStrVersaoSEI($this->obterVersaoSEI());
+      $objIndicadoresDTO->setNumTamanhoFileSystem($this->obterTamanhoFileSystem());
+      $objIndicadoresDTO->setStrPlugins($this->obterPlugins());
       $objIndicadoresDTO->setNumQuantidadeUnidades($this->obterQuantidadeUnidades());
       $objIndicadoresDTO->setNumTamanhoDocumentosExternos($this->obterTamanhoTotalDocumentosExternos());
 
@@ -50,8 +52,47 @@ class MdEstatisticasColetarRN extends InfraRN {
   }
 
   private function obterVersaoSEI(){
-    InfraDebug::getInstance()->gravar('SEIXX - Versão SEI: ' . SEI_VERSAO, InfraLog::$INFORMACAO);
+    InfraDebug::getInstance()->gravar('SEI01 - Versão SEI: ' . SEI_VERSAO, InfraLog::$INFORMACAO);
     return SEI_VERSAO;
+  }
+
+  private function getDirectorySize($path){
+    $bytestotal = 0;
+    $path = realpath($path);
+    if($path!==false){
+      foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object){
+        $bytestotal += $object->getSize();
+      }
+    }
+    return $bytestotal;
+  }
+
+  private function obterTamanhoFileSystem(){
+    $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+    if ($objConfiguracaoSEI->isSetValor('SEI', 'RepositorioArquivos')){
+      $diretorio = $objConfiguracaoSEI->getValor('SEI','RepositorioArquivos');
+      $tamanho = $this->getDirectorySize($diretorio);
+
+      InfraDebug::getInstance()->gravar('SEI02 - Diretorio: ' . $diretorio, InfraLog::$INFORMACAO);
+      InfraDebug::getInstance()->gravar('SEI02 - Tamanho File System: ' . $tamanho, InfraLog::$INFORMACAO);
+    }
+    return $tamanho;
+  }
+
+  private function obterPlugins(){
+    global $SEI_MODULOS;
+    $lista = array();
+    foreach($SEI_MODULOS as $strModulo => $seiModulo){
+      $result = array(
+        'nome' => $strModulo,
+        'versao' => $seiModulo->getVersao()
+      );
+      array_push($lista, $result);
+    }
+    $resultado = json_encode($lista);
+
+    InfraDebug::getInstance()->gravar('SEI03 - Plugins: ' . $resultado, InfraLog::$INFORMACAO);
+    return $resultado;
   }
 
   private function obterQuantidadeUnidades(){
