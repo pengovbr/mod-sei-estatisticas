@@ -32,6 +32,7 @@ class MdEstatisticasColetarRN extends InfraRN {
       $objIndicadoresDTO->setStrPlugins($this->obterPlugins());
       $objIndicadoresDTO->setNumQuantidadeUnidades($this->obterQuantidadeUnidades());
       $objIndicadoresDTO->setNumTamanhoDocumentosExternos($this->obterTamanhoTotalDocumentosExternos());
+      $objIndicadoresDTO->setStrProtocolo($this->obterProtocolo());
 
       //...
 
@@ -56,7 +57,6 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI01 - Versão SEI: ' . SEI_VERSAO, InfraLog::$INFORMACAO);
     return SEI_VERSAO;
   }
-
 
   private function obterVersaoPHP(){
     InfraDebug::getInstance()->gravar('SEI21 - Versão PHP: ' . phpversion(), InfraLog::$INFORMACAO);
@@ -119,6 +119,18 @@ class MdEstatisticasColetarRN extends InfraRN {
 
     InfraDebug::getInstance()->gravar('SEI12 - Tamanho Documentos Externos: ' . $tamanho, InfraLog::$INFORMACAO);
     return $tamanho;
+  }
+  private function obterProtocolo(){
+    $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+    if ($objConfiguracaoSEI->isSetValor('SessaoSEI', 'https')){
+      $temHTTPS = $objConfiguracaoSEI->getValor('SessaoSEI', 'https');
+      $protocolo = 'HTTP';
+      if ($temHTTPS) {
+        $protocolo = 'HTTPS';
+      }
+      InfraDebug::getInstance()->gravar('SEI12 - Protocolo: ' . $protocolo, InfraLog::$INFORMACAO);
+      return $protocolo;
+    }
   }
 
 }
