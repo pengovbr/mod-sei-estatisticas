@@ -11,6 +11,7 @@ class IndicadoresDTO extends InfraDTO {
   public function montar() {
 
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'VersaoSEI', 'versao_sei');
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'VersaoPHP', 'versao_php');
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'TamanhoFileSystem', 'tamanho_file_system');
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'Plugins', 'plugins');
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'QuantidadeUnidades', 'quantidade_unidades');

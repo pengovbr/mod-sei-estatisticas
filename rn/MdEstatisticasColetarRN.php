@@ -27,6 +27,7 @@ class MdEstatisticasColetarRN extends InfraRN {
 
       //2) Preencher cada indicador do sistema
       $objIndicadoresDTO->setStrVersaoSEI($this->obterVersaoSEI());
+      $objIndicadoresDTO->setStrVersaoPHP($this->obterVersaoPHP());
       $objIndicadoresDTO->setNumTamanhoFileSystem($this->obterTamanhoFileSystem());
       $objIndicadoresDTO->setStrPlugins($this->obterPlugins());
       $objIndicadoresDTO->setNumQuantidadeUnidades($this->obterQuantidadeUnidades());
@@ -54,6 +55,12 @@ class MdEstatisticasColetarRN extends InfraRN {
   private function obterVersaoSEI(){
     InfraDebug::getInstance()->gravar('SEI01 - Versão SEI: ' . SEI_VERSAO, InfraLog::$INFORMACAO);
     return SEI_VERSAO;
+  }
+
+
+  private function obterVersaoPHP(){
+    InfraDebug::getInstance()->gravar('SEI21 - Versão PHP: ' . phpversion(), InfraLog::$INFORMACAO);
+    return phpversion();
   }
 
   private function getDirectorySize($path){
