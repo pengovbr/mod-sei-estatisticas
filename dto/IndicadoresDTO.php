@@ -17,5 +17,6 @@ class IndicadoresDTO extends InfraDTO {
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'QuantidadeUnidades', 'quantidade_unidades');
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'TamanhoDocumentosExternos', 'tamanho_docs_externos');
     $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_STR, 'Protocolo', 'protocolo');
+    $this->adicionarAtributoTabela(InfraDTO::$PREFIXO_NUM, 'QuantidadeProcedimentos', 'quantidade_procedimentos');
   }
 }

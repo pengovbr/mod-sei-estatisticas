@@ -22,7 +22,7 @@ class MdEstatisticasColetarRN extends InfraRN {
       InfraDebug::getInstance()->limpar();
 
       //IMPLEMENTAÇÃO DA EXTRAÇÃO DE INDICADORES
-      //1) Criar o objeto DTO representativo dos indicaores
+      //1) Criar o objeto DTO representativo dos indicadores
       $objIndicadoresDTO = new IndicadoresDTO();
 
       //2) Preencher cada indicador do sistema
@@ -33,6 +33,7 @@ class MdEstatisticasColetarRN extends InfraRN {
       $objIndicadoresDTO->setNumQuantidadeUnidades($this->obterQuantidadeUnidades());
       $objIndicadoresDTO->setNumTamanhoDocumentosExternos($this->obterTamanhoTotalDocumentosExternos());
       $objIndicadoresDTO->setStrProtocolo($this->obterProtocolo());
+      $objIndicadoresDTO->setNumQuantidadeProcedimentos($this->obterQuantidadeProcessosAdministrativos());
 
       //...
 
@@ -120,6 +121,7 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI12 - Tamanho Documentos Externos: ' . $tamanho, InfraLog::$INFORMACAO);
     return $tamanho;
   }
+
   private function obterProtocolo(){
     $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
     if ($objConfiguracaoSEI->isSetValor('SessaoSEI', 'https')){
@@ -131,6 +133,15 @@ class MdEstatisticasColetarRN extends InfraRN {
       InfraDebug::getInstance()->gravar('SEI12 - Protocolo: ' . $protocolo, InfraLog::$INFORMACAO);
       return $protocolo;
     }
+  }
+
+  private function obterQuantidadeProcessosAdministrativos(){
+    $query = "select count(*) as quantidade from procedimento";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    InfraDebug::getInstance()->gravar('SEI06 - Quantidade de Processos Administrativos: ' . $quantidade, InfraLog::$INFORMACAO);
+    return $quantidade;
   }
 
 }
