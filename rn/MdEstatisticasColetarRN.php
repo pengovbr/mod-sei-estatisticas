@@ -34,6 +34,7 @@ class MdEstatisticasColetarRN extends InfraRN {
       $objIndicadoresDTO->setNumTamanhoDocumentosExternos($this->obterTamanhoTotalDocumentosExternos());
       $objIndicadoresDTO->setStrProtocolo($this->obterProtocolo());
       $objIndicadoresDTO->setNumQuantidadeProcedimentos($this->obterQuantidadeProcessosAdministrativos());
+      $objIndicadoresDTO->setStrNavegadores($this->obterNavegadores());
 
       //...
 
@@ -141,6 +142,24 @@ class MdEstatisticasColetarRN extends InfraRN {
     $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
 
     InfraDebug::getInstance()->gravar('SEI06 - Quantidade de Processos Administrativos: ' . $quantidade, InfraLog::$INFORMACAO);
+    return $quantidade;
+  }
+
+  private function obterNavegadores(){
+    $query = "select count(*) as quantidade, identificacao, versao from infra_navegador group by identificacao,versao";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $lista = array();
+    foreach($rs as $r) {
+      $result = array(
+        'quantidade' => $r['quantidade'],
+        'navegador' => $r['identificacao'],
+        'versao' => $r['versao']
+      );
+      array_push($lista, $result);
+    }
+    $resultado = json_encode($lista);
+
+    InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . $resultado, InfraLog::$INFORMACAO);
     return $quantidade;
   }
 
