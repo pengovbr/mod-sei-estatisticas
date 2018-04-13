@@ -16,10 +16,6 @@ class MdEstatisticasColetarRN extends InfraRN {
 
     try {
 
-      InfraDebug::getInstance()->setBolLigado(true);
-      InfraDebug::getInstance()->setBolDebugInfra(false);
-      InfraDebug::getInstance()->setBolEcho(false);
-      InfraDebug::getInstance()->limpar();
 
       //IMPLEMENTAÇÃO DA EXTRAÇÃO DE INDICADORES
       //1) Criar o objeto DTO representativo dos indicadores
@@ -36,16 +32,15 @@ class MdEstatisticasColetarRN extends InfraRN {
       $objIndicadoresDTO->setNumQuantidadeProcedimentos($this->obterQuantidadeProcessosAdministrativos());
       $objIndicadoresDTO->setStrNavegadores($this->obterNavegadores());
 
-      //...
+      $indicadores = array(
+        'seiVersao' => $this->obterVersaoSEI(),
+        'phpVersao' => $this->obterVersaoPHP(),
+        'protocolo' => $this->obterProtocolo(),
+        'quantidadeProcedimentos' => $this->obterQuantidadeProcessosAdministrativos(),
+        'quantidadeUnidades' => $this->obterQuantidadeUnidades()
+      );
 
-      //3) Salvar indicador no banco de dados ????
-      //
-
-      //4) Enviar indicadores para webservice
-      //
-
-      LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
-      return $objIndicadoresDTO;
+      return $indicadores;
 
     } catch(Exception $e) {
       InfraDebug::getInstance()->setBolLigado(false);
