@@ -23,7 +23,8 @@ class MdEstatisticasEnviarRN extends InfraRN {
       curl_setopt($ch, CURLOPT_URL, "http://192.168.1.7:8181/estatisticas");
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($ch, CURLOPT_POST, true);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $indicadores);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
       $output = curl_exec($ch);
 
       InfraDebug::getInstance()->gravar('Output: ' . $output, InfraLog::$INFORMACAO);

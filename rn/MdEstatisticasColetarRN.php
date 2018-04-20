@@ -19,25 +19,26 @@ class MdEstatisticasColetarRN extends InfraRN {
 
       //IMPLEMENTAÇÃO DA EXTRAÇÃO DE INDICADORES
       //1) Criar o objeto DTO representativo dos indicadores
-      $objIndicadoresDTO = new IndicadoresDTO();
+      /* $objIndicadoresDTO = new IndicadoresDTO(); */
 
       //2) Preencher cada indicador do sistema
-      $objIndicadoresDTO->setStrVersaoSEI($this->obterVersaoSEI());
-      $objIndicadoresDTO->setStrVersaoPHP($this->obterVersaoPHP());
-      $objIndicadoresDTO->setNumTamanhoFileSystem($this->obterTamanhoFileSystem());
-      $objIndicadoresDTO->setStrPlugins($this->obterPlugins());
-      $objIndicadoresDTO->setNumQuantidadeUnidades($this->obterQuantidadeUnidades());
-      $objIndicadoresDTO->setNumTamanhoDocumentosExternos($this->obterTamanhoTotalDocumentosExternos());
-      $objIndicadoresDTO->setStrProtocolo($this->obterProtocolo());
-      $objIndicadoresDTO->setNumQuantidadeProcedimentos($this->obterQuantidadeProcessosAdministrativos());
-      $objIndicadoresDTO->setStrNavegadores($this->obterNavegadores());
+      /* $objIndicadoresDTO->setStrVersaoSEI($this->obterVersaoSEI()); */
+      /* $objIndicadoresDTO->setStrVersaoPHP($this->obterVersaoPHP()); */
+      /* $objIndicadoresDTO->setNumTamanhoFileSystem($this->obterTamanhoFileSystem()); */
+      /* $objIndicadoresDTO->setStrPlugins($this->obterPlugins()); */
+      /* $objIndicadoresDTO->setNumQuantidadeUnidades($this->obterQuantidadeUnidades()); */
+      /* $objIndicadoresDTO->setNumTamanhoDocumentosExternos($this->obterTamanhoTotalDocumentosExternos()); */
+      /* $objIndicadoresDTO->setStrProtocolo($this->obterProtocolo()); */
+      /* $objIndicadoresDTO->setNumQuantidadeProcedimentos($this->obterQuantidadeProcessosAdministrativos()); */
+      /* $objIndicadoresDTO->setStrNavegadores($this->obterNavegadores()); */
 
       $indicadores = array(
         'seiVersao' => $this->obterVersaoSEI(),
         'phpVersao' => $this->obterVersaoPHP(),
         'protocolo' => $this->obterProtocolo(),
+        'quantidadeUnidades' => $this->obterQuantidadeUnidades(),
         'quantidadeProcedimentos' => $this->obterQuantidadeProcessosAdministrativos(),
-        'quantidadeUnidades' => $this->obterQuantidadeUnidades()
+        'navegadores' => $this->obterNavegadores()
       );
 
       return $indicadores;
@@ -146,16 +147,15 @@ class MdEstatisticasColetarRN extends InfraRN {
     $lista = array();
     foreach($rs as $r) {
       $result = array(
-        'quantidade' => $r['quantidade'],
-        'navegador' => $r['identificacao'],
+        'quantidade' => (int)$r['quantidade'],
+        'nome' => $r['identificacao'],
         'versao' => $r['versao']
       );
       array_push($lista, $result);
     }
-    $resultado = json_encode($lista);
 
-    InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . $resultado, InfraLog::$INFORMACAO);
-    return $quantidade;
+    InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($lista), InfraLog::$INFORMACAO);
+    return $lista;
   }
 
 }
