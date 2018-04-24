@@ -39,7 +39,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'quantidadeUnidades' => $this->obterQuantidadeUnidades(),
         'quantidadeProcedimentos' => $this->obterQuantidadeProcessosAdministrativos(),
         'navegadores' => $this->obterNavegadores(),
-        'modulos' => $this->obterPlugins()
+        'modulos' => $this->obterPlugins(),
+        'tamanhoFilesystem' => $this->obterTamanhoFileSystem()
       );
 
       return $indicadores;
