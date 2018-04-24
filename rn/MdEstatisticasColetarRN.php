@@ -38,7 +38,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'protocolo' => $this->obterProtocolo(),
         'quantidadeUnidades' => $this->obterQuantidadeUnidades(),
         'quantidadeProcedimentos' => $this->obterQuantidadeProcessosAdministrativos(),
-        'navegadores' => $this->obterNavegadores()
+        'navegadores' => $this->obterNavegadores(),
+        'modulos' => $this->obterPlugins()
       );
 
       return $indicadores;
@@ -94,10 +95,9 @@ class MdEstatisticasColetarRN extends InfraRN {
       );
       array_push($lista, $result);
     }
-    $resultado = json_encode($lista);
 
-    InfraDebug::getInstance()->gravar('SEI03 - Plugins: ' . $resultado, InfraLog::$INFORMACAO);
-    return $resultado;
+    InfraDebug::getInstance()->gravar('SEI03 - Plugins: ' . json_encode($lista), InfraLog::$INFORMACAO);
+    return $lista;
   }
 
   private function obterQuantidadeUnidades(){
