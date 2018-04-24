@@ -38,6 +38,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'protocolo' => $this->obterProtocolo(),
         'quantidadeUnidades' => $this->obterQuantidadeUnidades(),
         'quantidadeProcedimentos' => $this->obterQuantidadeProcessosAdministrativos(),
+        'quantidadeUsuarios' => $this->obterQuantidadeUsuarios(),
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem()
@@ -118,6 +119,16 @@ class MdEstatisticasColetarRN extends InfraRN {
 
     InfraDebug::getInstance()->gravar('SEI12 - Tamanho Documentos Externos: ' . $tamanho, InfraLog::$INFORMACAO);
     return $tamanho;
+  }
+
+  private function obterQuantidadeUsuarios(){
+
+    $query = "SELECT COUNT(*) as quantidade FROM usuario WHERE sin_ativo = 'S'";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    InfraDebug::getInstance()->gravar('SEI09 - Quantidade de usuários: ' . $quantidade, InfraLog::$INFORMACAO);
+    return $quantidade;
   }
 
   private function obterProtocolo(){
