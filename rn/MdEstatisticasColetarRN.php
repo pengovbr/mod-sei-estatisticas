@@ -16,22 +16,6 @@ class MdEstatisticasColetarRN extends InfraRN {
 
     try {
 
-
-      //IMPLEMENTAÇÃO DA EXTRAÇÃO DE INDICADORES
-      //1) Criar o objeto DTO representativo dos indicadores
-      /* $objIndicadoresDTO = new IndicadoresDTO(); */
-
-      //2) Preencher cada indicador do sistema
-      /* $objIndicadoresDTO->setStrVersaoSEI($this->obterVersaoSEI()); */
-      /* $objIndicadoresDTO->setStrVersaoPHP($this->obterVersaoPHP()); */
-      /* $objIndicadoresDTO->setNumTamanhoFileSystem($this->obterTamanhoFileSystem()); */
-      /* $objIndicadoresDTO->setStrPlugins($this->obterPlugins()); */
-      /* $objIndicadoresDTO->setNumQuantidadeUnidades($this->obterQuantidadeUnidades()); */
-      /* $objIndicadoresDTO->setNumTamanhoDocumentosExternos($this->obterTamanhoTotalDocumentosExternos()); */
-      /* $objIndicadoresDTO->setStrProtocolo($this->obterProtocolo()); */
-      /* $objIndicadoresDTO->setNumQuantidadeProcedimentos($this->obterQuantidadeProcessosAdministrativos()); */
-      /* $objIndicadoresDTO->setStrNavegadores($this->obterNavegadores()); */
-
       $indicadores = array(
         'seiVersao' => $this->obterVersaoSEI(),
         'phpVersao' => $this->obterVersaoPHP(),
