@@ -19,8 +19,13 @@ class MdEstatisticasEnviarRN extends InfraRN {
       $json = json_encode($indicadores);
       InfraDebug::getInstance()->gravar('JSON: ' . $json, InfraLog::$INFORMACAO);
 
+      $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+      $url = $objConfiguracaoSEI->getValor('MdEstatisticas','url', false, 'http://estatisticas.planejamento.gov.br');
+
+      InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
+
       $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, "http://192.168.1.7:8181/estatisticas");
+      curl_setopt($ch, CURLOPT_URL, $url);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($ch, CURLOPT_POST, true);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
