@@ -28,7 +28,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
         'bancoSEI' => $this->obterTipoSGBD(),
         'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
-        'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos()
+        'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
+        'quantidadeDocumentosExternosPorExtensao' => $this->obterQuantidadeDocumentosExternosPorExtensao()
       );
 
       return $indicadores;
@@ -182,5 +183,30 @@ class MdEstatisticasColetarRN extends InfraRN {
     return $quantidade;
   }
 
+  private function obterQuantidadeDocumentosExternosPorExtensao(){
+    $query = "SELECT nome FROM anexo WHERE sin_ativo = 'S'";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $extensoes = array();
+    # Calculando na aplicacao para funcionar independente do banco
+    foreach($rs as $r) {
+      $extensao =pathinfo($r['nome'], PATHINFO_EXTENSION);
+      $qtd = $extensoes[$extensao];
+      if (!$qtd) {
+        $qtd = 0;
+      }
+      $extensoes[$extensao] = $qtd + 1;
+    }
+    $lista = array();
+    foreach($extensoes as $key => $value) {
+      $result = array(
+        'extensao' => $key,
+        'quantidade' => $value
+      );
+      array_push($lista, $result);
+    }
+
+    InfraDebug::getInstance()->gravar('SEI07 - Quantidade de  extensoes de documentos externos: ' . json_encode($lista), InfraLog::$INFORMACAO);
+    return $lista;
+  }
 }
 ?>
