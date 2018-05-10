@@ -7,16 +7,26 @@ cd sei/web/modulos
 git clone http://softwarepublico.gov.br/gitlab/mp/mod-sei-estatisticas.git
 ```
 
-Edite o arquivo *sei/sei/config/ConfiguracaoSEI.php* e adicione o nome do projeto e seu diretório na propriedade *Modulos*.
+Para que o SEI reconheça esse módulo é necessário editar o arquivo *sei/sei/config/ConfiguracaoSEI.php*.
+Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor um array contendo o nome do módulo e o nome do diretório do módulo. **'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')**
 ```
 ...
-
   'SEI' => array(
-      'URL' => 'http://localhost/sei',
+      ...
+      'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
+...
+  ```
+Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configurações do módulo
+```
+...
+  'SEI' => array(
+      'URL' => getenv('SEI_HOST_URL').'/sei',
       'Producao' => false,
       'RepositorioArquivos' => '/var/sei/arquivos',
       'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
-
+...
+  'MdEstatisticas' => array(
+      'url' => 'http://estatisticas.planejamento.gov.br/estatisticas'),
 ...
   ```
 
