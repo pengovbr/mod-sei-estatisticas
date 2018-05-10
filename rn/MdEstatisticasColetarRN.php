@@ -25,7 +25,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'quantidadeUsuarios' => $this->obterQuantidadeUsuarios(),
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
-        'tamanhoFilesystem' => $this->obterTamanhoFileSystem()
+        'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
+        'bancoSEI' => $this->obterTipoSGBD()
       );
 
       return $indicadores;
@@ -153,6 +154,14 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($lista), InfraLog::$INFORMACAO);
     return $lista;
   }
+
+  private function obterTipoSGBD(){
+    $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+    $sgbd = $objConfiguracaoSEI->getValor('BancoSEI','Tipo', false, '');
+    InfraDebug::getInstance()->gravar('SEI02 - SGBD: ' . $sgbd, InfraLog::$INFORMACAO);
+    return $sgbd;
+  }
+
 
 }
 ?>
