@@ -26,7 +26,9 @@ class MdEstatisticasColetarRN extends InfraRN {
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
-        'bancoSEI' => $this->obterTipoSGBD()
+        'bancoSEI' => $this->obterTipoSGBD(),
+        'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
+        'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos()
       );
 
       return $indicadores;
@@ -162,6 +164,23 @@ class MdEstatisticasColetarRN extends InfraRN {
     return $sgbd;
   }
 
+  private function obterQuantidadeDocumentosInternos(){
+    $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'I'";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    InfraDebug::getInstance()->gravar('SEI05 - Quantidade de documentos internos: ' . $quantidade, InfraLog::$INFORMACAO);
+    return $quantidade;
+  }
+
+  private function obterQuantidadeDocumentosExternos(){
+    $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'X'";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    InfraDebug::getInstance()->gravar('SEI05 - Quantidade de documentos externos: ' . $quantidade, InfraLog::$INFORMACAO);
+    return $quantidade;
+  }
 
 }
 ?>
