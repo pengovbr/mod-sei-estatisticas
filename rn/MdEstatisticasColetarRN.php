@@ -31,7 +31,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
         'quantidadeDocumentosExternosPorExtensao' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
         'estrategiaCessao' => $this->obterEstrategiaCessao(),
-        'versaoMemcached' => $this->obterVersaoMemcached()
+        'versaoMemcached' => $this->obterVersaoMemcached(),
+        'tamanhoDatabase' => $this->obterTamanoDataBase()
       );
 
       return $indicadores;
@@ -228,6 +229,20 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI23 - Versão memcached: ' . $versao, InfraLog::$INFORMACAO);
     return $versao;
   }
+
+  private function obterTamanoDatabase(){
+    $sgbd = $this->obterTipoSGBD();
+    $query = '';
+    if ($sgbd == 'MySql') {
+      $query = "SELECT table_schema, SUM(data_length + index_length) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei' GROUP BY table_schema";
+    }
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
+
+    InfraDebug::getInstance()->gravar('SEI03 - Tamanho do SGBD: ' . $tamanho, InfraLog::$INFORMACAO);
+    return $tamanho;
+  }
+
 
 }
 ?>
