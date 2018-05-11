@@ -29,7 +29,9 @@ class MdEstatisticasColetarRN extends InfraRN {
         'bancoSEI' => $this->obterTipoSGBD(),
         'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
         'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
-        'quantidadeDocumentosExternosPorExtensao' => $this->obterQuantidadeDocumentosExternosPorExtensao()
+        'quantidadeDocumentosExternosPorExtensao' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
+        'estrategiaCessao' => $this->obterEstrategiaCessao(),
+        'versaoMemcached' => $this->obterVersaoMemcached()
       );
 
       return $indicadores;
@@ -208,5 +210,24 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI07 - Quantidade de  extensoes de documentos externos: ' . json_encode($lista), InfraLog::$INFORMACAO);
     return $lista;
   }
+
+  private function obterEstrategiaCessao(){
+    InfraDebug::getInstance()->gravar('SEI24 - Estrategia de armazenamento de cessao: ' . ini_get('session.save_handler'), InfraLog::$INFORMACAO);
+    return ini_get('session.save_handler');
+  }
+
+  private function obterVersaoMemcached(){
+    $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+    $host = $objConfiguracaoSEI->getValor('CacheSEI','Servidor', false, '');
+    $porta = $objConfiguracaoSEI->getValor('CacheSEI','Porta', false, '');
+
+    $memcache = new Memcache;
+    $memcache->connect($host, $porta);
+    $versao = $memcache->getVersion();
+
+    InfraDebug::getInstance()->gravar('SEI23 - Versão memcached: ' . $versao, InfraLog::$INFORMACAO);
+    return $versao;
+  }
+
 }
 ?>
