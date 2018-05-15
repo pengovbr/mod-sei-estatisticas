@@ -29,7 +29,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'bancoSei' => $this->obterTipoSGBD(),
         'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
         'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
-        'quantidadeDocumentosExternosPorExtensao' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
+        'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
         'estrategiaCessao' => $this->obterEstrategiaCessao(),
         'versaoMemcached' => $this->obterVersaoMemcached(),
         'tamanhoDatabase' => $this->obterTamanoDataBase()
