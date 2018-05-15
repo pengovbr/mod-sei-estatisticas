@@ -19,20 +19,21 @@ class MdEstatisticasColetarRN extends InfraRN {
       $indicadores = array(
         'seiVersao' => $this->obterVersaoSEI(),
         'phpVersao' => $this->obterVersaoPHP(),
+        'memcachedVersao' => $this->obterVersaoMemcached(),
+        'solrVersao' => $this->obterVersaoSolr(),
         'protocolo' => $this->obterProtocolo(),
         'quantidadeUnidades' => $this->obterQuantidadeUnidades(),
         'quantidadeProcedimentos' => $this->obterQuantidadeProcessosAdministrativos(),
         'quantidadeUsuarios' => $this->obterQuantidadeUsuarios(),
+        'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
+        'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
+        'estrategiaCessao' => $this->obterEstrategiaCessao(),
+        'tamanhoDatabase' => $this->obterTamanoDataBase(),
+        'bancoSei' => $this->obterTipoSGBD(),
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
-        'bancoSei' => $this->obterTipoSGBD(),
-        'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
-        'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
-        'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
-        'estrategiaCessao' => $this->obterEstrategiaCessao(),
-        'versaoMemcached' => $this->obterVersaoMemcached(),
-        'tamanhoDatabase' => $this->obterTamanoDataBase()
+        'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao()
       );
 
       return $indicadores;
@@ -242,7 +243,20 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI03 - Tamanho do SGBD: ' . $tamanho, InfraLog::$INFORMACAO);
     return $tamanho;
   }
+  private function obterVersaoSolr(){
+    $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+    $url = $objConfiguracaoSEI->getValor('Solr','Servidor', false, 'http://localhost:8983/solr');
+    $url = $url . '/admin/info/system?wt=json';
 
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $output = curl_exec($ch);
+    $json = json_decode($output, true);
+    $versao = $json['lucene']['lucene-spec-version'];
+    InfraDebug::getInstance()->gravar('SEI22 - Versao Solr: ' . $versao, InfraLog::$INFORMACAO);
+    return $versao;
+  }
 
 }
 ?>
