@@ -31,6 +31,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'tamanhoDatabase' => $this->obterTamanoDataBase(),
         'bancoSei' => $this->obterTipoSGBD(),
         'servidorAplicacao' => $this->obterServidorAplicacao(),
+        'sistemaOperacional' => $this->obterSistemaOperacional(),
+        'sistemaOperacionalDetalhado' => $this->obterSistemaOperacionalDetalhado(),
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
@@ -258,10 +260,25 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI22 - Versao Solr: ' . $versao, InfraLog::$INFORMACAO);
     return $versao;
   }
+
   private function obterServidorAplicacao(){
     $versao = $_SERVER['SERVER_SOFTWARE'];
     InfraDebug::getInstance()->gravar('SEI20 - Quantidade de servidores de aplicação e suas versões: ' . $versao, InfraLog::$INFORMACAO);
     return $versao;
+  }
+
+  private function obterSistemaOperacional(){
+    $so = PHP_OS;
+    $versao = $_SERVER['SERVER_SOFTWARE'];
+    InfraDebug::getInstance()->gravar('SEI17 - Quantidade de Sistemas Operacionais: ' . $so, InfraLog::$INFORMACAO);
+    return $so;
+  }
+
+  private function obterSistemaOperacionalDetalhado(){
+    $so = php_uname();
+    $versao = $_SERVER['SERVER_SOFTWARE'];
+    InfraDebug::getInstance()->gravar('SEI17 - Quantidade de Sistemas Operacionais (Detalhado): ' . $so, InfraLog::$INFORMACAO);
+    return $so;
   }
 
 }
