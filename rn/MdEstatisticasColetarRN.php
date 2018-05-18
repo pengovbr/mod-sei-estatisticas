@@ -30,6 +30,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'estrategiaCessao' => $this->obterEstrategiaCessao(),
         'tamanhoDatabase' => $this->obterTamanoDataBase(),
         'bancoSei' => $this->obterTipoSGBD(),
+        'servidorAplicacao' => $this->obterServidorAplicacao(),
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
@@ -255,6 +256,11 @@ class MdEstatisticasColetarRN extends InfraRN {
     $json = json_decode($output, true);
     $versao = $json['lucene']['lucene-spec-version'];
     InfraDebug::getInstance()->gravar('SEI22 - Versao Solr: ' . $versao, InfraLog::$INFORMACAO);
+    return $versao;
+  }
+  private function obterServidorAplicacao(){
+    $versao = $_SERVER['SERVER_SOFTWARE'];
+    InfraDebug::getInstance()->gravar('SEI20 - Quantidade de servidores de aplicação e suas versões: ' . $versao, InfraLog::$INFORMACAO);
     return $versao;
   }
 
