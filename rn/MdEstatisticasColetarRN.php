@@ -17,6 +17,7 @@ class MdEstatisticasColetarRN extends InfraRN {
     try {
 
       $indicadores = array(
+        'dataColeta' => $this->obterDataColeta(),
         'seiVersao' => $this->obterVersaoSEI(),
         'phpVersao' => $this->obterVersaoPHP(),
         'memcachedVersao' => $this->obterVersaoMemcached(),
@@ -279,6 +280,12 @@ class MdEstatisticasColetarRN extends InfraRN {
     $versao = $_SERVER['SERVER_SOFTWARE'];
     InfraDebug::getInstance()->gravar('SEI17 - Quantidade de Sistemas Operacionais (Detalhado): ' . $so, InfraLog::$INFORMACAO);
     return $so;
+  }
+
+  private function obterDataColeta(){
+    $dataColeta = date ("Y-m-d");
+    InfraDebug::getInstance()->gravar('SEI29 - Periodicidade do envio - Data da coleta: ' . $dataColeta, InfraLog::$INFORMACAO);
+    return $dataColeta;
   }
 
 }
