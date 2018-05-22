@@ -283,7 +283,7 @@ class MdEstatisticasColetarRN extends InfraRN {
   }
 
   private function obterDataColeta(){
-    $dataColeta = date ("Y-m-d");
+    $dataColeta = date (DATE_ATOM);
     InfraDebug::getInstance()->gravar('SEI29 - Periodicidade do envio - Data da coleta: ' . $dataColeta, InfraLog::$INFORMACAO);
     return $dataColeta;
   }
