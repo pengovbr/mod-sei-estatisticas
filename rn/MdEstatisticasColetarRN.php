@@ -37,6 +37,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
+        'tamanhoDocumentosExternos' => $this->obterTamanhoDocumentosExternos(),
         'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao()
       );
 
@@ -286,6 +287,32 @@ class MdEstatisticasColetarRN extends InfraRN {
     $dataColeta = date (DATE_ATOM);
     InfraDebug::getInstance()->gravar('SEI29 - Periodicidade do envio - Data da coleta: ' . $dataColeta, InfraLog::$INFORMACAO);
     return $dataColeta;
+  }
+
+  private function obterTamanhoDocumentosExternos(){
+    $resultado = array();
+    # 0MB - !MB
+    $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 0 AND tamanho < 1000";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $resultado['0MB - 1MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    # 1MB - 10MB
+    $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 1000 AND tamanho < 10000";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $resultado['1MB - 10MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    # 10MB - 100MB
+    $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 10000 AND tamanho < 100000";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $resultado['10MB - 100MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    # > 100MB
+    $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 100000";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $resultado['Maior que 100MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+
+    InfraDebug::getInstance()->gravar('SEI11 - Tamanho dos documentos externos: ' . json_encode($resultado), InfraLog::$INFORMACAO);
+    return $resultado;
   }
 
 }
