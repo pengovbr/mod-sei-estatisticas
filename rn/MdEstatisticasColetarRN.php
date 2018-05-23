@@ -36,6 +36,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'sistemaOperacionalDetalhado' => $this->obterSistemaOperacionalDetalhado(),
         'navegadores' => $this->obterNavegadores(),
         'modulos' => $this->obterPlugins(),
+        'sistemasOperacionaisUsuarios' => $this->obterSistemasOperacionaisUsuarios(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
         'tamanhoDocumentosExternos' => $this->obterTamanhoDocumentosExternos(),
         'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao()
@@ -313,6 +314,18 @@ class MdEstatisticasColetarRN extends InfraRN {
 
     InfraDebug::getInstance()->gravar('SEI11 - Tamanho dos documentos externos: ' . json_encode($resultado), InfraLog::$INFORMACAO);
     return $resultado;
+  }
+
+  private function obterSistemasOperacionaisUsuarios(){
+    $query = "select distinct user_agent from infra_auditoria";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $sistemas = (count($rs) && isset($rs[0]['user_agent'])) ? $rs[0]['user_agent'] : '';
+    $lista = array();
+    foreach($rs as $r) {
+      array_push($lista, $r['user_agent']);
+    }
+    InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($lista), InfraLog::$INFORMACAO);
+    return $lista;
   }
 
 }
