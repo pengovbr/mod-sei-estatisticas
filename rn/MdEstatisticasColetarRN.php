@@ -29,7 +29,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
         'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
         'estrategiaCessao' => $this->obterEstrategiaCessao(),
-        'tamanhoDatabase' => $this->obterTamanoDataBase(),
+        'tamanhoDatabase' => $this->obterTamanhoDataBase(),
+        'tamanhoTabelas' => $this->obterTamanhoTabelas(),
         'bancoSei' => $this->obterTipoSGBD(),
         'servidorAplicacao' => $this->obterServidorAplicacao(),
         'sistemaOperacional' => $this->obterSistemaOperacional(),
@@ -237,7 +238,7 @@ class MdEstatisticasColetarRN extends InfraRN {
     return $versao;
   }
 
-  private function obterTamanoDatabase(){
+  private function obterTamanhoDatabase(){
     $sgbd = $this->obterTipoSGBD();
     $query = '';
     if ($sgbd == 'MySql') {
@@ -249,6 +250,20 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI03 - Tamanho do SGBD: ' . $tamanho, InfraLog::$INFORMACAO);
     return $tamanho;
   }
+
+  private function obterTamanhoTabelas(){
+    $sgbd = $this->obterTipoSGBD();
+    $query = '';
+    if ($sgbd == 'MySql') {
+      $query = "SELECT table_name as tabela, data_length + index_length as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
+    }
+    $tabelas = BancoSEI::getInstance()->consultarSql($query);
+
+    InfraDebug::getInstance()->gravar('SEI15 - Tamanho das tabelas: ' . json_encode($tabelas), InfraLog::$INFORMACAO);
+    return $tamanho;
+  }
+
+
   private function obterVersaoSolr(){
     $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
     $url = $objConfiguracaoSEI->getValor('Solr','Servidor', false, 'http://localhost:8983/solr');
