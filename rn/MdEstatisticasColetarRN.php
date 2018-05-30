@@ -39,7 +39,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'modulos' => $this->obterPlugins(),
         'sistemasOperacionaisUsuarios' => $this->obterSistemasOperacionaisUsuarios(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
-        'tamanhoDocumentosExternos' => $this->obterTamanhoDocumentosExternos(),
+        'anexosTamanhos' => $this->obterTamanhoDocumentosExternos(),
         'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao()
       );
 
@@ -310,22 +310,34 @@ class MdEstatisticasColetarRN extends InfraRN {
     # 0MB - !MB
     $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 0 AND tamanho < 1000";
     $rs = BancoSEI::getInstance()->consultarSql($query);
-    $resultado['0MB - 1MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+    $resultado[0] = array(
+      'tamanho' => '0MB - 1MB',
+      'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
+    );
 
     # 1MB - 10MB
     $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 1000 AND tamanho < 10000";
     $rs = BancoSEI::getInstance()->consultarSql($query);
-    $resultado['1MB - 10MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+    $resultado[1] = array(
+      'tamanho' => '1MB - 10MB',
+      'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
+    );
 
     # 10MB - 100MB
     $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 10000 AND tamanho < 100000";
     $rs = BancoSEI::getInstance()->consultarSql($query);
-    $resultado['10MB - 100MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+    $resultado[2] = array(
+      'tamanho' => '10MB - 100MB',
+      'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
+    );
 
     # > 100MB
     $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 100000";
     $rs = BancoSEI::getInstance()->consultarSql($query);
-    $resultado['Maior que 100MB'] = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+    $resultado[3] = array(
+      'tamanho' => 'Maior que 100MB',
+      'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
+    );
 
     InfraDebug::getInstance()->gravar('SEI11 - Tamanho dos documentos externos: ' . json_encode($resultado), InfraLog::$INFORMACAO);
     return $resultado;
