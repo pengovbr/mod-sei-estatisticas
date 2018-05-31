@@ -30,7 +30,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
         'estrategiaCessao' => $this->obterEstrategiaCessao(),
         'tamanhoDatabase' => $this->obterTamanhoDataBase(),
-        'tamanhoTabelas' => $this->obterTamanhoTabelas(),
+        'tabelasTamanhos' => $this->obterTamanhoTabelas(),
         'bancoSei' => $this->obterTipoSGBD(),
         'servidorAplicacao' => $this->obterServidorAplicacao(),
         'sistemaOperacional' => $this->obterSistemaOperacional(),
@@ -260,7 +260,7 @@ class MdEstatisticasColetarRN extends InfraRN {
     $tabelas = BancoSEI::getInstance()->consultarSql($query);
 
     InfraDebug::getInstance()->gravar('SEI15 - Tamanho das tabelas: ' . json_encode($tabelas), InfraLog::$INFORMACAO);
-    return $tamanho;
+    return $tabelas;
   }
 
 
