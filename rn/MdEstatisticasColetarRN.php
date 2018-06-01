@@ -344,15 +344,10 @@ class MdEstatisticasColetarRN extends InfraRN {
   }
 
   private function obterSistemasOperacionaisUsuarios(){
-    $query = "select distinct user_agent from infra_auditoria";
-    $rs = BancoSEI::getInstance()->consultarSql($query);
-    $sistemas = (count($rs) && isset($rs[0]['user_agent'])) ? $rs[0]['user_agent'] : '';
-    $lista = array();
-    foreach($rs as $r) {
-      array_push($lista, $r['user_agent']);
-    }
-    InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($lista), InfraLog::$INFORMACAO);
-    return $lista;
+    $query = "select distinct user_agent as nome from infra_auditoria";
+    $sistemas = BancoSEI::getInstance()->consultarSql($query);
+    InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
+    return $sistemas;
   }
 
 }
