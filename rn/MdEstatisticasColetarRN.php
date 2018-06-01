@@ -28,6 +28,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'quantidadeUsuarios' => $this->obterQuantidadeUsuarios(),
         'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
         'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
+        'quantidadeMemoria' => $this->obterUsoMemoria(),
+        'porcentagemCPU' => $this->obterUsoCPU(),
         'estrategiaCessao' => $this->obterEstrategiaCessao(),
         'tamanhoDatabase' => $this->obterTamanhoDataBase(),
         'tabelasTamanhos' => $this->obterTamanhoTabelas(),
@@ -348,6 +350,20 @@ class MdEstatisticasColetarRN extends InfraRN {
     $sistemas = BancoSEI::getInstance()->consultarSql($query);
     InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
     return $sistemas;
+  }
+  private function obterUsoMemoria(){
+    $memoria = memory_get_usage();
+    InfraDebug::getInstance()->gravar('SEI18 - Quantidade de byte de uso de memoria: ' . json_encode($memoria), InfraLog::$INFORMACAO);
+    return $memoria;
+  }
+  private function obterUsoCPU(){
+    $load = sys_getloadavg();
+    $uso = null;
+    if ($load) {
+      $uso = $load[0];
+    }
+    InfraDebug::getInstance()->gravar('SEI18 - Porcentagem de uso de CPU: ' . json_encode($uso), InfraLog::$INFORMACAO);
+    return $uso;
   }
 
 }
