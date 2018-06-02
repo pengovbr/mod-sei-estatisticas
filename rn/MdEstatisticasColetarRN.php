@@ -43,7 +43,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'sistemasOperacionaisUsuarios' => $this->obterSistemasOperacionaisUsuarios(),
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
         'anexosTamanhos' => $this->obterTamanhoDocumentosExternos(),
-        'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao()
+        'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
+        'velocidades' => $this->obterVelocidadePorCidade()
       );
 
       return $indicadores;
@@ -381,6 +382,31 @@ class MdEstatisticasColetarRN extends InfraRN {
     return $versao;
   }
 
+  private function obterVelocidadePorCidade(){
+    $query = "
+      select d.nome as nome_cidade, e.nome as nome_uf, avg(velocidade) as media_velocidade
+      from velocidade_transferencia a
+        join unidade b on b.id_unidade = a.id_unidade
+        join contato c on b.id_contato = c.id_contato
+        join cidade d on c.id_cidade = d.id_cidade
+        join uf e on d.id_uf = e.id_uf
+      group by
+        d.nome, e.nome
+    ";
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $lista = array();
+    foreach($rs as $r) {
+      $result = array(
+        'cidade' => utf8_encode($r['nome_cidade']),
+        'uf' => utf8_encode($r['nome_uf']),
+        'velocidade' => $r['media_velocidade']
+      );
+
+      array_push($lista, $result);
+    }
+    InfraDebug::getInstance()->gravar('SEI14 - Quantidade de bytes de transferência: ' . json_encode($lista), InfraLog::$INFORMACAO);
+    return $lista;
+  }
 
 }
 ?>
