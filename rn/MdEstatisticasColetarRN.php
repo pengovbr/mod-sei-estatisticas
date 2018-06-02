@@ -34,6 +34,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'tamanhoDatabase' => $this->obterTamanhoDataBase(),
         'tabelasTamanhos' => $this->obterTamanhoTabelas(),
         'bancoSei' => $this->obterTipoSGBD(),
+        'bancoVersao' => $this->obterBancoVersao(),
         'servidorAplicacao' => $this->obterServidorAplicacao(),
         'sistemaOperacional' => $this->obterSistemaOperacional(),
         'sistemaOperacionalDetalhado' => $this->obterSistemaOperacionalDetalhado(),
@@ -351,11 +352,13 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
     return $sistemas;
   }
+
   private function obterUsoMemoria(){
     $memoria = memory_get_usage();
     InfraDebug::getInstance()->gravar('SEI18 - Quantidade de byte de uso de memoria: ' . json_encode($memoria), InfraLog::$INFORMACAO);
     return $memoria;
   }
+
   private function obterUsoCPU(){
     $load = sys_getloadavg();
     $uso = null;
@@ -365,6 +368,19 @@ class MdEstatisticasColetarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('SEI18 - Porcentagem de uso de CPU: ' . json_encode($uso), InfraLog::$INFORMACAO);
     return $uso;
   }
+
+  private function obterBancoVersao(){
+    $sgbd = $this->obterTipoSGBD();
+    $query = '';
+    if ($sgbd == 'MySql') {
+      $query = "SELECT version() as versao";
+    }
+    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $versao = (count($rs) && isset($rs[0]['versao'])) ? $rs[0]['versao'] : null;
+    InfraDebug::getInstance()->gravar('SEI02 - Versao do SGBD: ' . $versao, InfraLog::$INFORMACAO);
+    return $versao;
+  }
+
 
 }
 ?>
