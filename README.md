@@ -26,7 +26,11 @@ Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova 
       'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
 ...
   'MdEstatisticas' => array(
-      'url' => 'http://estatisticas.planejamento.gov.br/estatisticas'),
+      'url' => 'http://estatisticas.planejamento.gov.br/estatisticas',
+      'sigla' => 'MPOG',
+      'chave' => '123456'),
+
+
 ...
   ```
 

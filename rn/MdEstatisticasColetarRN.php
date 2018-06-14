@@ -16,8 +16,12 @@ class MdEstatisticasColetarRN extends InfraRN {
 
     try {
 
+      $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+      $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas','sigla', false, '');
+
       $indicadores = array(
         'dataColeta' => $this->obterDataColeta(),
+        'orgaoSigla' => $orgaoSigla,
         'seiVersao' => $this->obterVersaoSEI(),
         'phpVersao' => $this->obterVersaoPHP(),
         'memcachedVersao' => $this->obterVersaoMemcached(),
