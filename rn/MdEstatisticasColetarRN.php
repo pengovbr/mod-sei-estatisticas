@@ -251,6 +251,8 @@ class MdEstatisticasColetarRN extends InfraRN {
     $query = '';
     if ($sgbd == 'MySql') {
       $query = "SELECT table_schema, SUM(data_length + index_length) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei' GROUP BY table_schema";
+    } elseif ($sgbd == 'SqlServer') {
+      $query = "SELECT 'a' as table_schema, 1 as tamanho";
     }
     $rs = BancoSEI::getInstance()->consultarSql($query);
     $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
@@ -264,6 +266,8 @@ class MdEstatisticasColetarRN extends InfraRN {
     $query = '';
     if ($sgbd == 'MySql') {
       $query = "SELECT table_name as tabela, data_length + index_length as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
+    } elseif ($sgbd == 'SqlServer') {
+      $query = "SELECT OBJECT_NAME(object_id) As tabela, SUM(Total_Pages * 8 * 1000) As tamanho FROM sys.partitions As P INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id GROUP BY OBJECT_NAME(object_id) ORDER BY tabela";
     }
     $tabelas = BancoSEI::getInstance()->consultarSql($query);
 
@@ -379,6 +383,8 @@ class MdEstatisticasColetarRN extends InfraRN {
     $query = '';
     if ($sgbd == 'MySql') {
       $query = "SELECT version() as versao";
+    } elseif ($sgbd == 'SqlServer') {
+      $query = "SELECT SERVERPROPERTY('productversion') as versao";
     }
     $rs = BancoSEI::getInstance()->consultarSql($query);
     $versao = (count($rs) && isset($rs[0]['versao'])) ? $rs[0]['versao'] : null;
