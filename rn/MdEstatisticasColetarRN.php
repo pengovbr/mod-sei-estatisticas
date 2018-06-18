@@ -252,7 +252,7 @@ class MdEstatisticasColetarRN extends InfraRN {
     if ($sgbd == 'MySql') {
       $query = "SELECT table_schema, SUM(data_length + index_length) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei' GROUP BY table_schema";
     } elseif ($sgbd == 'SqlServer') {
-      $query = "SELECT 'a' as table_schema, 1 as tamanho";
+      $query = "SELECT SUM(Total_Pages * 8 * 1000) As tamanho FROM sys.partitions As P INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id  INNER JOIN sys.tables t on t.object_id = p.object_id";
     }
     $rs = BancoSEI::getInstance()->consultarSql($query);
     $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
@@ -267,7 +267,12 @@ class MdEstatisticasColetarRN extends InfraRN {
     if ($sgbd == 'MySql') {
       $query = "SELECT table_name as tabela, data_length + index_length as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
     } elseif ($sgbd == 'SqlServer') {
-      $query = "SELECT OBJECT_NAME(object_id) As tabela, SUM(Total_Pages * 8 * 1000) As tamanho FROM sys.partitions As P INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id GROUP BY OBJECT_NAME(object_id) ORDER BY tabela";
+      $query = "" .
+        " SELECT t.name as tabela,  SUM(Total_Pages * 8 * 1000) As tamanho " .
+        " FROM sys.partitions As P " .
+        "   INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id " .
+        "   INNER JOIN sys.tables t on t.object_id = p.object_id " .
+        " GROUP BY t.name ORDER BY t.name";
     }
     $tabelas = BancoSEI::getInstance()->consultarSql($query);
 
