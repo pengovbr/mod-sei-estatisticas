@@ -53,8 +53,8 @@ services:
     environment:
       - SEI_HOST_URL=http://localhost
     links:
-      - mysql:mysql
-#      - oracle:oracle
+      # - mysql:mysql
+      - oracle:oracle
 #      - sqlserver:sqlserver
       - memcached:memcached
       - solr:solr

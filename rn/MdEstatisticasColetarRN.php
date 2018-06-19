@@ -253,8 +253,13 @@ class MdEstatisticasColetarRN extends InfraRN {
       $query = "SELECT table_schema, SUM(data_length + index_length) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei' GROUP BY table_schema";
     } elseif ($sgbd == 'SqlServer') {
       $query = "SELECT SUM(Total_Pages * 8 * 1000) As tamanho FROM sys.partitions As P INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id  INNER JOIN sys.tables t on t.object_id = p.object_id";
+    } elseif ($sgbd == 'Oracle') {
+      $query = "";
     }
-    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $rs = array();
+    if($query) {
+      $rs = BancoSEI::getInstance()->consultarSql($query);
+    }
     $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
 
     InfraDebug::getInstance()->gravar('SEI03 - Tamanho do SGBD: ' . $tamanho, InfraLog::$INFORMACAO);
@@ -273,8 +278,13 @@ class MdEstatisticasColetarRN extends InfraRN {
         "   INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id " .
         "   INNER JOIN sys.tables t on t.object_id = p.object_id " .
         " GROUP BY t.name ORDER BY t.name";
+    } elseif ($sgbd == 'Oracle') {
+      $query = "";
     }
-    $tabelas = BancoSEI::getInstance()->consultarSql($query);
+    $tabelas = array();
+    if($query) {
+      $tabelas = BancoSEI::getInstance()->consultarSql($query);
+    }
 
     InfraDebug::getInstance()->gravar('SEI15 - Tamanho das tabelas: ' . json_encode($tabelas), InfraLog::$INFORMACAO);
     return $tabelas;
@@ -361,7 +371,13 @@ class MdEstatisticasColetarRN extends InfraRN {
   }
 
   private function obterSistemasOperacionaisUsuarios(){
-    $query = "select distinct user_agent as nome from infra_auditoria";
+    $sgbd = $this->obterTipoSGBD();
+    if ($sgbd == 'Oracle') {
+      $query = "select distinct to_char(user_agent) as nome from infra_auditoria";
+    } else {
+      $query = "select distinct user_agent as nome from infra_auditoria";
+    }
+    InfraDebug::getInstance()->gravar('query: ' . json_encode($query), InfraLog::$INFORMACAO);
     $sistemas = BancoSEI::getInstance()->consultarSql($query);
     InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
     return $sistemas;
@@ -390,8 +406,13 @@ class MdEstatisticasColetarRN extends InfraRN {
       $query = "SELECT version() as versao";
     } elseif ($sgbd == 'SqlServer') {
       $query = "SELECT SERVERPROPERTY('productversion') as versao";
+    } elseif ($sgbd == 'Oracle') {
+      $query = "select version AS versao from product_component_version WHERE product LIKE 'Oracle%'";
     }
-    $rs = BancoSEI::getInstance()->consultarSql($query);
+    $rs = array();
+    if ($query) {
+      $rs = BancoSEI::getInstance()->consultarSql($query);
+    }
     $versao = (count($rs) && isset($rs[0]['versao'])) ? $rs[0]['versao'] : null;
     InfraDebug::getInstance()->gravar('SEI02 - Versao do SGBD: ' . $versao, InfraLog::$INFORMACAO);
     return $versao;
