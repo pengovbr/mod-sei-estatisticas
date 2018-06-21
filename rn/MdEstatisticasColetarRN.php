@@ -48,7 +48,8 @@ class MdEstatisticasColetarRN extends InfraRN {
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
         'anexosTamanhos' => $this->obterTamanhoDocumentosExternos(),
         'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
-        'velocidades' => $this->obterVelocidadePorCidade()
+        'velocidades' => $this->obterVelocidadePorCidade(),
+        'acessosUsuarios' => $this->obterAcessosUsuarios()
       );
 
       return $indicadores;
@@ -442,6 +443,25 @@ class MdEstatisticasColetarRN extends InfraRN {
     }
     InfraDebug::getInstance()->gravar('SEI14 - Quantidade de bytes de transferência: ' . json_encode($lista), InfraLog::$INFORMACAO);
     return $lista;
+  }
+
+  private function obterAcessosUsuarios(){
+    $sgbd = $this->obterTipoSGBD();
+    $query = '';
+    if ($sgbd == 'MySql') {
+      $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador group by date(dth_acesso)";
+    } elseif ($sgbd == 'SqlServer') {
+      $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador group by CONVERT(date, dth_acesso)";
+    } elseif ($sgbd == 'Oracle') {
+      $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador group by to_char(dth_acesso,'YYYY-MM-DD')";
+    }
+
+    $rs = array();
+    if($query) {
+      $rs = BancoSEI::getInstance()->consultarSql($query);
+    }
+    InfraDebug::getInstance()->gravar('SEI27 - Quantidade de acessos por dia: ' . json_encode($rs), InfraLog::$INFORMACAO);
+    return $rs;
   }
 
 }
