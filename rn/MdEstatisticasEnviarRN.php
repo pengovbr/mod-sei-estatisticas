@@ -21,19 +21,16 @@ class MdEstatisticasEnviarRN extends InfraRN {
 
       $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
       $url = $objConfiguracaoSEI->getValor('MdEstatisticas','url', false, 'http://estatisticas.planejamento.gov.br');
+      $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas','sigla', false, '');
 
-      InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
+      $output = $this->doPost($url, $json);
+      $id = $output['id'];
+      InfraDebug::getInstance()->gravar('Output: ' . json_encode($output), InfraLog::$INFORMACAO);
+      InfraDebug::getInstance()->gravar('iD: ' . $id, InfraLog::$INFORMACAO);
 
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($ch, CURLOPT_POST, true);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-      $output = curl_exec($ch);
-
-      InfraDebug::getInstance()->gravar('Output: ' . $output, InfraLog::$INFORMACAO);
-      curl_close($ch);
+      $data = $this->doGet($url . '/ultimoacesso?sigla=' . $orgaoSigla);
+      $data = date($data);
+      InfraDebug::getInstance()->gravar('Data: ' . $data, InfraLog::$INFORMACAO);
 
       return true;
 
@@ -43,6 +40,31 @@ class MdEstatisticasEnviarRN extends InfraRN {
       InfraDebug::getInstance()->setBolEcho(false);
       throw new InfraException('Erro processando estatísticas do sistema.',$e);
     }
+  }
+
+  private function doPost($url, $json) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+    $output = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($output, true);
+  }
+
+  private function doGet($url, $isjson=false) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    $output = curl_exec($ch);
+    curl_close($ch);
+
+    if ($isjson) {
+      return json_decode($output, true);
+    }
+    return $output;
   }
 
 }

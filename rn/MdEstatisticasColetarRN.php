@@ -445,15 +445,18 @@ class MdEstatisticasColetarRN extends InfraRN {
     return $lista;
   }
 
-  private function obterAcessosUsuarios(){
+  public function obterAcessosUsuarios($ultimadata=null){
+    if ($ultimadata == null) {
+      $ultimadata = '1900-01-01';
+    }
     $sgbd = $this->obterTipoSGBD();
     $query = '';
     if ($sgbd == 'MySql') {
-      $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador group by date(dth_acesso)";
+      $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador where dth_acesso >= '" . $ultimadata . "' group by date(dth_acesso)";
     } elseif ($sgbd == 'SqlServer') {
-      $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador group by CONVERT(date, dth_acesso)";
+      $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador where dth_acesso >= '" . $ultimadata . "' group by CONVERT(date, dth_acesso)";
     } elseif ($sgbd == 'Oracle') {
-      $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador group by to_char(dth_acesso,'YYYY-MM-DD')";
+      $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador where dth_acesso >= date '" . $ultimadata . "' group by to_char(dth_acesso,'YYYY-MM-DD')";
     }
 
     $rs = array();
