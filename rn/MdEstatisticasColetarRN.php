@@ -373,9 +373,9 @@ class MdEstatisticasColetarRN extends InfraRN {
   private function obterSistemasOperacionaisUsuarios(){
     $sgbd = $this->obterTipoSGBD();
     if ($sgbd == 'Oracle') {
-      $query = "select distinct to_char(user_agent) as nome from infra_auditoria";
+      $query = "select distinct to_char(user_agent) as nome from infra_auditoria where user_agent is not null";
     } else {
-      $query = "select distinct user_agent as nome from infra_auditoria";
+      $query = "select distinct user_agent as nome from infra_auditoria where user_agent is not null";
     }
     InfraDebug::getInstance()->gravar('query: ' . json_encode($query), InfraLog::$INFORMACAO);
     $sistemas = BancoSEI::getInstance()->consultarSql($query);
