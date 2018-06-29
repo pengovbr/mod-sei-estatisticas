@@ -48,8 +48,7 @@ class MdEstatisticasColetarRN extends InfraRN {
         'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
         'anexosTamanhos' => $this->obterTamanhoDocumentosExternos(),
         'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
-        'velocidades' => $this->obterVelocidadePorCidade(),
-        'acessosUsuarios' => $this->obterAcessosUsuarios()
+        'velocidades' => $this->obterVelocidadePorCidade()
       );
 
       return $indicadores;
@@ -452,11 +451,11 @@ class MdEstatisticasColetarRN extends InfraRN {
     $sgbd = $this->obterTipoSGBD();
     $query = '';
     if ($sgbd == 'MySql') {
-      $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador where dth_acesso >= '" . $ultimadata . "' group by date(dth_acesso)";
+      $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador where date(dth_acesso) > " . $ultimadata . " group by date(dth_acesso)";
     } elseif ($sgbd == 'SqlServer') {
-      $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador where dth_acesso >= '" . $ultimadata . "' group by CONVERT(date, dth_acesso)";
+      $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador where dth_acesso >= " . $ultimadata . " group by CONVERT(date, dth_acesso)";
     } elseif ($sgbd == 'Oracle') {
-      $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador where dth_acesso >= date '" . $ultimadata . "' group by to_char(dth_acesso,'YYYY-MM-DD')";
+      $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador where dth_acesso >= date " . $ultimadata . " group by to_char(dth_acesso,'YYYY-MM-DD')";
     }
 
     $rs = array();

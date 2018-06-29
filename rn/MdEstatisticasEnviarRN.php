@@ -6,6 +6,10 @@ class MdEstatisticasEnviarRN extends InfraRN {
 
   public function __construct(){
     parent::__construct();
+
+    $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+    $this->url = $objConfiguracaoSEI->getValor('MdEstatisticas','url', false, 'http://estatisticas.planejamento.gov.br');
+    $this->orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas','sigla', false, '');
   }
 
   protected function inicializarObjInfraIBanco(){
@@ -13,48 +17,43 @@ class MdEstatisticasEnviarRN extends InfraRN {
   }
 
   public function enviarIndicadores($indicadores) {
-
-    try {
-
-      $json = json_encode($indicadores);
-      InfraDebug::getInstance()->gravar('JSON: ' . $json, InfraLog::$INFORMACAO);
-
-      $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-      $url = $objConfiguracaoSEI->getValor('MdEstatisticas','url', false, 'http://estatisticas.planejamento.gov.br');
-      $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas','sigla', false, '');
-
-      $output = $this->doPost($url, $json);
-      $id = $output['id'];
-      InfraDebug::getInstance()->gravar('Output: ' . json_encode($output), InfraLog::$INFORMACAO);
-      InfraDebug::getInstance()->gravar('iD: ' . $id, InfraLog::$INFORMACAO);
-
-      $data = $this->doGet($url . '/ultimoacesso?sigla=' . $orgaoSigla);
-      $data = date($data);
-      InfraDebug::getInstance()->gravar('Data: ' . $data, InfraLog::$INFORMACAO);
-
-      return true;
-
-    } catch(Exception $e) {
-      InfraDebug::getInstance()->setBolLigado(false);
-      InfraDebug::getInstance()->setBolDebugInfra(false);
-      InfraDebug::getInstance()->setBolEcho(false);
-      throw new InfraException('Erro processando estatísticas do sistema.',$e);
-    }
+    return $this->doPost($this->url, $indicadores);
   }
 
-  private function doPost($url, $json) {
+  public function obterUltimoAcesso() {
+    $data = $this->doGet($this->url . '/ultimoacesso?sigla=' . $this->orgaoSigla, false);
+    return date($data);
+  }
+
+  public function enviarAcessos($acessos, $id) {
+    $url = $this->url . '/acessos';
+    InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
+    $obj = array(
+      id => $id,
+      acessosUsuarios => $acessos
+    );
+    InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
+    return $this->doPost($url, $obj, false);
+  }
+
+  private function doPost($url, $json, $isjson=true) {
+    $data = json_encode($json);
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     $output = curl_exec($ch);
     curl_close($ch);
-    return json_decode($output, true);
+
+    if ($isjson) {
+      return json_decode($output, true);
+    }
+    return $output;
   }
 
-  private function doGet($url, $isjson=false) {
+  private function doGet($url, $isjson=true) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $url);
