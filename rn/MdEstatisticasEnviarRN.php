@@ -35,6 +35,17 @@ class MdEstatisticasEnviarRN extends InfraRN {
     InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
     return $this->doPost($url, $obj, false);
   }
+  
+  public function enviarVelocidades($velocidades, $id) {
+  	$url = $this->url . '/velocidades';
+  	InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
+  	$obj = array(
+  	  id => $id,
+  	  velocidades => $velocidades
+  	);
+  	InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
+  	return $this->doPost($url, $obj, false);
+  }
 
   private function doPost($url, $json, $isjson=true) {
     $data = json_encode($json);

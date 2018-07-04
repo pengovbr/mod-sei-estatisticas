@@ -18,40 +18,41 @@ class MdEstatisticasColetarRN extends InfraRN {
 
       $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
       $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas','sigla', false, '');
+      
+      $ind = array();
+      
+      $ind['dataColeta'] = $this->obterDataColeta();
+      $ind['orgaoSigla'] = $orgaoSigla;
+      $ind['seiVersao'] = $this->obterVersaoSEI();
+      $ind['phpVersao'] = $this->obterVersaoPHP();
+      $ind['memcachedVersao'] = $this->obterVersaoMemcached();
+      $ind['solrVersao'] = $this->obterVersaoSolr();
+      $ind['protocolo'] = $this->obterProtocolo();
+      $ind['quantidadeUnidades'] = $this->obterQuantidadeUnidades();
+      $ind['quantidadeProcedimentos'] = $this->obterQuantidadeProcessosAdministrativos();
+      $ind['quantidadeUsuarios'] = $this->obterQuantidadeUsuarios();
+      $ind['quantidadeDocumentosInternos'] = $this->obterQuantidadeDocumentosInternos();
+      $ind['quantidadeDocumentosExternos'] = $this->obterQuantidadeDocumentosExternos();
+      $ind['quantidadeMemoria'] = $this->obterUsoMemoria();
+      $ind['porcentagemCPU'] = $this->obterUsoCPU();
+      $ind['estrategiaCessao'] = $this->obterEstrategiaCessao();
+      $ind['tamanhoDatabase'] = $this->obterTamanhoDataBase();
+      $ind['bancoSei'] = $this->obterTipoSGBD();
+      $ind['bancoVersao'] = $this->obterBancoVersao();
+      $ind['servidorAplicacao'] = $this->obterServidorAplicacao();
+      $ind['sistemaOperacional'] = $this->obterSistemaOperacional();
+      $ind['sistemaOperacionalDetalhado'] = $this->obterSistemaOperacionalDetalhado();
+      $ind['tamanhoFilesystem'] = $this->obterTamanhoFileSystem();
+      $ind['tabelasTamanhos'] = $this->obterTamanhoTabelas();
+      $ind['modulos'] = $this->obterPlugins();
+      $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
+      $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
+      $ind['sistemasOperacionaisUsuarios'] = $this->obterSistemasOperacionaisUsuarios();
+      $ind['navegadores'] = $this->obterNavegadores();
+      
+      InfraDebug::getInstance()->gravar('Ind: ' . json_encode($ind), InfraLog::$INFORMACAO);
 
-      $indicadores = array(
-        'dataColeta' => $this->obterDataColeta(),
-        'orgaoSigla' => $orgaoSigla,
-        'seiVersao' => $this->obterVersaoSEI(),
-        'phpVersao' => $this->obterVersaoPHP(),
-        'memcachedVersao' => $this->obterVersaoMemcached(),
-        'solrVersao' => $this->obterVersaoSolr(),
-        'protocolo' => $this->obterProtocolo(),
-        'quantidadeUnidades' => $this->obterQuantidadeUnidades(),
-        'quantidadeProcedimentos' => $this->obterQuantidadeProcessosAdministrativos(),
-        'quantidadeUsuarios' => $this->obterQuantidadeUsuarios(),
-        'quantidadeDocumentosInternos' => $this->obterQuantidadeDocumentosInternos(),
-        'quantidadeDocumentosExternos' => $this->obterQuantidadeDocumentosExternos(),
-        'quantidadeMemoria' => $this->obterUsoMemoria(),
-        'porcentagemCPU' => $this->obterUsoCPU(),
-        'estrategiaCessao' => $this->obterEstrategiaCessao(),
-        'tamanhoDatabase' => $this->obterTamanhoDataBase(),
-        'tabelasTamanhos' => $this->obterTamanhoTabelas(),
-        'bancoSei' => $this->obterTipoSGBD(),
-        'bancoVersao' => $this->obterBancoVersao(),
-        'servidorAplicacao' => $this->obterServidorAplicacao(),
-        'sistemaOperacional' => $this->obterSistemaOperacional(),
-        'sistemaOperacionalDetalhado' => $this->obterSistemaOperacionalDetalhado(),
-        'navegadores' => $this->obterNavegadores(),
-        'modulos' => $this->obterPlugins(),
-        'sistemasOperacionaisUsuarios' => $this->obterSistemasOperacionaisUsuarios(),
-        'tamanhoFilesystem' => $this->obterTamanhoFileSystem(),
-        'anexosTamanhos' => $this->obterTamanhoDocumentosExternos(),
-        'extensoes' => $this->obterQuantidadeDocumentosExternosPorExtensao(),
-        'velocidades' => $this->obterVelocidadePorCidade()
-      );
-
-      return $indicadores;
+      return $ind;
 
     } catch(Exception $e) {
       InfraDebug::getInstance()->setBolLigado(false);
@@ -161,20 +162,11 @@ class MdEstatisticasColetarRN extends InfraRN {
   }
 
   private function obterNavegadores(){
-    $query = "select count(*) as quantidade, identificacao, versao from infra_navegador group by identificacao,versao";
+    $query = "select count(*) as quantidade, identificacao as nome, versao from infra_navegador group by identificacao,versao";
     $rs = BancoSEI::getInstance()->consultarSql($query);
-    $lista = array();
-    foreach($rs as $r) {
-      $result = array(
-        'quantidade' => (int)$r['quantidade'],
-        'nome' => $r['identificacao'],
-        'versao' => $r['versao']
-      );
-      array_push($lista, $result);
-    }
-
-    InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($lista), InfraLog::$INFORMACAO);
-    return $lista;
+    
+    InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($rs), InfraLog::$INFORMACAO);
+    return $rs;
   }
 
   private function obterTipoSGBD(){
@@ -377,8 +369,26 @@ class MdEstatisticasColetarRN extends InfraRN {
     } else {
       $query = "select distinct user_agent as nome from infra_auditoria where user_agent is not null";
     }
-    InfraDebug::getInstance()->gravar('query: ' . json_encode($query), InfraLog::$INFORMACAO);
     $sistemas = BancoSEI::getInstance()->consultarSql($query);
+    
+    $lista = array();
+    foreach($sistemas as $r) {
+    	$texto = $r['nome'];
+    	$inicio = strpos($texto, '(');
+    	if ($inicio !== false) {
+      	$fim = strpos($texto, ')', $inicio);
+      	$nome = substr($texto, $inicio + 1, $fim - $inicio -1);
+      	array_push($lista, $nome);
+    	}
+    }
+    $lista = array_unique($lista);
+    
+    $sistemas = array();
+    foreach($lista as $n) {
+    	$result = array('nome'=>$n);
+    	array_push($sistemas, $result);
+    }
+    
     InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
     return $sistemas;
   }
@@ -418,9 +428,9 @@ class MdEstatisticasColetarRN extends InfraRN {
     return $versao;
   }
 
-  private function obterVelocidadePorCidade(){
+  public function obterVelocidadePorCidade(){
     $query = "
-      select d.nome as nome_cidade, e.nome as nome_uf, avg(velocidade) as media_velocidade
+      select d.nome as cidade, e.nome as uf, avg(velocidade) as velocidade
       from velocidade_transferencia a
         join unidade b on b.id_unidade = a.id_unidade
         join contato c on b.id_contato = c.id_contato
@@ -432,13 +442,13 @@ class MdEstatisticasColetarRN extends InfraRN {
     $rs = BancoSEI::getInstance()->consultarSql($query);
     $lista = array();
     foreach($rs as $r) {
-      $result = array(
-        'cidade' => utf8_encode($r['nome_cidade']),
-        'uf' => utf8_encode($r['nome_uf']),
-        'velocidade' => $r['media_velocidade']
-      );
-
-      array_push($lista, $result);
+    	$result = array(
+    			'cidade' => utf8_encode($r['cidade']),
+    			'uf' => utf8_encode($r['uf']),
+    			'velocidade' => $r['velocidade']
+    	);
+    	
+    	array_push($lista, $result);
     }
     InfraDebug::getInstance()->gravar('SEI14 - Quantidade de bytes de transferência: ' . json_encode($lista), InfraLog::$INFORMACAO);
     return $lista;
