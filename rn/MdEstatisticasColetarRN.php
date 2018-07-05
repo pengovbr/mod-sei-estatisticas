@@ -471,8 +471,6 @@ class MdEstatisticasColetarRN extends InfraRN {
   	$rs = BancoSEI::getInstance()->consultarSql($query);
   	$lista = array();
   	foreach ($rs as $r) {
-  		$r['nome'] = 
-  		InfraDebug::getInstance()->gravar('Navegador: ' . json_encode($r) . ' - ' . $r['nome'], InfraLog::$INFORMACAO);
   		$result = array(
   				'nome' => utf8_encode($r['nome']),
   				'quantidade' => $r['quantidade'],
