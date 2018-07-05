@@ -47,7 +47,6 @@ class MdEstatisticasColetarRN extends InfraRN {
       $ind['modulos'] = $this->obterPlugins();
       $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
       $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
-      $ind['sistemasOperacionaisUsuarios'] = $this->obterSistemasOperacionaisUsuarios();
       $ind['navegadores'] = $this->obterNavegadores();
       
       InfraDebug::getInstance()->gravar('Ind: ' . json_encode($ind), InfraLog::$INFORMACAO);
@@ -164,6 +163,9 @@ class MdEstatisticasColetarRN extends InfraRN {
   private function obterNavegadores(){
     $query = "select count(*) as quantidade, identificacao as nome, versao from infra_navegador group by identificacao,versao";
     $rs = BancoSEI::getInstance()->consultarSql($query);
+    foreach ($rs as $r) {
+    	$r['nome'] = utf8_encode($r['nome']);    	
+    }
     
     InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($rs), InfraLog::$INFORMACAO);
     return $rs;
@@ -362,37 +364,6 @@ class MdEstatisticasColetarRN extends InfraRN {
     return $resultado;
   }
 
-  private function obterSistemasOperacionaisUsuarios(){
-    $sgbd = $this->obterTipoSGBD();
-    if ($sgbd == 'Oracle') {
-      $query = "select distinct to_char(user_agent) as nome from infra_auditoria where user_agent is not null";
-    } else {
-      $query = "select distinct user_agent as nome from infra_auditoria where user_agent is not null";
-    }
-    $sistemas = BancoSEI::getInstance()->consultarSql($query);
-    
-    $lista = array();
-    foreach($sistemas as $r) {
-    	$texto = $r['nome'];
-    	$inicio = strpos($texto, '(');
-    	if ($inicio !== false) {
-      	$fim = strpos($texto, ')', $inicio);
-      	$nome = substr($texto, $inicio + 1, $fim - $inicio -1);
-      	array_push($lista, $nome);
-    	}
-    }
-    $lista = array_unique($lista);
-    
-    $sistemas = array();
-    foreach($lista as $n) {
-    	$result = array('nome'=>$n);
-    	array_push($sistemas, $result);
-    }
-    
-    InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
-    return $sistemas;
-  }
-
   private function obterUsoMemoria(){
     $memoria = memory_get_usage();
     InfraDebug::getInstance()->gravar('SEI18 - Quantidade de byte de uso de memoria: ' . json_encode($memoria), InfraLog::$INFORMACAO);
@@ -474,6 +445,37 @@ class MdEstatisticasColetarRN extends InfraRN {
     }
     InfraDebug::getInstance()->gravar('SEI27 - Quantidade de acessos por dia: ' . json_encode($rs), InfraLog::$INFORMACAO);
     return $rs;
+  }
+  
+  public function obterSistemasOperacionaisUsuarios(){
+  	$sgbd = $this->obterTipoSGBD();
+  	if ($sgbd == 'Oracle') {
+  		$query = "select distinct to_char(user_agent) as nome from infra_auditoria where user_agent is not null";
+  	} else {
+  		$query = "select distinct user_agent as nome from infra_auditoria where user_agent is not null";
+  	}
+  	$sistemas = BancoSEI::getInstance()->consultarSql($query);
+  	
+  	$lista = array();
+  	foreach($sistemas as $r) {
+  		$texto = $r['nome'];
+  		$inicio = strpos($texto, '(');
+  		if ($inicio !== false) {
+  			$fim = strpos($texto, ')', $inicio);
+  			$nome = substr($texto, $inicio + 1, $fim - $inicio -1);
+  			array_push($lista, $nome);
+  		}
+  	}
+  	$lista = array_unique($lista);
+  	
+  	$sistemas = array();
+  	foreach($lista as $n) {
+  		$result = array('nome'=>$n);
+  		array_push($sistemas, $result);
+  	}
+  	
+  	InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
+  	return $sistemas;
   }
 
 }

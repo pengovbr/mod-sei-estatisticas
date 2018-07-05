@@ -35,6 +35,9 @@ class MdEstatisticasAgendamentoRN extends InfraRN {
       
       $velocidades = $coletor->obterVelocidadePorCidade();
       $enviar->enviarVelocidades($velocidades, $id);
+      
+      $sistemasOperacionaisUsuarios = $coletor->obterSistemasOperacionaisUsuarios();
+      $enviar->enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id);
 
       LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
 
