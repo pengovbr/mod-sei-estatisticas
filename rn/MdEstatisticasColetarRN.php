@@ -469,12 +469,20 @@ class MdEstatisticasColetarRN extends InfraRN {
   public function obterNavegadores(){
   	$query = "select count(*) as quantidade, identificacao as nome, versao from infra_navegador group by identificacao,versao";
   	$rs = BancoSEI::getInstance()->consultarSql($query);
+  	$lista = array();
   	foreach ($rs as $r) {
-  		$r['nome'] = utf8_encode($r['nome']);
+  		$r['nome'] = 
+  		InfraDebug::getInstance()->gravar('Navegador: ' . json_encode($r) . ' - ' . $r['nome'], InfraLog::$INFORMACAO);
+  		$result = array(
+  				'nome' => utf8_encode($r['nome']),
+  				'quantidade' => $r['quantidade'],
+  				'versao' => $r['versao']
+  		);
+  		array_push($lista, $result);
   	}
   	
-  	InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($rs), InfraLog::$INFORMACAO);
-  	return $rs;
+  	InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($lista), InfraLog::$INFORMACAO);
+  	return $lista;
   }
   
 
