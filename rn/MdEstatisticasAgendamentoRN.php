@@ -38,6 +38,9 @@ class MdEstatisticasAgendamentoRN extends InfraRN {
       
       $sistemasOperacionaisUsuarios = $coletor->obterSistemasOperacionaisUsuarios();
       $enviar->enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id);
+      
+      $navegadores = $coletor->obterNavegadores();
+      $enviar->enviarNavegadores($navegadores, $id);
 
       LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(),InfraLog::$INFORMACAO);
 

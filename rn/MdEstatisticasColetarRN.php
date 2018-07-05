@@ -47,7 +47,6 @@ class MdEstatisticasColetarRN extends InfraRN {
       $ind['modulos'] = $this->obterPlugins();
       $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
       $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
-      $ind['navegadores'] = $this->obterNavegadores();
       
       InfraDebug::getInstance()->gravar('Ind: ' . json_encode($ind), InfraLog::$INFORMACAO);
 
@@ -158,17 +157,6 @@ class MdEstatisticasColetarRN extends InfraRN {
 
     InfraDebug::getInstance()->gravar('SEI06 - Quantidade de Processos Administrativos: ' . $quantidade, InfraLog::$INFORMACAO);
     return $quantidade;
-  }
-
-  private function obterNavegadores(){
-    $query = "select count(*) as quantidade, identificacao as nome, versao from infra_navegador group by identificacao,versao";
-    $rs = BancoSEI::getInstance()->consultarSql($query);
-    foreach ($rs as $r) {
-    	$r['nome'] = utf8_encode($r['nome']);    	
-    }
-    
-    InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($rs), InfraLog::$INFORMACAO);
-    return $rs;
   }
 
   private function obterTipoSGBD(){
@@ -477,6 +465,18 @@ class MdEstatisticasColetarRN extends InfraRN {
   	InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
   	return $sistemas;
   }
+  
+  public function obterNavegadores(){
+  	$query = "select count(*) as quantidade, identificacao as nome, versao from infra_navegador group by identificacao,versao";
+  	$rs = BancoSEI::getInstance()->consultarSql($query);
+  	foreach ($rs as $r) {
+  		$r['nome'] = utf8_encode($r['nome']);
+  	}
+  	
+  	InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($rs), InfraLog::$INFORMACAO);
+  	return $rs;
+  }
+  
 
 }
 ?>
