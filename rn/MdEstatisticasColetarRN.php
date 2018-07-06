@@ -35,6 +35,7 @@ class MdEstatisticasColetarRN extends InfraRN {
       $ind['quantidadeDocumentosExternos'] = $this->obterQuantidadeDocumentosExternos();
       $ind['quantidadeMemoria'] = $this->obterUsoMemoria();
       $ind['porcentagemCPU'] = $this->obterUsoCPU();
+      $ind['espacoDiscoUsado'] = $this->obterEspacoDisco();
       $ind['estrategiaCessao'] = $this->obterEstrategiaCessao();
       $ind['tamanhoDatabase'] = $this->obterTamanhoDataBase();
       $ind['bancoSei'] = $this->obterTipoSGBD();
@@ -366,6 +367,23 @@ class MdEstatisticasColetarRN extends InfraRN {
     }
     InfraDebug::getInstance()->gravar('SEI18 - Porcentagem de uso de CPU: ' . json_encode($uso), InfraLog::$INFORMACAO);
     return $uso;
+  }
+  
+  private function obterEspacoDisco() {
+  	$ds = null;
+  	if(php_uname('s')=='Windows NT') {
+  		$unidade = substr($_SERVER['DOCUMENT_ROOT'], 0, 2);
+  		if (!$unidade) {
+  			$unidade = 'C:';
+  		}
+  	} else {
+  		$unidade = "/";
+  	}
+  	$total = disk_total_space($unidade);
+  	$free = disk_free_space($unidade);
+  	$ds = $total - $free;
+  	InfraDebug::getInstance()->gravar('SEI18 - Espaco utilizado do disco: ' . json_encode($ds), InfraLog::$INFORMACAO);
+  	return $ds;
   }
 
   private function obterBancoVersao(){
