@@ -506,5 +506,10 @@ class MdEstatisticasColetarRN extends InfraRN {
       return BancoSEI::getInstance()->consultarSql($query);
   }
   
+  public function obterQuantidadeLogErro() {
+      $query = "select year(dth_log) ano, month(dth_log) mes, week(dth_log) semana, count(*) as quantidade from sei.infra_log where sta_tipo = 'E' group by 1, 2, 3";
+      return BancoSEI::getInstance()->consultarSql($query);
+  }
+  
 }
 ?>
