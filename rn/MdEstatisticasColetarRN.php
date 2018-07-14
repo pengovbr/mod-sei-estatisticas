@@ -485,7 +485,7 @@ class MdEstatisticasColetarRN extends InfraRN
         return $lista;
     }
 
-    public function obterQuantidadeRecurso() {
+    public function obterQuantidadeRecursos() {
         $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM sei.infra_auditoria group by 1, 2, 3 order by 1, 2, 3";
         return BancoSEI::getInstance()->consultarSql($query);
     }

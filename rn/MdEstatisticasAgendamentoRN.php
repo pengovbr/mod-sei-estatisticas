@@ -44,6 +44,9 @@ class MdEstatisticasAgendamentoRN extends InfraRN
 
                 $logs = $coletor->obterQuantidadeLogErro();
                 $enviar->enviarLogsErro($logs, $id);
+                
+                $recursos = $coletor->obterQuantidadeRecursos();
+                $enviar->enviarRecursos($recursos, $id);
             }
 
             LogSEI::getInstance()->gravar(InfraDebug::getInstance()->getStrDebug(), InfraLog::$INFORMACAO);

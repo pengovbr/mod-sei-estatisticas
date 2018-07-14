@@ -79,6 +79,17 @@ class MdEstatisticasEnviarRN extends InfraRN
         InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
         return $this->doPost($url, $obj, false);
     }
+    
+    public function enviarRecursos($recursos, $id) {
+        $url = $this->url . '/recursos';
+        InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
+        $obj = array(
+            id => $id,
+            recursos => $recursos
+        );
+        InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
+        return $this->doPost($url, $obj, false);
+    }
 
     private function doPost($url, $json, $isjson = true) {
         $data = json_encode($json);
