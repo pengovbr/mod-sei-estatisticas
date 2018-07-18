@@ -21,7 +21,12 @@ class MdEstatisticasEnviarRN extends InfraRN
     }
 
     public function obterUltimoAcesso() {
-        $data = $this->doGet($this->url . '/ultimoacesso?sigla=' . $this->orgaoSigla, false);
+        $data = $this->doGet($this->url . '/acessos/ultimo?sigla=' . $this->orgaoSigla, false);
+        return date($data);
+    }
+    
+    public function obterUltimoRecurso() {
+        $data = $this->doGet($this->url . '/recursos/ultimo?sigla=' . $this->orgaoSigla, false);
         return date($data);
     }
 

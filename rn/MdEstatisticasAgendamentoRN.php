@@ -45,7 +45,8 @@ class MdEstatisticasAgendamentoRN extends InfraRN
                 $logs = $coletor->obterQuantidadeLogErro();
                 $enviar->enviarLogsErro($logs, $id);
                 
-                $recursos = $coletor->obterQuantidadeRecursos();
+                $dataultimorecurso = $enviar->obterUltimoRecurso();  
+                $recursos = $coletor->obterQuantidadeRecursos($dataultimorecurso);
                 $enviar->enviarRecursos($recursos, $id);
             }
 

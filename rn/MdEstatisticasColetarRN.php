@@ -485,8 +485,12 @@ class MdEstatisticasColetarRN extends InfraRN
         return $lista;
     }
 
-    public function obterQuantidadeRecursos() {
-        $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM sei.infra_auditoria group by 1, 2, 3 order by 1, 2, 3";
+    public function obterQuantidadeRecursos($dataultimorecurso) {
+        if ($dataultimorecurso == null) {
+            $dataultimorecurso = "'1900-01-01'";
+        }
+        $current_month = date("'Y-m-01'");
+        $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM sei.infra_auditoria where date(dth_acesso) > " . $dataultimorecurso . " and date(dth_acesso) < ". $current_month . " group by 1, 2, 3 order by 1, 2, 3";
         return BancoSEI::getInstance()->consultarSql($query);
     }
 
