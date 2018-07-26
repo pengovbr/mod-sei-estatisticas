@@ -415,20 +415,21 @@ class MdEstatisticasColetarRN extends InfraRN
 
     public function obterAcessosUsuarios($ultimadata = null) {
         if ($ultimadata == null) {
-            $ultimadata = '1900-01-01';
+            $ultimadata = "1900-01-01";
         }
         $sgbd = $this->obterTipoSGBD();
         $query = '';
         if ($sgbd == 'MySql') {
-            $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador where date(dth_acesso) > " . $ultimadata . " group by date(dth_acesso)";
+            $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador where date(dth_acesso) > '%s' group by date(dth_acesso)";
         } elseif ($sgbd == 'SqlServer') {
-            $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador where dth_acesso >= " . $ultimadata . " group by CONVERT(date, dth_acesso)";
+            $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador where dth_acesso >= '%s' group by CONVERT(date, dth_acesso)";
         } elseif ($sgbd == 'Oracle') {
-            $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador where dth_acesso >= date " . $ultimadata . " group by to_char(dth_acesso,'YYYY-MM-DD')";
+            $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador where dth_acesso >= date '%s' group by to_char(dth_acesso,'YYYY-MM-DD')";
         }
-
+        
         $rs = array();
         if ($query) {
+            $query = sprintf($query, $ultimadata);
             $rs = BancoSEI::getInstance()->consultarSql($query);
         }
         InfraDebug::getInstance()->gravar('SEI27 - Quantidade de acessos por dia: ' . json_encode($rs), InfraLog::$INFORMACAO);
@@ -487,15 +488,29 @@ class MdEstatisticasColetarRN extends InfraRN
 
     public function obterQuantidadeRecursos($dataultimorecurso) {
         if ($dataultimorecurso == null) {
-            $dataultimorecurso = "'1900-01-01'";
+            $dataultimorecurso = "1900-01-01";
         }
-        $current_month = date("'Y-m-01'");
-        $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM sei.infra_auditoria where date(dth_acesso) > " . $dataultimorecurso . " and date(dth_acesso) < ". $current_month . " group by 1, 2, 3 order by 1, 2, 3";
+        $current_month = date("Y-m-01");
+        $sgbd = $this->obterTipoSGBD();
+            if ($sgbd == 'Oracle') {
+            $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, recurso, count(*) as quantidade FROM sei.infra_auditoria WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' GROUP BY to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), recurso";
+        } else {
+            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM sei.infra_auditoria where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3 order by 1, 2, 3";
+        }
+        $query = sprintf($query, $dataultimorecurso, $current_month);
+        
+        InfraDebug::getInstance()->gravar('Query: ' . $query, InfraLog::$INFORMACAO);
+        
         return BancoSEI::getInstance()->consultarSql($query);
     }
 
     public function obterQuantidadeLogErro() {
-        $query = "select year(dth_log) ano, month(dth_log) mes, week(dth_log) semana, count(*) as quantidade from sei.infra_log where sta_tipo = 'E' group by 1, 2, 3";
+        $sgbd = $this->obterTipoSGBD();
+        if ($sgbd == 'Oracle') {
+            $query = "select to_char(dth_log, 'YYYY') AS ano, to_char(dth_log, 'MM') AS mes, to_char(dth_log, 'WW') AS semana, count(*) as quantidade from sei.infra_log where sta_tipo = 'E' GROUP BY to_char(dth_log, 'YYYY'), to_char(dth_log, 'MM'), to_char(dth_log, 'WW')";
+        } else {
+            $query = "select year(dth_log) ano, month(dth_log) mes, week(dth_log) + 1 semana, count(*) as quantidade from sei.infra_log where sta_tipo = 'E' group by 1, 2, 3";
+        }
         return BancoSEI::getInstance()->consultarSql($query);
     }
 }
