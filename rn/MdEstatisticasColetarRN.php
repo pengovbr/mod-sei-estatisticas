@@ -48,8 +48,6 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
             $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
 
-            InfraDebug::getInstance()->gravar('Ind: ' . json_encode($ind), InfraLog::$INFORMACAO);
-
             return $ind;
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
@@ -98,24 +96,18 @@ class MdEstatisticasColetarRN extends InfraRN
             array_push($lista, $result);
         }
 
-        InfraDebug::getInstance()->gravar('SEI03 - Plugins: ' . json_encode($lista), InfraLog::$INFORMACAO);
         return $lista;
     }
 
     private function obterQuantidadeUnidades() {
         $objUnidadeRN = new UnidadeRN();
-        $numQuantidadeUnidades = $objUnidadeRN->contarRN0128(new UnidadeDTO());
-
-        InfraDebug::getInstance()->gravar('SEI11 - Quantidade Unidades: ' . $numQuantidadeUnidades, InfraLog::$INFORMACAO);
-        return $numQuantidadeUnidades;
+        return $objUnidadeRN->contarRN0128(new UnidadeDTO());
     }
 
     private function obterTamanhoTotalDocumentosExternos() {
         $query = "select sum(tamanho) as tamanho from anexo where sin_ativo = 'S'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
-
-        InfraDebug::getInstance()->gravar('SEI12 - Tamanho Documentos Externos: ' . $tamanho, InfraLog::$INFORMACAO);
         return $tamanho;
     }
 
@@ -123,8 +115,6 @@ class MdEstatisticasColetarRN extends InfraRN
         $query = "SELECT COUNT(*) as quantidade FROM usuario WHERE sin_ativo = 'S'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-
-        InfraDebug::getInstance()->gravar('SEI09 - Quantidade de usuários: ' . $quantidade, InfraLog::$INFORMACAO);
         return $quantidade;
     }
 
@@ -136,7 +126,6 @@ class MdEstatisticasColetarRN extends InfraRN
             if ($temHTTPS) {
                 $protocolo = 'HTTPS';
             }
-            InfraDebug::getInstance()->gravar('SEI12 - Protocolo: ' . $protocolo, InfraLog::$INFORMACAO);
             return $protocolo;
         }
     }
@@ -145,24 +134,18 @@ class MdEstatisticasColetarRN extends InfraRN
         $query = "select count(*) as quantidade from procedimento";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-
-        InfraDebug::getInstance()->gravar('SEI06 - Quantidade de Processos Administrativos: ' . $quantidade, InfraLog::$INFORMACAO);
         return $quantidade;
     }
 
     private function obterTipoSGBD() {
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-        $sgbd = $objConfiguracaoSEI->getValor('BancoSEI', 'Tipo', false, '');
-        InfraDebug::getInstance()->gravar('SEI02 - SGBD: ' . $sgbd, InfraLog::$INFORMACAO);
-        return $sgbd;
+        return $objConfiguracaoSEI->getValor('BancoSEI', 'Tipo', false, '');
     }
 
     private function obterQuantidadeDocumentosInternos() {
         $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'I'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-
-        InfraDebug::getInstance()->gravar('SEI05 - Quantidade de documentos internos: ' . $quantidade, InfraLog::$INFORMACAO);
         return $quantidade;
     }
 
@@ -170,8 +153,6 @@ class MdEstatisticasColetarRN extends InfraRN
         $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'X'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-
-        InfraDebug::getInstance()->gravar('SEI05 - Quantidade de documentos externos: ' . $quantidade, InfraLog::$INFORMACAO);
         return $quantidade;
     }
 
@@ -196,13 +177,10 @@ class MdEstatisticasColetarRN extends InfraRN
             );
             array_push($lista, $result);
         }
-
-        InfraDebug::getInstance()->gravar('SEI07 - Quantidade de  extensoes de documentos externos: ' . json_encode($lista), InfraLog::$INFORMACAO);
         return $lista;
     }
 
     private function obterEstrategiaCessao() {
-        InfraDebug::getInstance()->gravar('SEI24 - Estrategia de armazenamento de cessao: ' . ini_get('session.save_handler'), InfraLog::$INFORMACAO);
         return ini_get('session.save_handler');
     }
 
@@ -215,7 +193,6 @@ class MdEstatisticasColetarRN extends InfraRN
         $memcache->connect($host, $porta);
         $versao = $memcache->getVersion();
 
-        InfraDebug::getInstance()->gravar('SEI23 - Versão memcached: ' . $versao, InfraLog::$INFORMACAO);
         return $versao;
     }
 
@@ -234,8 +211,6 @@ class MdEstatisticasColetarRN extends InfraRN
             $rs = BancoSEI::getInstance()->consultarSql($query);
         }
         $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
-
-        InfraDebug::getInstance()->gravar('SEI03 - Tamanho do SGBD: ' . $tamanho, InfraLog::$INFORMACAO);
         return $tamanho;
     }
 
@@ -253,8 +228,6 @@ class MdEstatisticasColetarRN extends InfraRN
         if ($query) {
             $tabelas = BancoSEI::getInstance()->consultarSql($query);
         }
-
-        InfraDebug::getInstance()->gravar('SEI15 - Tamanho das tabelas: ' . json_encode($tabelas), InfraLog::$INFORMACAO);
         return $tabelas;
     }
 
@@ -268,33 +241,23 @@ class MdEstatisticasColetarRN extends InfraRN
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $output = curl_exec($ch);
         $json = json_decode($output, true);
-        $versao = $json['lucene']['lucene-spec-version'];
-        InfraDebug::getInstance()->gravar('SEI22 - Versao Solr: ' . $versao, InfraLog::$INFORMACAO);
-        return $versao;
+        return $json['lucene']['lucene-spec-version'];
     }
 
     private function obterServidorAplicacao() {
-        $versao = $_SERVER['SERVER_SOFTWARE'];
-        InfraDebug::getInstance()->gravar('SEI20 - Quantidade de servidores de aplicação e suas versões: ' . $versao, InfraLog::$INFORMACAO);
-        return $versao;
+        return $_SERVER['SERVER_SOFTWARE'];
     }
 
     private function obterSistemaOperacional() {
-        $so = PHP_OS;
-        InfraDebug::getInstance()->gravar('SEI17 - Quantidade de Sistemas Operacionais: ' . $so, InfraLog::$INFORMACAO);
-        return $so;
+        return PHP_OS;
     }
 
     private function obterSistemaOperacionalDetalhado() {
-        $so = php_uname();
-        InfraDebug::getInstance()->gravar('SEI17 - Quantidade de Sistemas Operacionais (Detalhado): ' . $so, InfraLog::$INFORMACAO);
-        return $so;
+        return php_uname();
     }
 
     private function obterDataColeta() {
-        $dataColeta = date(DATE_ATOM);
-        InfraDebug::getInstance()->gravar('SEI29 - Periodicidade do envio - Data da coleta: ' . $dataColeta, InfraLog::$INFORMACAO);
-        return $dataColeta;
+        return date(DATE_ATOM);
     }
 
     private function obterTamanhoDocumentosExternos() {
@@ -330,15 +293,11 @@ class MdEstatisticasColetarRN extends InfraRN
             'tamanho' => 'Maior que 100MB',
             'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
         );
-
-        InfraDebug::getInstance()->gravar('SEI11 - Tamanho dos documentos externos: ' . json_encode($resultado), InfraLog::$INFORMACAO);
         return $resultado;
     }
 
     private function obterUsoMemoria() {
-        $memoria = memory_get_usage();
-        InfraDebug::getInstance()->gravar('SEI18 - Quantidade de byte de uso de memoria: ' . json_encode($memoria), InfraLog::$INFORMACAO);
-        return $memoria;
+        return memory_get_usage();
     }
 
     private function obterUsoCPU() {
@@ -347,12 +306,10 @@ class MdEstatisticasColetarRN extends InfraRN
         if ($load) {
             $uso = $load[0];
         }
-        InfraDebug::getInstance()->gravar('SEI18 - Porcentagem de uso de CPU: ' . json_encode($uso), InfraLog::$INFORMACAO);
         return $uso;
     }
 
     private function obterEspacoDisco() {
-        $ds = null;
         if (php_uname('s') == 'Windows NT') {
             $unidade = substr($_SERVER['DOCUMENT_ROOT'], 0, 2);
             if (! $unidade) {
@@ -363,9 +320,7 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         $total = disk_total_space($unidade);
         $free = disk_free_space($unidade);
-        $ds = $total - $free;
-        InfraDebug::getInstance()->gravar('SEI18 - Espaco utilizado do disco: ' . json_encode($ds), InfraLog::$INFORMACAO);
-        return $ds;
+        return $total - $free;
     }
 
     private function obterBancoVersao() {
@@ -383,7 +338,6 @@ class MdEstatisticasColetarRN extends InfraRN
             $rs = BancoSEI::getInstance()->consultarSql($query);
         }
         $versao = (count($rs) && isset($rs[0]['versao'])) ? $rs[0]['versao'] : null;
-        InfraDebug::getInstance()->gravar('SEI02 - Versao do SGBD: ' . $versao, InfraLog::$INFORMACAO);
         return $versao;
     }
 
@@ -409,7 +363,6 @@ class MdEstatisticasColetarRN extends InfraRN
 
             array_push($lista, $result);
         }
-        InfraDebug::getInstance()->gravar('SEI14 - Quantidade de bytes de transferência: ' . json_encode($lista), InfraLog::$INFORMACAO);
         return $lista;
     }
 
@@ -432,7 +385,6 @@ class MdEstatisticasColetarRN extends InfraRN
             $query = sprintf($query, $ultimadata);
             $rs = BancoSEI::getInstance()->consultarSql($query);
         }
-        InfraDebug::getInstance()->gravar('SEI27 - Quantidade de acessos por dia: ' . json_encode($rs), InfraLog::$INFORMACAO);
         return $rs;
     }
 
@@ -464,8 +416,6 @@ class MdEstatisticasColetarRN extends InfraRN
             );
             array_push($sistemas, $result);
         }
-
-        InfraDebug::getInstance()->gravar('SEI26 - Sistemas Operacionais dos Clientes: ' . json_encode($sistemas), InfraLog::$INFORMACAO);
         return $sistemas;
     }
 
@@ -481,8 +431,6 @@ class MdEstatisticasColetarRN extends InfraRN
             );
             array_push($lista, $result);
         }
-
-        InfraDebug::getInstance()->gravar('SEI13 - Quantidade de Navegadores: ' . json_encode($lista), InfraLog::$INFORMACAO);
         return $lista;
     }
 
@@ -501,7 +449,6 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         if ($query) {
             $query = sprintf($query, $dataultimorecurso, $current_month);
-            InfraDebug::getInstance()->gravar('Query: ' . $query, InfraLog::$INFORMACAO);
             return BancoSEI::getInstance()->consultarSql($query);
         }
     }

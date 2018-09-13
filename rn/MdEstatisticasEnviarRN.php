@@ -8,8 +8,12 @@ class MdEstatisticasEnviarRN extends InfraRN
         parent::__construct();
 
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-        $this->url = $objConfiguracaoSEI->getValor('MdEstatisticas', 'url', false, 'http://estatisticas.planejamento.gov.br');
+        $url = $objConfiguracaoSEI->getValor('MdEstatisticas', 'url', false, 'http://estatisticas.planejamento.gov.br');
+        $this->url = $url . '/api/estatisticas';
+        $this->urllogin = $url . '/login';
         $this->orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla', false, '');
+        $this->orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave', false, '');
+        $this->header = array('Content-Type: application/json');
     }
 
     protected function inicializarObjInfraIBanco() {
@@ -32,68 +36,84 @@ class MdEstatisticasEnviarRN extends InfraRN
 
     public function enviarAcessos($acessos, $id) {
         $url = $this->url . '/acessos';
-        InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
         $obj = array(
             id => $id,
             acessosUsuarios => $acessos
         );
-        InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
         return $this->doPost($url, $obj, false);
     }
 
     public function enviarVelocidades($velocidades, $id) {
         $url = $this->url . '/velocidades';
-        InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
         $obj = array(
             id => $id,
             velocidades => $velocidades
         );
-        InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
         return $this->doPost($url, $obj, false);
     }
 
     public function enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id) {
         $url = $this->url . '/sistemasoperacionais';
-        InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
         $obj = array(
             id => $id,
             sistemasOperacionaisUsuarios => $sistemasOperacionaisUsuarios
         );
-        InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
         return $this->doPost($url, $obj, false);
     }
 
     public function enviarNavegadores($navegadores, $id) {
         $url = $this->url . '/navegadores';
-        InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
         $obj = array(
             id => $id,
             navegadores => $navegadores
         );
-        InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
         return $this->doPost($url, $obj, false);
     }
 
     public function enviarLogsErro($logs, $id) {
         $url = $this->url . '/logserro';
-        InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
         $obj = array(
             id => $id,
             logsErro => $logs
         );
-        InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
         return $this->doPost($url, $obj, false);
     }
     
     public function enviarRecursos($recursos, $id) {
         $url = $this->url . '/recursos';
-        InfraDebug::getInstance()->gravar('URL: ' . $url, InfraLog::$INFORMACAO);
         $obj = array(
             id => $id,
             recursos => $recursos
         );
-        InfraDebug::getInstance()->gravar('URL: ' . json_encode($obj), InfraLog::$INFORMACAO);
         return $this->doPost($url, $obj, false);
+    }
+    
+    public function autenticar() {
+        $json = array(
+            username => $this->orgaoSigla,
+            password => $this->orgaoSenha
+        );
+        $data = json_encode($json);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->urllogin);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->header);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        $output = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        curl_close($ch);
+        if ($info['http_code'] == 200) {
+            $output = explode("\r\n", $output);
+            foreach ($output as $value) {
+                if (strpos($value, 'Authorization') !== false) {
+                    $this->header[] = $value;
+                    return true;
+                }
+            }
+        } 
+        return false;
     }
 
     private function doPost($url, $json, $isjson = true) {
@@ -102,9 +122,7 @@ class MdEstatisticasEnviarRN extends InfraRN
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json'
-        ));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->header);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         $output = curl_exec($ch);
         curl_close($ch);
@@ -118,6 +136,7 @@ class MdEstatisticasEnviarRN extends InfraRN
     private function doGet($url, $isjson = true) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->header);
         curl_setopt($ch, CURLOPT_URL, $url);
         $output = curl_exec($ch);
         curl_close($ch);
