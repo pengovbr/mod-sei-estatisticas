@@ -1,14 +1,14 @@
-# MÛdulo EstatÌsticas do SEI
+# M√≥dulo Estat√≠sticas do SEI
 
-## InstalaÁ„o
-FaÁa o download desse projeto no seguinte diretÛrio do SEI
+## Instala√ß√£o
+Fa√ßa o download desse projeto no seguinte diret√≥rio do SEI
 ```
 cd sei/web/modulos
 git clone http://softwarepublico.gov.br/gitlab/mp/mod-sei-estatisticas.git
 ```
 
-Para que o SEI reconheÁa esse mÛdulo È necess·rio editar o arquivo *sei/sei/config/ConfiguracaoSEI.php*.
-Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor um array contendo o nome do mÛdulo e o nome do diretÛrio do mÛdulo. **'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')**
+Para que o SEI reconhe√ßa esse m√≥dulo √© necess√°rio editar o arquivo *sei/sei/config/ConfiguracaoSEI.php*.
+Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor um array contendo o nome do m√≥dulo e o nome do diret√≥rio do m√≥dulo. **'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')**
 ```
 ...
   'SEI' => array(
@@ -16,7 +16,7 @@ Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor 
       'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
 ...
   ```
-Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configuraÁıes do mÛdulo
+Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configura√ß√µes do m√≥dulo
 ```
 ...
   'SEI' => array(
@@ -34,44 +34,50 @@ Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova 
 ...
   ```
 
+Em seguida basta criar um agendamento definindo-se a periodicidade do envio. O agendamento dever√° executar o seguinte comando:
+
+ ```
+MdEstatisticasAgendamentoRN::coletarIndicadores
+ ```
+ 
 ## Como contribuir
 
 ### 1. Com Vagrant
 
-Para o desenvolvimento È necess·rio ter instalado
+Para o desenvolvimento √© necess√°rio ter instalado
 
 - [Vagrant](https://www.vagrantup.com/)
 - [VirtualBox](https://www.virtualbox.org/)
 
-Na raiz do projeto SEI, crie o arquivo *Vagrantfile* com o seguinte conte˙do
+Na raiz do projeto SEI, crie o arquivo *Vagrantfile* com o seguinte conte√∫do
 ```
 Vagrant.configure("2") do |config|
     config.vm.box = "processoeletronico/sei-3.0.0"
 end
 ```
-Siga as instruÁıes de instalaÁ„o do mÛdulo
+Siga as instru√ß√µes de instala√ß√£o do m√≥dulo
 
 Inicie o SEI com o comando.
  ```
 sudo vagrant up
  ```
-… necess·rio executar como administrador (root) porque a box est· configurado para iniciar na porta 80.
-Ser· feito o download da box e no final o projeto poder· ser acessivel no endereÁo.
+√â necess√°rio executar como administrador (root) porque a box est√° configurado para iniciar na porta 80.
+Ser√° feito o download da box e no final o projeto poder√° ser acessivel no endere√ßo.
  ```
 http://localhost/sei
  ```
 
 ### 2. Com docker
 
-… necess·rio ter instalado
+√â necess√°rio ter instalado
 - [Docker](https://docs.docker.com/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
-Siga as orientaÁıes para instalar o mÛdulo no SEI, acesse o diretÛrio do mÛdulo e execute
+Siga as orienta√ß√µes para instalar o m√≥dulo no SEI, acesse o diret√≥rio do m√≥dulo e execute
 ```
 docker-compose up -d
 ```
-Ser· feito download dos containers e no final o SEI estar· acessivel em
+Ser√° feito download dos containers e no final o SEI estar√° acessivel em
  ```
 http://localhost/sei
  ```
