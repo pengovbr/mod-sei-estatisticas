@@ -160,17 +160,15 @@ class MdEstatisticasColetarRN extends InfraRN
         $query = "SELECT nome FROM anexo WHERE sin_ativo = 'S'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $extensoes = array();
-        // Calculando na aplicacao para funcionar independente do banco
         foreach ($rs as $r) {
-            /* $extensao = pathinfo($r['nome'], PATHINFO_EXTENSION); */
-            $extensao = end(explode('.', $r['nome']));
-            $extensao = utf8_encode($extensao);
+            $extensao = $this->extrairExtensao($r['nome']);
             $qtd = $extensoes[$extensao];
             if (! $qtd) {
                 $qtd = 0;
             }
             $extensoes[$extensao] = $qtd + 1;
         }
+        // Calculando na aplicacao para funcionar independente do banco
         $lista = array();
         foreach ($extensoes as $key => $value) {
             $result = array(
@@ -180,6 +178,12 @@ class MdEstatisticasColetarRN extends InfraRN
             array_push($lista, $result);
         }
         return $lista;
+    }
+
+    private function extrairExtensao($filename) {
+        $listaarq = explode('.', $filename);
+        $extensao = end($listaarq);
+        return utf8_encode($extensao);
     }
 
     private function obterEstrategiaCessao() {

@@ -28,7 +28,7 @@ class MdEstatisticasEnviarRN extends InfraRN
         $data = $this->doGet($this->url . '/acessos/ultimo?sigla=' . $this->orgaoSigla, false);
         return date($data);
     }
-    
+
     public function obterUltimoRecurso() {
         $data = $this->doGet($this->url . '/recursos/ultimo?sigla=' . $this->orgaoSigla, false);
         return date($data);
@@ -78,7 +78,7 @@ class MdEstatisticasEnviarRN extends InfraRN
         );
         return $this->doPost($url, $obj, false);
     }
-    
+
     public function enviarRecursos($recursos, $id) {
         $url = $this->url . '/recursos';
         $obj = array(
@@ -87,7 +87,7 @@ class MdEstatisticasEnviarRN extends InfraRN
         );
         return $this->doPost($url, $obj, false);
     }
-    
+
     public function autenticar() {
         $json = array(
             username => $this->orgaoSigla,
@@ -112,7 +112,7 @@ class MdEstatisticasEnviarRN extends InfraRN
                     return true;
                 }
             }
-        } 
+        }
         return false;
     }
 
