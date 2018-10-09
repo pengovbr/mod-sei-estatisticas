@@ -16,7 +16,8 @@ Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor 
       'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
 ...
   ```
-Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configurações do módulo
+Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configurações do módulo.
+Os campos url, sigla e chave devem ser preenchidos com os valores enviados pela equipe do Pen.
 ```
 ...
   'SEI' => array(
@@ -26,7 +27,7 @@ Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova 
       'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
 ...
   'MdEstatisticas' => array(
-      'url' => 'http://estatisticas.planejamento.gov.br',
+      'url' => 'https://estatistica.dev.processoeletronico.gov.br',
       'sigla' => 'MPOG',
       'chave' => '123456'),
 
