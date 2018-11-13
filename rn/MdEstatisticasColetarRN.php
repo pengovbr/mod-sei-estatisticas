@@ -47,7 +47,7 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['modulos'] = $this->obterPlugins();
             $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
             $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
-
+            $ind['filehashIndicador'] = $this->obterHashs();
             return $ind;
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
@@ -55,6 +55,73 @@ class MdEstatisticasColetarRN extends InfraRN
             InfraDebug::getInstance()->setBolEcho(false);
             throw new InfraException('Erro processando estatísticas do sistema.', $e);
         }
+    }
+
+    private static function bolArrFindItem($arrNeedle, $strHaystack){
+        $r=false;
+        foreach ($arrNeedle as $v) {
+            $r=strpos($strHaystack, $v);
+            if($r === 0 || $r) return $r;
+        }
+        return $r;
+    }
+
+    private $IG = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php');
+
+    private static function getDirContents($dir, &$results = array(), $ignorar = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php')){
+
+        $files = scandir($dir);
+
+        foreach($files as $key => $value){
+            $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+            if(!MdEstatisticasColetarRN::bolArrFindItem($ignorar, $path)){
+                if(!is_dir($path)) {
+                    $results[] = $path;
+
+                } else if($value != "." && $value != "..") {
+                    MdEstatisticasColetarRN::getDirContents($path, $results);
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    private function obterHashs(){
+
+        $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../sei');
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+
+        if ($objConfiguracaoSEI->isSetValor('SEI','Modulos')){
+
+            foreach($objConfiguracaoSEI->getValor('SEI','Modulos') as $strModulo => $strPathModulo){            
+                $reflectionClass = new ReflectionClass($strModulo);
+                $classe = $reflectionClass->newInstance();
+                $arrModulos[$strModulo] = array('modulo' => $strModulo, 'path' => $strPathModulo, 'versao' => $classe->getVersao());
+            }  
+        }
+
+        foreach ($a as $key => $value) {
+            $m="";
+            $version="";
+
+            foreach ($arrModulos as $k => $v) {
+                if(strpos($value, 'web/modulos/'.$arrModulos[$k]['path']) !== false){
+                    $m = $k;
+                    $version = $arrModulos[$k]['versao'];
+                    break;
+                }
+            }
+
+            $b[] = array('file' => $value, 
+                         'hash' => hash_file('sha256', $value), 
+                         'modulo' => $m, 
+                         'versao_modulo' => $version, 
+                         'versao_sei' => SEI_VERSAO); 
+        }
+
+        return $b;
+
     }
 
     private function obterVersaoSEI() {
@@ -474,3 +541,4 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 }
 ?>
+
