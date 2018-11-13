@@ -89,7 +89,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterHashs(){
 
-        $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../sei');
+        $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../');
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
 
         if ($objConfiguracaoSEI->isSetValor('SEI','Modulos')){
