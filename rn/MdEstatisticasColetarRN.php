@@ -47,13 +47,12 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['modulos'] = $this->obterPlugins();
             $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
             $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
-            $ind['filehashIndicador'] = $this->obterHashs();
             return $ind;
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Erro processando estatísticas do sistema.', $e);
+            throw new InfraException('Erro processando estatÃ­sticas do sistema.', $e);
         }
     }
 
@@ -68,7 +67,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private $IG = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php');
 
-    private static function getDirContents($dir, &$results = array(), $ignorar = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php')){
+    private static function getDirContents($dir, &$results = array(), $ignorar = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git')){
 
         $files = scandir($dir);
 
@@ -87,18 +86,18 @@ class MdEstatisticasColetarRN extends InfraRN
         return $results;
     }
 
-    private function obterHashs(){
+    public function obterHashs(){
 
         $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../');
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
 
         if ($objConfiguracaoSEI->isSetValor('SEI','Modulos')){
 
-            foreach($objConfiguracaoSEI->getValor('SEI','Modulos') as $strModulo => $strPathModulo){            
+            foreach($objConfiguracaoSEI->getValor('SEI','Modulos') as $strModulo => $strPathModulo){
                 $reflectionClass = new ReflectionClass($strModulo);
                 $classe = $reflectionClass->newInstance();
                 $arrModulos[$strModulo] = array('modulo' => $strModulo, 'path' => $strPathModulo, 'versao' => $classe->getVersao());
-            }  
+            }
         }
 
         foreach ($a as $key => $value) {
@@ -113,11 +112,11 @@ class MdEstatisticasColetarRN extends InfraRN
                 }
             }
 
-            $b[] = array('file' => $value, 
-                         'hash' => hash_file('sha256', $value), 
-                         'modulo' => $m, 
-                         'versao_modulo' => $version, 
-                         'versao_sei' => SEI_VERSAO); 
+            $b[] = array('file' => $value,
+                         'hash' => hash_file('sha256', $value),
+                         'modulo' => $m,
+                         'versaoModulo' => $version,
+                         'versaoSei' => SEI_VERSAO);
         }
 
         return $b;

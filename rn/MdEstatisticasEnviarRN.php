@@ -88,6 +88,15 @@ class MdEstatisticasEnviarRN extends InfraRN
         return $this->doPost($url, $obj, false);
     }
 
+    public function enviarHashs($hashs, $id) {
+      $url = $this->url . '/fileshashs';
+      $obj = array(
+          id => $id,
+          filesHashs => $hashs
+      );
+      return $this->doPost($url, $obj, false);
+  }
+
     public function autenticar() {
         $json = array(
             username => $this->orgaoSigla,

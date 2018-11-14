@@ -75,6 +75,12 @@ class MdEstatisticasAgendamentoRN extends InfraRN
             $recursos = $coletor->obterQuantidadeRecursos($dataultimorecurso);
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarRecursos($recursos, $id);
+
+            $this->gravarLog('Enviado. Coletar o hash dos arquivos do SEI: ');
+            $filesHash = $coletor->obterHashs();
+            $this->gravarLog('Coletado. Enviar: ');
+            $enviar->enviarHashs($filesHash, $id);
+
             $this->gravarLog('Enviado: ');
 
             $this->gravarLog('Finalizado');
