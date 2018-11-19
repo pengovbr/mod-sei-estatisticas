@@ -47,7 +47,8 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['modulos'] = $this->obterPlugins();
             $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
             $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
-            $ind['filehashIndicador'] = $this->obterHashs();
+            $ind['filesHashs'] = $this->obterHashs();
+            //print_r($ind);die;
             return $ind;
         } catch (Exception $e) {
             InfraDebug::getInstance()->setBolLigado(false);
@@ -89,7 +90,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterHashs(){
 
-        $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../sei');
+        $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../');
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
 
         if ($objConfiguracaoSEI->isSetValor('SEI','Modulos')){
@@ -116,8 +117,8 @@ class MdEstatisticasColetarRN extends InfraRN
             $b[] = array('file' => $value, 
                          'hash' => hash_file('sha256', $value), 
                          'modulo' => $m, 
-                         'versao_modulo' => $version, 
-                         'versao_sei' => SEI_VERSAO); 
+                         'versaoModulo' => $version, 
+                         'versaoSei' => SEI_VERSAO); 
         }
 
         return $b;
