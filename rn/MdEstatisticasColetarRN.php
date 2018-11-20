@@ -113,8 +113,15 @@ class MdEstatisticasColetarRN extends InfraRN
                     break;
                 }
             }
+            
+            //vamos retirar a parte inicial do dir que nao interessa
+            $novo_valor = $value;
+            $pos=MdEstatisticasColetarRN::bolArrFindItem(array('infra/infra', 'sei/', 'sip/'), $novo_valor);
+            if($pos !== false){
+                $novo_valor = substr($novo_valor, $pos);
+            }
 
-            $b[] = array('file' => $value, 
+            $b[] = array('file' => $novo_valor, 
                          'hash' => hash_file('sha256', $value), 
                          'modulo' => $m, 
                          'versaoModulo' => $version, 
