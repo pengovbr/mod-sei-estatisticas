@@ -491,17 +491,39 @@ class MdEstatisticasColetarRN extends InfraRN
         return $sistemas;
     }
 
-    public function obterNavegadores() {
-        $query = "select count(*) as quantidade, identificacao as nome, versao from infra_navegador group by identificacao,versao";
-        $rs = BancoSEI::getInstance()->consultarSql($query);
+    public function obterNavegadores($ultimadata = null) {
+        if ($ultimadata == null) {
+          $ultimadata = "1900-01-01";
+        }
+        $current_month = date("Y-m-01");
+        $sgbd = $this->obterTipoSGBD();
+        $query = '';
+        if ($sgbd == 'MySql') {
+            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from sei.infra_navegador where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3, 4 order by 1,2,3,4";
+            // $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM sei.infra_auditoria where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3 order by 1, 2, 3";
+        } elseif ($sgbd == 'SqlServer') {
+            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where dth_acesso > '%s' and dth_acesso < '%s' group by year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao order by 1,2,3,4";
+            //$query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM infra_auditoria where dth_acesso > '%s' and dth_acesso < '%s' group by year(dth_acesso), month(dth_acesso), recurso order by 1, 2, 3";
+        } elseif ($sgbd == 'Oracle'){
+            $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, identificacao as nome, versao, count(*) as quantidade from sei.infra_navegador WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' group by to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, identificacao as nome, versao order by to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, identificacao as nome, versao";
+            // $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, recurso, count(*) as quantidade FROM sei.infra_auditoria WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' GROUP BY to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), recurso";
+        }
         $lista = array();
-        foreach ($rs as $r) {
-            $result = array(
-                'nome' => utf8_encode($r['nome']),
-                'quantidade' => $r['quantidade'],
-                'versao' => $r['versao']
-            );
-            array_push($lista, $result);
+        if ($query) {
+          $query = sprintf($query, $ultimadata, $current_month);
+          echo $query;
+          $rs = BancoSEI::getInstance()->consultarSql($query);
+          foreach ($rs as $r) {
+              $result = array(
+                  'nome' => utf8_encode($r['nome']),
+                  'quantidade' => $r['quantidade'],
+                  'versao' => $r['versao'],
+                  'ano' => $r['ano'],
+                  'mes' => $r['mes'],
+              );
+              array_push($lista, $result);
+          }
+
         }
         return $lista;
     }

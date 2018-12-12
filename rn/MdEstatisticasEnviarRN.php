@@ -34,6 +34,11 @@ class MdEstatisticasEnviarRN extends InfraRN
         return date($data);
     }
 
+    public function obterUltimoNavegador() {
+      $data = $this->doGet($this->url . '/navegadores/ultimo?sigla=' . $this->orgaoSigla, false);
+      return date($data);
+    }
+
     public function enviarAcessos($acessos, $id) {
         $url = $this->url . '/acessos';
         $obj = array(
