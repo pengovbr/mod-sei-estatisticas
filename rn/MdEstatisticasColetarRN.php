@@ -47,7 +47,6 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['modulos'] = $this->obterPlugins();
             $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
             $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
-            $ind['filesHashs'] = $this->obterHashs();
 
             return $ind;
         } catch (Exception $e) {
@@ -113,7 +112,7 @@ class MdEstatisticasColetarRN extends InfraRN
                     break;
                 }
             }
-            
+
             //vamos retirar a parte inicial do dir que nao interessa
             $novo_valor = $value;
             $pos=MdEstatisticasColetarRN::bolArrFindItem(array('infra/infra', 'sei/', 'sip/'), $novo_valor);
@@ -121,10 +120,10 @@ class MdEstatisticasColetarRN extends InfraRN
                 $novo_valor = substr($novo_valor, $pos);
             }
 
-            $b[] = array('file' => $novo_valor, 
-                         'hash' => hash_file('sha256', $value), 
-                         'modulo' => $m, 
-                         'versaoModulo' => $version, 
+            $b[] = array('file' => $novo_valor,
+                         'hash' => hash_file('sha256', $value),
+                         'modulo' => $m,
+                         'versaoModulo' => $version,
                          'versaoSei' => SEI_VERSAO);
         }
 
@@ -508,12 +507,11 @@ class MdEstatisticasColetarRN extends InfraRN
         $sgbd = $this->obterTipoSGBD();
         $query = '';
         if ($sgbd == 'MySql') {
-            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from sei.infra_navegador where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3, 4 order by 1,2,3,4";
+            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3, 4 order by 1,2,3,4";
         } elseif ($sgbd == 'SqlServer') {
             $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where dth_acesso > '%s' and dth_acesso < '%s' group by year(dth_acesso), month(dth_acesso), identificacao, versao order by 1,2,3,4";
         } elseif ($sgbd == 'Oracle'){
-            $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, identificacao as nome, versao, count(*) as quantidade from sei.infra_navegador WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' group by to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), identificacao, versao order by to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), identificacao, versao";
-            // $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, recurso, count(*) as quantidade FROM sei.infra_auditoria WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' GROUP BY to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), recurso";
+            $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' group by to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), identificacao, versao order by to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), identificacao, versao";
         }
         $lista = array();
         if ($query) {
@@ -542,11 +540,11 @@ class MdEstatisticasColetarRN extends InfraRN
         $current_month = date("Y-m-01");
         $sgbd = $this->obterTipoSGBD();
         if ($sgbd == 'MySql') {
-            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM sei.infra_auditoria where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3 order by 1, 2, 3";
+            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM infra_auditoria where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3 order by 1, 2, 3";
         } elseif ($sgbd == 'SqlServer') {
             $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM infra_auditoria where dth_acesso > '%s' and dth_acesso < '%s' group by year(dth_acesso), month(dth_acesso), recurso order by 1, 2, 3";
         } elseif ($sgbd == 'Oracle'){
-            $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, recurso, count(*) as quantidade FROM sei.infra_auditoria WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' GROUP BY to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), recurso";
+            $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, recurso, count(*) as quantidade FROM infra_auditoria WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' GROUP BY to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), recurso";
         }
         if ($query) {
             $query = sprintf($query, $dataultimorecurso, $current_month);
@@ -557,11 +555,11 @@ class MdEstatisticasColetarRN extends InfraRN
     public function obterQuantidadeLogErro() {
         $sgbd = $this->obterTipoSGBD();
         if ($sgbd == 'MySql') {
-            $query = "select year(dth_log) ano, month(dth_log) mes, week(dth_log) + 1 semana, count(*) as quantidade from sei.infra_log where sta_tipo = 'E' group by 1, 2, 3";
+            $query = "select year(dth_log) ano, month(dth_log) mes, week(dth_log) + 1 semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by 1, 2, 3";
         } elseif ($sgbd == 'SqlServer') {
             $query = "select year(dth_log) ano, month(dth_log) mes, datepart(week, dth_log) semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by year(dth_log), month(dth_log), datepart(week, dth_log)";
         } elseif ($sgbd == 'Oracle'){
-            $query = "select to_char(dth_log, 'YYYY') AS ano, to_char(dth_log, 'MM') AS mes, to_char(dth_log, 'WW') AS semana, count(*) as quantidade from sei.infra_log where sta_tipo = 'E' GROUP BY to_char(dth_log, 'YYYY'), to_char(dth_log, 'MM'), to_char(dth_log, 'WW')";
+            $query = "select to_char(dth_log, 'YYYY') AS ano, to_char(dth_log, 'MM') AS mes, to_char(dth_log, 'WW') AS semana, count(*) as quantidade from infra_log where sta_tipo = 'E' GROUP BY to_char(dth_log, 'YYYY'), to_char(dth_log, 'MM'), to_char(dth_log, 'WW')";
         }
         if ($query) {
             return BancoSEI::getInstance()->consultarSql($query);
