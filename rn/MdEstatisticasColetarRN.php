@@ -47,6 +47,7 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['modulos'] = $this->obterPlugins();
             $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
             $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
+            $ind['isMonoOrgao'] = $this->obterSeMonoOrgao();
 
             return $ind;
         } catch (Exception $e) {
@@ -564,6 +565,13 @@ class MdEstatisticasColetarRN extends InfraRN
         if ($query) {
             return BancoSEI::getInstance()->consultarSql($query);
         }
+    }
+
+    public function obterSeMonoOrgao () {
+        $query = "SELECT count(*) as quantidade FROM orgao WHERE sin_ativo = 'S'";
+        $rs = BancoSEI::getInstance()->consultarSql($query);
+        $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+        return $quantidade <= 1;
     }
 }
 ?>
