@@ -27,7 +27,7 @@ Os campos url, sigla e chave devem ser preenchidos com os valores enviados pela 
       'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
 ...
   'MdEstatisticas' => array(
-      'url' => 'https://estatistica.dev.processoeletronico.gov.br',
+      'url' => 'https://estatistica.processoeletronico.gov.br',
       'sigla' => 'MPOG',
       'chave' => '123456'),
 
@@ -40,7 +40,18 @@ Em seguida basta criar um agendamento definindo-se a periodicidade do envio. O a
  ```
 MdEstatisticasAgendamentoRN::coletarIndicadores
  ```
- 
+
+IMPORTANTE:
+- verificar se há rota aberta do servidor do SEI onde roda o agendamento para o servidor Webservice coletor
+- a rota pode ser facilmente verificada usando, por exemplo, o comando:
+```
+curl https://estatistica.processoeletronico.gov.br
+ ```
+o resultado deverá ser algo como:
+```
+{"sistema":"WebService Estatísticas do SEI","versao":"1.0.0"}
+ ```
+
 ## Como contribuir
 
 ### 1. Com Vagrant
