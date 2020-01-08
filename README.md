@@ -54,7 +54,7 @@ o resultado deverá ser algo como:
 
 ## Suporte
 Caso precise de ajuda, ou para solicitar a sua chave de conexão, favor abrir um chamado em nossa Central de Atendimento:
-http://processoeletronico.gov.br/index.php/conteudo/suporte
+http://processoeletronico.gov.br/index.php/conteudo/suporte. A categoria do chamado é PEN - MODULO ESTATISTICAS - INSTALAÇÃO.
 
 
 
