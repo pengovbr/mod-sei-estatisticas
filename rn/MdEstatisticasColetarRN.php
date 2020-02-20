@@ -416,7 +416,11 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         $rs = array();
         if ($query) {
-            $rs = BancoSEI::getInstance()->consultarSql($query);
+            try{
+                $rs = BancoSEI::getInstance()->consultarSql($query);
+            }catch(Exception $e){
+                $rs = array(array('versao' => 'Undefined'));
+            }
         }
         $versao = (count($rs) && isset($rs[0]['versao'])) ? $rs[0]['versao'] : null;
         return $versao;
