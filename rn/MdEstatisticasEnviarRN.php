@@ -39,7 +39,7 @@ class MdEstatisticasEnviarRN extends InfraRN
       return date($data);
     }
 
-    public function enviarAcessos($acessos, $id) {
+    public function enviarAcessos($acessos, $id) { 
         $url = $this->url . '/acessos';
         $obj = array(
             id => $id,
