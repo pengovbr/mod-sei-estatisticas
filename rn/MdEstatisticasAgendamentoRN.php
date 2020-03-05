@@ -21,7 +21,7 @@ class MdEstatisticasAgendamentoRN extends InfraRN
 
             $this->gravarLog('Autenticar no WebService');
             if (!$enviar->autenticar()) {
-                throw new InfraException('Problemas com a autenticação.');
+                throw new InfraException('Problemas com a autenticacao.');
             }
 
             $this->gravarLog('Autenticado. Coletando indicadores');
@@ -41,7 +41,7 @@ class MdEstatisticasAgendamentoRN extends InfraRN
 
             $this->gravarLog('Indicadores recebidos. Coletar indicadores do tipo lista');
 
-            $this->gravarLog('Obter a data do último envio das quantidades de acessos ');
+            $this->gravarLog('Obter a data do ultimo envio das quantidades de acessos ');
             $data = $enviar->obterUltimoAcesso();
             $this->gravarLog('Ultima data das quantidades de acessos: ' . $data . '. Coletar quantidade de acessos');
 
@@ -54,12 +54,12 @@ class MdEstatisticasAgendamentoRN extends InfraRN
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarVelocidades($velocidades, $id);
 
-            $this->gravarLog('Enviado. Coletar os sistemas operacionais dos usuários: ');
+            $this->gravarLog('Enviado. Coletar os sistemas operacionais dos usuarios: ');
             $sistemasOperacionaisUsuarios = $coletor->obterSistemasOperacionaisUsuarios();
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id);
 
-            $this->gravarLog('Enviado. Obter a data do último envio das quantidades de navegadores ');
+            $this->gravarLog('Enviado. Obter a data do ultimo envio das quantidades de navegadores ');
             $data = $enviar->obterUltimoNavegador();
             $this->gravarLog('Ultima data das quantidades de navegadores: ' . $data . '. Coletar quantidade de navegadores');
 
@@ -93,7 +93,7 @@ class MdEstatisticasAgendamentoRN extends InfraRN
             InfraDebug::getInstance()->setBolLigado(false);
             InfraDebug::getInstance()->setBolDebugInfra(false);
             InfraDebug::getInstance()->setBolEcho(false);
-            throw new InfraException('Erro processando estatísticas do sistema.', $e);
+            throw new InfraException('Erro processando estatisticas do sistema.', $e);
         }
 
     }
