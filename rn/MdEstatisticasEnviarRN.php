@@ -1,4 +1,4 @@
-<?
+<? 
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
 class MdEstatisticasEnviarRN extends InfraRN
