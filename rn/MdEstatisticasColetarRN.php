@@ -144,8 +144,16 @@ class MdEstatisticasColetarRN extends InfraRN
         $bytestotal = 0;
         $path = realpath($path);
         if ($path !== false) {
-            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
-                $bytestotal += $object->getSize();
+            try{
+                foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
+                    try{
+                        $bytestotal += $object->getSize();
+                    }catch(Exception $e1){
+                        $bytestotal += 0;
+                    }
+                }
+            }catch(Exception $e2){
+                $bytestotal = 0;
             }
         }
         return $bytestotal;
@@ -480,7 +488,11 @@ class MdEstatisticasColetarRN extends InfraRN
         } else {
             $query = "select distinct user_agent as nome from infra_auditoria where user_agent is not null";
         }
-        $sistemas = BancoSEI::getInstance()->consultarSql($query);
+        try{
+            $sistemas = BancoSEI::getInstance()->consultarSql($query);
+        } catch (Exception $e) {
+            $sistemas = array(array('nome'=>'(XX)'));
+        }
 
         $lista = array();
         foreach ($sistemas as $r) {
