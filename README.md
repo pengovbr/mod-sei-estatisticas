@@ -4,7 +4,7 @@
 Faça o download desse projeto no seguinte diretório do SEI
 ```
 cd sei/web/modulos
-git clone http://softwarepublico.gov.br/gitlab/mp/mod-sei-estatisticas.git
+git clone https://github.com/spbgovbr/mod-sei-estatisticas.git
 ```
 
 Para que o SEI reconheça esse módulo é necessário editar o arquivo *sei/sei/config/ConfiguracaoSEI.php*.
