@@ -121,7 +121,7 @@ class MdEstatisticasEnviarRN extends InfraRN
         if ($info['http_code'] == 200) {
             $output = explode("\r\n", $output);
             foreach ($output as $value) {
-                if (strpos($value, 'Authorization') !== false) {
+                if (strpos(strtoupper($value), 'AUTHORIZATION') !== false) {
                     $this->header[] = $value;
                     return true;
                 }
