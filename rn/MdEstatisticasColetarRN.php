@@ -69,18 +69,21 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private $IG = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php');
 
-    private static function getDirContents($dir, &$results = array(), $ignorar = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git')){
+    private static function getDirContents($dir, $ignorar = array(), &$results = array()){
 
         $files = scandir($dir);
 
         foreach($files as $key => $value){
+            
+            if($value == "." || $value == "..") continue;
+            
             $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
             if(!MdEstatisticasColetarRN::bolArrFindItem($ignorar, $path)){
                 if(!is_dir($path)) {
                     $results[] = $path;
 
-                } else if($value != "." && $value != "..") {
-                    MdEstatisticasColetarRN::getDirContents($path, $results);
+                } else {
+                    MdEstatisticasColetarRN::getDirContents($path, $ignorar, $results);
                 }
             }
         }
@@ -89,8 +92,16 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 
     public function obterHashs(){
-
-        $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../');
+                
+        try{
+            //buscar arquivos a ignorar na elaboracao do hash
+            $ignore_files = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorar_arquivos');
+            if(!is_array($ignore_files)) throw new Exception('nao array');
+        }catch(Exception $e){
+            $ignore_files = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git');
+        }
+        
+        $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../', $ignore_files);
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
 
         if ($objConfiguracaoSEI->isSetValor('SEI','Modulos')){
@@ -120,9 +131,11 @@ class MdEstatisticasColetarRN extends InfraRN
             if($pos !== false){
                 $novo_valor = substr($novo_valor, $pos);
             }
-
+            
+            $hash = ''; 
+            if($value) $hash = hash_file('sha256', $value);
             $b[] = array('file' => $novo_valor,
-                         'hash' => hash_file('sha256', $value),
+                         'hash' => $hash,
                          'modulo' => $m,
                          'versaoModulo' => $version,
                          'versaoSei' => SEI_VERSAO);

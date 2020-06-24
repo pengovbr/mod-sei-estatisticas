@@ -18,6 +18,7 @@ Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor 
   ```
 Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configurações do módulo.
 Os campos url, sigla e chave devem ser preenchidos com os valores enviados pela equipe do Pen.
+O campo ignorar_arquivos pode ser preenchido com os diretórios a serem ignorados durante a leitura da coleta de hash. Via de regra não precisa ser alterado, apenas caso ocorram erros de permissão específicos que serão alertados no menu infra->log após execução com erro
 ```
 ...
   'SEI' => array(
@@ -29,7 +30,8 @@ Os campos url, sigla e chave devem ser preenchidos com os valores enviados pela 
   'MdEstatisticas' => array(
       'url' => 'https://estatistica.processoeletronico.gov.br',
       'sigla' => 'MPOG',
-      'chave' => '123456'),
+      'chave' => '123456',
+      'ignorar_arquivos' => array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git')),
 
 
 ...
