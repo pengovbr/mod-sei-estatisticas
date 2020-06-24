@@ -92,7 +92,8 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 
     public function obterHashs(){
-                
+        
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();        
         try{
             //buscar arquivos a ignorar na elaboracao do hash
             $ignore_files = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorar_arquivos');
@@ -102,8 +103,7 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         
         $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../', $ignore_files);
-        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-
+        
         if ($objConfiguracaoSEI->isSetValor('SEI','Modulos')){
 
             foreach($objConfiguracaoSEI->getValor('SEI','Modulos') as $strModulo => $strPathModulo){
