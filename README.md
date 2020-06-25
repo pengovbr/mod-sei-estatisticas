@@ -1,5 +1,12 @@
 # Módulo Estatísticas do SEI
 
+Este módulo, ao ser executado, via agendamento ou manualmente:
+- coleta informações estatísticas diversas como: quantidade de documentos e processos, quantidade de unidades, quantidade de usuários, percentual de tipos de documentos, etc
+- coleta o hash dos arquivos fontes do SEI e módulos instalados - o intuito aqui é segurança. Para que o órgão tenha ciência dos arquivos que possam ter sido alterados ou adicionados sem a sua autorização. Importante! Esses dados são tratados como privados
+- os dados públicos de estatísticas aparecem em http://processoeletronico.gov.br - procurar pelo painel **Indicadores Negociais**
+- os dados de hash serão disponibilizados aos gestores do SEI através de um acesso controlado que será oportunamente divulgado
+
+
 ## Instalação
 Faça o download desse projeto no seguinte diretório do SEI
 ```
@@ -7,7 +14,7 @@ cd sei/web/modulos
 git clone https://github.com/spbgovbr/mod-sei-estatisticas.git
 ```
 
-Para que o SEI reconheça esse módulo é necessário editar o arquivo *sei/sei/config/ConfiguracaoSEI.php*.
+Para que o SEI reconheça esse módulo é necessário editar o arquivo *sei/config/ConfiguracaoSEI.php*.
 Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor um array contendo o nome do módulo e o nome do diretório do módulo. **'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')**
 ```
 ...
@@ -16,9 +23,23 @@ Adicione a propriedade *Modulos* ao objeto *SEI*, caso nao exista, e como valor 
       'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
 ...
   ```
-Ainda editando o arquivo *sei/sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configurações do módulo.
+Ainda editando o arquivo *sei/config/ConfiguracaoSEI.php* adicione uma nova chave com as configurações do módulo.
 Os campos url, sigla e chave devem ser preenchidos com os valores enviados pela equipe do Pen.
-O campo ignorar_arquivos pode ser preenchido com os diretórios a serem ignorados durante a leitura da coleta de hash. Via de regra não precisa ser alterado, apenas caso ocorram erros de permissão específicos que serão alertados no menu infra->log após execução com erro
+
+Detalhes sobre o campo **ignorar_arquivos**:
+
+- Esse campo atua durante a leitura de hash dos fontes do SEI
+
+- Via de regra, o ideal é deixar apenas o SEI em uma pasta isolada no apache. Porém existem instalações onde o SEI é compartilhado na mesma pasta com outros ativos
+
+- Nesse caso, o módulo ao ler as informações do diretório onde o SEI se encontra, poderá encontrar arquivos sem permissão de leitura ou até mesmo pastas imensas, como a pasta para armazenar os arquivos externos
+
+- Para mitigar esse problema basta informar as pastas para o módulo ignorar a leitura do hash
+
+- Para isso, vamos usar o campo ignorar_arquivos. Deve ser preenchido com os diretórios a serem ignorados durante a leitura da coleta de hash
+
+- Caso seja necessário, basta adicionar as pastas a serem ignoradas seguindo o formato do array php, como abaixo
+
 ```
 ...
   'SEI' => array(
