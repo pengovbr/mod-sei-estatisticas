@@ -320,15 +320,44 @@ class MdEstatisticasColetarRN extends InfraRN
         $sgbd = $this->obterTipoSGBD();
         $query = '';
         if ($sgbd == 'MySql') {
-            $query = "SELECT table_name as tabela, data_length + index_length as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
+            $query = "SELECT table_name as tabela, coalesce(data_length,0) + coalesce(index_length,0) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
         } elseif ($sgbd == 'SqlServer') {
-            $query = "" . " SELECT t.name as tabela,  SUM(Total_Pages * 8 * 1000) As tamanho " . " FROM sys.partitions As P " . "   INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id " . "   INNER JOIN sys.tables t on t.object_id = p.object_id " . " GROUP BY t.name ORDER BY t.name";
+            $query = "" . " SELECT t.name as tabela,  SUM(ISNULL(Total_Pages,0) * 8 * 1000) As tamanho " . " FROM sys.partitions As P " . "   INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id " . "   INNER JOIN sys.tables t on t.object_id = p.object_id " . " GROUP BY t.name ORDER BY t.name";
         } elseif ($sgbd == 'Oracle') {
-            $query = "";
+            $query =    "select tabela, sum(tamanho_tabela) + sum(tamanho_indice) as tamanho
+                        from 
+                        (
+                            SELECT  
+                            segment_name as tabela,  
+                            SUM(nvl(bytes,0)) as tamanho_tabela,
+                            0 as tamanho_indice
+                            from
+                            USER_SEGMENTS 
+                            WHERE SEGMENT_TYPE='TABLE'  
+                            GROUP BY segment_name
+
+                            union all
+
+                            select 
+                            ui.table_name as tabela, 
+                            0 as tamanho_tabela,
+                            sum(nvl(bytes,0)) as tamanho_indice
+                            from
+                            user_segments us inner join 
+                            user_indexes ui on ui.index_name = us.segment_name
+                            group by 
+                            ui.table_name
+
+                        ) tudo
+                        group by tabela";
         }
         $tabelas = array();
         if ($query) {
-            $tabelas = BancoSEI::getInstance()->consultarSql($query);
+            //try{
+                $tabelas = BancoSEI::getInstance()->consultarSql($query);
+                //}catch(Exception $e){
+                //$tabelas = array();
+                //}
         }
         return $tabelas;
     }
