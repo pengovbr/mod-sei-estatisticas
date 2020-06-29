@@ -322,7 +322,7 @@ class MdEstatisticasColetarRN extends InfraRN
         if ($sgbd == 'MySql') {
             $query = "SELECT table_name as tabela, coalesce(data_length,0) + coalesce(index_length,0) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
         } elseif ($sgbd == 'SqlServer') {
-            $query = "" . " SELECT t.name as tabela,  SUM(ISNULL(Total_Pages,0) * 8 * 1000) As tamanho " . " FROM sys.partitions As P " . "   INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id " . "   INNER JOIN sys.tables t on t.object_id = p.object_id " . " GROUP BY t.name ORDER BY t.name";
+            $query = "" . " SELECT t.name as tabela,  SUM(ISNULL(Total_Pages,0) * 8 * 1024) As tamanho " . " FROM sys.partitions As P " . "   INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id " . "   INNER JOIN sys.tables t on t.object_id = p.object_id " . " GROUP BY t.name ORDER BY t.name";
         } elseif ($sgbd == 'Oracle') {
             $query =    "select tabela, sum(tamanho_tabela) + sum(tamanho_indice) as tamanho
                         from 
@@ -353,11 +353,11 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         $tabelas = array();
         if ($query) {
-            //try{
+            try{
                 $tabelas = BancoSEI::getInstance()->consultarSql($query);
-                //}catch(Exception $e){
-                //$tabelas = array();
-                //}
+            }catch(Exception $e){
+                $tabelas = array();
+            }
         }
         return $tabelas;
     }
