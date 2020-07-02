@@ -72,6 +72,30 @@ A partir da versão 1.1.0, disponibilizamos um script para ser executado via lin
 - executa um teste de conexão usando as credenciais acima
 - executa um teste de leitura do hash usando as configurações do módulo 
 
+Para executar o script basta acessar a pasta do sei e rodar o script q fica na pasta script do módulo, por exemplo:
+```
+cd /opt
+php sei/web/modulos/mod-sei-estatisticas/scripts/verifica_instalacao.php
+```
+o resultado deverá ser algo como:
+```
+00001 - [02/07/2020 16:00:43]   INICIANDO VERIFICACAO DA INSTALACAO DO MODULO MOD-SEI-ESTATISTICAS:
+00002 - [02/07/2020 16:00:44]       - Modulo corretamente ativado no arquivo de configuracao do sistema
+00003 - [02/07/2020 16:00:45]       - Chaves obrigatorias no arquivo de configuracao estao preenchidas (url,sigla e chave)
+00004 - [02/07/2020 16:00:46]       - Conexao com o WebService realizada com sucesso
+00005 - [02/07/2020 16:00:47]       - Vamos agora iniciar a leitura dos hashs.
+00006 - [02/07/2020 16:00:47]         Se necessario, certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos,
+00007 - [02/07/2020 16:00:47]         caso junto do sei voce tenha na pasta do Apache outros diretorios ou sistemas.
+00008 - [02/07/2020 16:00:47]             Ressalva: prestar atencao ao usuario que esta executando esse script pois ao ler os arquivos via agendamento quem
+00009 - [02/07/2020 16:00:47]             executa sera o user do crontab e via web sera o apache
+00010 - [02/07/2020 16:00:47]       - Aguardando 20 segs antes de iniciar a leitura. Aguarde...
+00011 - [02/07/2020 16:01:07]       - Iniciando leitura agora, aguarde...
+00012 - [02/07/2020 16:01:10]       - Leitura de Hashs realizada
+00013 - [02/07/2020 16:01:10]       - Foi calculado o hash de 6167 arquivos.
+00014 - [02/07/2020 16:01:10]
+00015 - [02/07/2020 16:01:10]   ** VERIFICACAO DA INSTALACAO DO MODULO DE ESTATISTICAS FINALIZADA COM SUCESSO **
+```
+
 IMPORTANTE:
 - verificar se há rota aberta do servidor do SEI onde roda o agendamento para o servidor Webservice coletor
 - a rota pode ser facilmente verificada usando, por exemplo, o comando:
