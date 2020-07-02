@@ -3,7 +3,7 @@
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
 /**
- * Classe responsável pela verificação da corretação instalação e configuração do módulo no sistema
+ * Classe responsavel pela verificacao da correta instalacao e configuracao do modulo no sistema
  */
 class MdEstatisticasVerificarRN extends InfraRN
 {
@@ -17,7 +17,7 @@ class MdEstatisticasVerificarRN extends InfraRN
     }
 
     /**
-     * Verifica se o módulo foi devidamente ativado nas configurações do sistema
+     * Verifica se o modulo foi devidamente ativado nas configuracoes do sistema
      *
      * @return bool
      */
@@ -26,20 +26,20 @@ class MdEstatisticasVerificarRN extends InfraRN
         global $SEI_MODULOS;
 
         if(!array_key_exists("MdEstatisticas", $SEI_MODULOS)){
-            throw new InfraException("Chave de ativação do módulo mod-sei-estatisticas (MdEstatisticas) não definido nas configurações de módulos do SEI");
+            throw new InfraException("Chave de ativacao do modulo mod-sei-estatisticas (MdEstatisticas) nao definido nas configuracoes de modulos do SEI");
         }
 
         if(is_null($SEI_MODULOS['MdEstatisticas'])){
             $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
 
             if (!$objConfiguracaoSEI->isSetValor('SEI','Modulos')){
-                throw new InfraException("Chave de configuração de Módulos não definida nas configurações do sistema. (ConfiguracaoSEI.php | SEI > Modulos)");
+                throw new InfraException("Chave de configuracao de Modulos nao definida nas configuracoes do sistema. (ConfiguracaoSEI.php | SEI > Modulos)");
             }
 
             $arrModulos = $objConfiguracaoSEI->getValor('SEI','Modulos');
             $strDiretorioModEstatisticas = basename($arrModulos['MdEstatisticas']);
             $strDiretorioModulos = dirname ($arrModulos['MdEstatisticas']);
-            throw new InfraException("Diretório do módulo ($strDiretorioModEstatisticas) não pode ser localizado em $strDiretorioModulos");
+            throw new InfraException("Diretorio do modulo ($strDiretorioModEstatisticas) nao pode ser localizado em $strDiretorioModulos");
         }
 
         return true;
@@ -47,28 +47,28 @@ class MdEstatisticasVerificarRN extends InfraRN
 
 
     /**
-    * Verifica a correta definição de todos os parâmetros de configuração do módulo
+    * Verifica a correta definicao de todos os parametros de configuracao do modulo
     *
     * @return bool
     */
     public function verificarArquivoConfiguracao()
     {
 
-        // Valida se todos os parâmetros de configuração estão presentes no arquivo de configuração
+        // Valida se todos os parametros de configuracao estao presentes no arquivo de configuracao
         $arrStrChavesConfiguracao = ConfiguracaoSEI::getInstance()->getArrConfiguracoes();
         if(!array_key_exists("MdEstatisticas", $arrStrChavesConfiguracao)){
-            $strMensagem = "Grupo de parametrização MdEstatisticas nao pode ser localizado no arquivo de configuração do SEI";
-            $strDetalhes = "Verifique se o arquivo de configuração encontra-se íntegro.";
+            $strMensagem = "Grupo de parametrizacao MdEstatisticas nao pode ser localizado no arquivo de configuracao do SEI";
+            $strDetalhes = "Verifique se o arquivo de configuracao encontra-se integro.";
             throw new InfraException($strMensagem, null, $strDetalhes);
         }
 
-        // Valida se todas as chaves de configuração obrigatórias foram atribuídas
+        // Valida se todas as chaves de configuracao obrigatorias foram atribuídas
         $arrStrChavesConfiguracao = $arrStrChavesConfiguracao["MdEstatisticas"];
         $arrStrParametrosExperados = array("url", "sigla", "chave");
         foreach ($arrStrParametrosExperados as $strChaveConfiguracao) {
             if(!array_key_exists($strChaveConfiguracao, $arrStrChavesConfiguracao)){
-                $strMensagem = "Parâmetro 'MdEstatisticas > $strChaveConfiguracao' não pode ser localizado no arquivo de configuração";
-                $strDetalhes = "Verifique se o arquivo de configuração  encontra-se íntegro.";
+                $strMensagem = "Parametro 'MdEstatisticas > $strChaveConfiguracao' nao pode ser localizado no arquivo de configuracao";
+                $strDetalhes = "Verifique se o arquivo de configuracao  encontra-se integro.";
                 throw new InfraException($strMensagem, null, $strDetalhes);
             }
         }
@@ -77,7 +77,7 @@ class MdEstatisticasVerificarRN extends InfraRN
     }
 
     /**
-    * Verifica a conexão com o WebService Rest, utilizando o endereço e certificados informados
+    * Verifica a conexao com o WebService Rest, utilizando o endereco e certificados informados
     *
     * @return bool
     */
@@ -125,7 +125,7 @@ class MdEstatisticasVerificarRN extends InfraRN
                ". Caso o http code seja diferente de 200 houve alguma falha na conexao. " .
                "Verifique a rota e se o seu php consegue acessar o servidor configurado no campo url. " . 
                "Caso o http code seja 403 significa que foi barrado no webservice. Verifique url, sigla e chave. " . 
-               "Caso o http code seja 200 verifique se o token Authorization está presente. " .
+               "Caso o http code seja 200 verifique se o token Authorization esta presente. " .
                "Caso ele nao esteja presente significa que nao conseguiu fazer o login. Reveja a url, sigla e chave usadas. " . 
                "Output do Curl: " . print_r($output, true);
         throw new InfraException($msg);

@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
-// Garante que código abaixo foi executado unicamente via linha de comando
+// Garante que codigo abaixo foi executado unicamente via linha de comando
 if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
     InfraDebug::getInstance()->setBolLigado(true);
     InfraDebug::getInstance()->setBolDebugInfra(false);
@@ -18,17 +18,17 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
     try {
         SessaoSEI::getInstance(false);
         
-        $fnPrint("INICIANDO VERIFICAÇÃO DA INSTALAÇÃO DO MÓDULO MOD-SEI-ESTATISTICAS:", 0);
+        $fnPrint("INICIANDO VERIFICACAO DA INSTALACAO DO MODULO MOD-SEI-ESTATISTICAS:", 0);
 
         try{
             $objMdEstatisticasVerificarRN = new MdEstatisticasVerificarRN();
         }catch(Exception $e){
-            $fnPrint("- Nao foi possível instanciar a classe, verifique se o modulo esta configurado no ConfiguracaoSEI.php. Maiores detalhes do erro abaixo", 1);
+            $fnPrint("- Nao foi possivel instanciar a classe, verifique se o modulo esta configurado no ConfiguracaoSEI.php. Maiores detalhes do erro abaixo", 1);
         }
 
         sleep(1);
         if($objMdEstatisticasVerificarRN->verificarAtivacaoModulo()){
-            $fnPrint("- Módulo corretamente ativado no arquivo de configuracao do sistema", 1);
+            $fnPrint("- Modulo corretamente ativado no arquivo de configuracao do sistema", 1);
         }
 
 
@@ -39,7 +39,7 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
 
         sleep(1);
         if($objMdEstatisticasVerificarRN->verificarConexao()){
-            $fnPrint("- Conexão com o WebService realizada com sucesso", 1);
+            $fnPrint("- Conexao com o WebService realizada com sucesso", 1);
         }
 
         sleep(1);
@@ -57,7 +57,7 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
             
             $fnPrint("- Foi calculado o hash de " . count($r) . " arquivos. ", 1);
         }else{
-            throw new InfraException("Falha ao ler o hash dos arquivos. Verifique permissoes no diretorio e também a necessidade de configurar a variavel ignorar_arquivos");           
+            throw new InfraException("Falha ao ler o hash dos arquivos. Verifique permissoes no diretorio e tambem a necessidade de configurar a variavel ignorar_arquivos");           
         }
 
         $fnPrint("", 0);
