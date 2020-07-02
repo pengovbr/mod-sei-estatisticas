@@ -44,8 +44,10 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
 
         sleep(1);
         $fnPrint("- Vamos agora iniciar a leitura dos hashs." , 1);
-        $fnPrint("  Certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos, ", 1);
-        $fnPrint("  caso junto do sei você tenha na pasta do Apache outros diretórios ou sistemas. ", 1);
+        $fnPrint("  Se necessario, certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos, ", 1);
+        $fnPrint("  caso junto do sei voce tenha na pasta do Apache outros diretorios ou sistemas. ", 1);
+        $fnPrint("  Ressalva: prestar atencao ao usuario que esta executando esse script pois ao ler os arquivos via agendamento quem", 2);
+        $fnPrint("  executa sera o user do crontab e via web sera o apache ", 2);
         $fnPrint("- Aguardando 20 segs antes de iniciar a leitura. Aguarde...", 1);
         sleep(20);
         $fnPrint("- Iniciando leitura agora, aguarde... ", 1);

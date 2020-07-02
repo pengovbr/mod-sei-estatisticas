@@ -57,7 +57,7 @@ class MdEstatisticasVerificarRN extends InfraRN
         // Valida se todos os parametros de configuracao estao presentes no arquivo de configuracao
         $arrStrChavesConfiguracao = ConfiguracaoSEI::getInstance()->getArrConfiguracoes();
         if(!array_key_exists("MdEstatisticas", $arrStrChavesConfiguracao)){
-            $strMensagem = "Grupo de parametrizacao MdEstatisticas nao pode ser localizado no arquivo de configuracao do SEI";
+            $strMensagem = "Grupo de parametrizacao MdEstatisticas nao pode ser localizado no arquivo de configuracao do SEI. Verifique se o arquivo de configuracao esta de acordo com o manual";
             $strDetalhes = "Verifique se o arquivo de configuracao encontra-se integro.";
             throw new InfraException($strMensagem, null, $strDetalhes);
         }
@@ -122,9 +122,9 @@ class MdEstatisticasVerificarRN extends InfraRN
                " Sigla: " . $orgaoSigla . 
                " Chave: " . $orgaoSenha . 
                " Valor do Http code: " . $info['http_code'] . 
+               "Caso o http code seja 403, significa que foi barrado no webservice. Verifique url, sigla e chave. " . 
                ". Caso o http code seja diferente de 200 houve alguma falha na conexao. " .
                "Verifique a rota e se o seu php consegue acessar o servidor configurado no campo url. " . 
-               "Caso o http code seja 403 significa que foi barrado no webservice. Verifique url, sigla e chave. " . 
                "Caso o http code seja 200 verifique se o token Authorization esta presente. " .
                "Caso ele nao esteja presente significa que nao conseguiu fazer o login. Reveja a url, sigla e chave usadas. " . 
                "Output do Curl: " . print_r($output, true);
