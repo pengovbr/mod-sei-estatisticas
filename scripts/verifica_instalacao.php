@@ -46,18 +46,18 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
         $fnPrint("- Vamos agora iniciar a leitura dos hashs." , 1);
         $fnPrint("  Certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos, ", 1);
         $fnPrint("  caso junto do sei você tenha na pasta do Apache outros diretórios ou sistemas. ", 1);
-        $fnPrint("- Aguardando 10 segs antes de iniciar a leitura. Aguarde...", 1);
-        sleep(10);
+        $fnPrint("- Aguardando 20 segs antes de iniciar a leitura. Aguarde...", 1);
+        sleep(20);
         $fnPrint("- Iniciando leitura agora, aguarde... ", 1);
         
         $r = $objMdEstatisticasVerificarRN->verificarLeituraHashs();        
 
         if(is_array($r)){
-            $fnPrint("- Leitura de Hashs realizada com sucesso", 1);
+            $fnPrint("- Leitura de Hashs realizada", 1);
             
-            $fnPrint(print_r($objMdEstatisticasVerificarRN->verificarLeituraHashs(), true), 1);
+            $fnPrint("- Foi calculado o hash de " . count($r) . " arquivos. ", 1);
         }else{
-            throw new InfraException("Falha");           
+            throw new InfraException("Falha ao ler o hash dos arquivos. Verifique permissoes no diretorio e também a necessidade de configurar a variavel ignorar_arquivos");           
         }
 
         $fnPrint("", 0);
