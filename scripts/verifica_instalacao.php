@@ -34,52 +34,34 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
 
         sleep(1);
         if($objMdEstatisticasVerificarRN->verificarArquivoConfiguracao()){
-            $fnPrint("- Arquivos do módulo posicionados corretamente", 1);
-        }
-die();
-        sleep(1);
-        if($objVerificadorInstalacaoRN->verificarAtivacaoModulo()){
-            $fnPrint("- Módulo corretamente ativado no arquivo de configuracao do sistema", 1);
+            $fnPrint("- Chaves obrigatorias no arquivo de configuracao estao preenchidas (url,sigla e chave) ", 1);
         }
 
         sleep(1);
-        if($objVerificadorInstalacaoRN->verificarArquivoConfiguracao()){
-            $fnPrint("- Parâmetros técnicos obrigatórios de integração atribuídos em ConfiguracaoModPEN.php", 1);
+        if($objMdEstatisticasVerificarRN->verificarConexao()){
+            $fnPrint("- Conexão com o WebService realizada com sucesso", 1);
         }
 
         sleep(1);
-        if($objVerificadorInstalacaoRN->verificarCompatibilidadeModulo()){
-            $fnPrint("- Verificada a compatibilidade do mod-sei-pen com a atual versão do SEI", 1);
-        }
+        $fnPrint("- Vamos agora iniciar a leitura dos hashs." , 1);
+        $fnPrint("  Certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos, ", 1);
+        $fnPrint("  caso junto do sei você tenha na pasta do Apache outros diretórios ou sistemas. ", 1);
+        $fnPrint("- Aguardando 10 segs antes de iniciar a leitura. Aguarde...", 1);
+        sleep(10);
+        $fnPrint("- Iniciando leitura agora, aguarde... ", 1);
+        
+        $r = $objMdEstatisticasVerificarRN->verificarLeituraHashs();        
 
-
-        sleep(1);
-        if($objVerificadorInstalacaoRN->verificarCertificadoDigital()){
-            $fnPrint("- Certificado digital localizado e corretamente configurado", 1);
-        }
-
-        sleep(1);
-        if($objVerificadorInstalacaoRN->verificarCompatibilidadeBanco()){
-            $fnPrint("- Base de dados do SEI corretamente atualizada com a versão atual do mod-sei-pen", 1);
-        }
-
-        sleep(1);
-        if($objVerificadorInstalacaoRN->verificarConexaoBarramentoPEN()){
-            $fnPrint("- Conexão com o Barramento de Serviços do PEN realizada com sucesso", 1);
-        }
-
-        sleep(1);
-        if($objVerificadorInstalacaoRN->verificarAcessoPendenciasTramitePEN()){
-            $fnPrint("- Acesso aos dados do Comitê de Protocolo vinculado ao certificado realizado com sucesso", 1);
-        }
-
-        sleep(1);
-        if($objVerificadorInstalacaoRN->verificarConfiguracaoGearman()){
-            $fnPrint("- Conexão com o servidor de processamento de tarefas Gearman realizada com sucesso", 1);
+        if(is_array($r)){
+            $fnPrint("- Leitura de Hashs realizada com sucesso", 1);
+            
+            $fnPrint(print_r($objMdEstatisticasVerificarRN->verificarLeituraHashs(), true), 1);
+        }else{
+            throw new InfraException("Falha");           
         }
 
         $fnPrint("", 0);
-        $fnPrint("** VERIFICAÇÃO DA INSTALAÇÃO DO MÓDULO MOD-SEI-PEN FINALIZADA COM SECESSO **", 0);
+        $fnPrint("** VERIFICACAO DA INSTALACAO DO MODULO DE ESTATISTICAS FINALIZADA COM SUCESSO **", 0);
 
         exit(0);
     } finally {

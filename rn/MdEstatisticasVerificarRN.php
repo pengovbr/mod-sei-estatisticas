@@ -87,8 +87,8 @@ class MdEstatisticasVerificarRN extends InfraRN
         $url = $objConfiguracaoSEI->getValor('MdEstatisticas', 'url');        
         $urlApi = $url . '/api/estatisticas';
         $urllogin = $url . '/login';
-        $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla', false, '');
-        $orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave', false, '');
+        $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla');
+        $orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave');
         $header = array('Content-Type: application/json');
         
         $json = array(
@@ -117,66 +117,32 @@ class MdEstatisticasVerificarRN extends InfraRN
         }
         
         //se chegou ate aqui deu problema
-        throw new InfraException("Falha ao autenticar http code " . $info['http_code'] . ". Caso o http code seja 200 verifique se o token Authorization está presente " . print_r($output, false));
+        $msg = "Falha ao autenticar. " . 
+               "Url: " . $urllogin . 
+               " Sigla: " . $orgaoSigla . 
+               " Chave: " . $orgaoSenha . 
+               " Valor do Http code: " . $info['http_code'] . 
+               ". Caso o http code seja diferente de 200 houve alguma falha na conexao. " .
+               "Verifique a rota e se o seu php consegue acessar o servidor configurado no campo url. " . 
+               "Caso o http code seja 403 significa que foi barrado no webservice. Verifique url, sigla e chave. " . 
+               "Caso o http code seja 200 verifique se o token Authorization está presente. " .
+               "Caso ele nao esteja presente significa que nao conseguiu fazer o login. Reveja a url, sigla e chave usadas. " . 
+               "Output do Curl: " . print_r($output, true);
+        throw new InfraException($msg);
     }
 
 
     /**
-    * Verifica a conexão com o Barramento de Serviços do PEN, utilizando o endereço e certificados informados
+    * Verifica leitura dos hashs
     *
     * @return bool
     */
-    public function verificarAcessoPendenciasTramitePEN()
+    public function verificarLeituraHashs()
     {
-        // Processa uma chamada ao Barramento de Serviços para certificar que o atual certificado está corretamente vinculado à um
-        // comitê de protocolo válido
-        $objProcessoEletronicoRN = new ProcessoEletronicoRN();
-        $objProcessoEletronicoRN->listarPendencias(false);
-        return true;
+        $coletor = new MdEstatisticasColetarRN();
+        $filesHash = $coletor->obterHashs(); 
+        
+        return $filesHash;
     }
 
-    /**
-    * Verifica se Gearman foi corretamente configurado e se o mesmo se encontra ativo
-    *
-    * @return bool
-    */
-    public function verificarConfiguracaoGearman()
-    {
-        $objConfiguracaoModPEN = ConfiguracaoModPEN::getInstance();
-        $arrObjGearman = $objConfiguracaoModPEN->getValor("PEN", "Gearman", false);
-        $strGearmanServidor = trim(@$arrObjGearman["Servidor"] ?: null);
-        $strGearmanPorta = trim(@$arrObjGearman["Porta"] ?: null);
-
-        if(empty($strGearmanServidor)) {
-            // Não processa a verificação da instalação do Gearman caso não esteja configurado
-            return false;
-        }
-
-        if(!class_exists("GearmanClient")){
-            throw new InfraException("Não foi possível localizar as bibliotecas do PHP para conexão ao GEARMAN./n" .
-                "Verifique os procedimentos de instalação do mod-sei-pen para maiores detalhes");
-        }
-
-        try{
-            $objGearmanClient = new GearmanClient();
-            $objGearmanClient->addServer($strGearmanServidor, $strGearmanPorta);
-            $objGearmanClient->ping("health");
-        } catch (\Exception $e) {
-            $strMensagemErro = "Não foi possível conectar ao servidor Gearman (%s, %s). Erro: %s";
-            $strMensagem = "Não foi possível conectar ao servidor Gearman ($this->strGearmanServidor, $this->strGearmanPorta). Erro:" . $objGearmanClient->error();
-            $strMensagem = sprintf($strMensagemErro, $this->strGearmanServidor, $this->strGearmanPorta, $objGearmanClient->error());
-            throw new InfraException($strMensagem);
-        }
-
-        return true;
-    }
-
-    private function verificarExistenciaArquivo($parStrLocalizacaoArquivo)
-    {
-        if(!file_exists($parStrLocalizacaoArquivo)){
-            $strNomeArquivo = basename($parStrLocalizacaoArquivo);
-            $strDiretorioArquivo = dirname($parStrLocalizacaoArquivo);
-            throw new InfraException("Arquivo do $strNomeArquivo não pode ser localizado em $strDiretorioArquivo");
-        }
-    }
 }
