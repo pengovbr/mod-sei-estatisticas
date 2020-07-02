@@ -64,6 +64,14 @@ Em seguida basta criar um agendamento definindo-se a periodicidade do envio. O a
 MdEstatisticasAgendamentoRN::coletarIndicadores
  ```
 
+### Script de Validação do Módulo
+
+A partir da versão 1.1.0, disponibilizamos um script para ser executado via linha de comando. Esse script irá executar algumas validações básicas no intuito de levantar possíveis problemas de instalação e configuração do módulo. O script:
+- testa o arquivo de configuração pelas chaves do módulo
+- testa se os atributos url, sigla e chave estão preenchidos
+- executa um teste de conexão usando as credenciais acima
+- executa um teste de leitura do hash usando as configurações do módulo 
+
 IMPORTANTE:
 - verificar se há rota aberta do servidor do SEI onde roda o agendamento para o servidor Webservice coletor
 - a rota pode ser facilmente verificada usando, por exemplo, o comando:
@@ -78,6 +86,3 @@ o resultado deverá ser algo como:
 ## Suporte
 Caso precise de ajuda, ou para solicitar a sua chave de conexão, favor abrir um chamado em nossa Central de Atendimento:
 http://processoeletronico.gov.br/index.php/conteudo/suporte. A categoria do chamado é PEN - MODULO ESTATISTICAS - INSTALAÇÃO.
-
-
-
