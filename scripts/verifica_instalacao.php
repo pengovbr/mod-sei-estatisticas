@@ -17,16 +17,26 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
 
     try {
         SessaoSEI::getInstance(false);
-
-        $objMdEstatisticasVerificarRN = new MdEstatisticasVerificarRN();
-
+        
         $fnPrint("INICIANDO VERIFICAÇÃO DA INSTALAÇÃO DO MÓDULO MOD-SEI-ESTATISTICAS:", 0);
+
+        try{
+            $objMdEstatisticasVerificarRN = new MdEstatisticasVerificarRN();
+        }catch(Exception $e){
+            $fnPrint("- Nao foi possível instanciar a classe, verifique se o modulo esta configurado no ConfiguracaoSEI.php. Maiores detalhes do erro abaixo", 1);
+        }
+
+        sleep(1);
+        if($objMdEstatisticasVerificarRN->verificarAtivacaoModulo()){
+            $fnPrint("- Módulo corretamente ativado no arquivo de configuracao do sistema", 1);
+        }
+
 
         sleep(1);
         if($objMdEstatisticasVerificarRN->verificarArquivoConfiguracao()){
             $fnPrint("- Arquivos do módulo posicionados corretamente", 1);
         }
-
+die();
         sleep(1);
         if($objVerificadorInstalacaoRN->verificarAtivacaoModulo()){
             $fnPrint("- Módulo corretamente ativado no arquivo de configuracao do sistema", 1);

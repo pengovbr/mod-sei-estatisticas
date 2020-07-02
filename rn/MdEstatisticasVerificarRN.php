@@ -1,7 +1,6 @@
 <?php
 
-require_once DIR_SEI_WEB . '/SEI.php';
-
+require_once dirname(__FILE__) . '/../../../SEI.php';
 
 /**
  * Classe responsável pela verificação da corretação instalação e configuração do módulo no sistema
@@ -55,25 +54,21 @@ class MdEstatisticasVerificarRN extends InfraRN
     public function verificarArquivoConfiguracao()
     {
 
-        // Verifica se chave de config presente
-        $arrPrincipal = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorar_arquivos');
-        
         // Valida se todos os parâmetros de configuração estão presentes no arquivo de configuração
-        $arrStrChavesConfiguracao = ConfiguracaoModPEN::getInstance()->getArrConfiguracoes();
-        if(!array_key_exists("PEN", $arrStrChavesConfiguracao)){
-            $strMensagem = "Grupo de parametrização 'PEN' não pode ser localizado no arquivo de configuração do módulo de integração do SEI com o Barramento PEN (mod-sei-pen)";
-            $strDetalhes = "Verifique se o arquivo de configuração localizado em $strArquivoConfiguracao encontra-se íntegro.";
+        $arrStrChavesConfiguracao = ConfiguracaoSEI::getInstance()->getArrConfiguracoes();
+        if(!array_key_exists("MdEstatisticas", $arrStrChavesConfiguracao)){
+            $strMensagem = "Grupo de parametrização MdEstatisticas nao pode ser localizado no arquivo de configuração do SEI";
+            $strDetalhes = "Verifique se o arquivo de configuração encontra-se íntegro.";
             throw new InfraException($strMensagem, null, $strDetalhes);
         }
 
-
         // Valida se todas as chaves de configuração obrigatórias foram atribuídas
-        $arrStrChavesConfiguracao = $arrStrChavesConfiguracao["PEN"];
-        $arrStrParametrosExperados = array("WebService", "LocalizacaoCertificado", "SenhaCertificado");
+        $arrStrChavesConfiguracao = $arrStrChavesConfiguracao["MdEstatisticas"];
+        $arrStrParametrosExperados = array("url", "sigla", "chave");
         foreach ($arrStrParametrosExperados as $strChaveConfiguracao) {
             if(!array_key_exists($strChaveConfiguracao, $arrStrChavesConfiguracao)){
-                $strMensagem = "Parâmetro 'PEN > $strChaveConfiguracao' não pode ser localizado no arquivo de configuração do módulo de integração do SEI com o Barramento PEN (mod-sei-pen)";
-                $strDetalhes = "Verifique se o arquivo de configuração localizado em $strArquivoConfiguracao encontra-se íntegro.";
+                $strMensagem = "Parâmetro 'MdEstatisticas > $strChaveConfiguracao' não pode ser localizado no arquivo de configuração";
+                $strDetalhes = "Verifique se o arquivo de configuração  encontra-se íntegro.";
                 throw new InfraException($strMensagem, null, $strDetalhes);
             }
         }
@@ -88,36 +83,41 @@ class MdEstatisticasVerificarRN extends InfraRN
     */
     public function verificarConexao()
     {
-        $objConfiguracaoModPEN = ConfiguracaoModPEN::getInstance();
-        $strEnderecoWebService = $objConfiguracaoModPEN->getValor("PEN", "WebService");
-        $strLocalizacaoCertificadoDigital = $objConfiguracaoModPEN->getValor("PEN", "LocalizacaoCertificado");
-        $strSenhaCertificadoDigital = $objConfiguracaoModPEN->getValor("PEN", "SenhaCertificado");
-
-        $strEnderecoWSDL = $strEnderecoWebService . '?wsdl';
-        $curl = curl_init($strEnderecoWSDL);
-
-        try{
-            curl_setopt($curl, CURLOPT_URL, $strEnderecoWSDL);
-            curl_setopt($curl, CURLOPT_HEADER, 0);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_SSLCERT, $strLocalizacaoCertificadoDigital);
-            curl_setopt($curl, CURLOPT_SSLCERTPASSWD, $strSenhaCertificadoDigital);
-
-            $strOutput = curl_exec($curl);
-
-            $objXML = simplexml_load_string($strOutput);
-            if(is_null($objXML)){
-                throw new InfraException("Falha na validação do WSDL do webservice de integração com o Barramento de Serviços do PEN localizado em $strEnderecoWSDL");
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+        $url = $objConfiguracaoSEI->getValor('MdEstatisticas', 'url');        
+        $urlApi = $url . '/api/estatisticas';
+        $urllogin = $url . '/login';
+        $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla', false, '');
+        $orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave', false, '');
+        $header = array('Content-Type: application/json');
+        
+        $json = array(
+            username => $orgaoSigla,
+            password => $orgaoSenha
+        );
+        $data = json_encode($json);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $urllogin);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        $output = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        curl_close($ch);
+        if ($info['http_code'] == 200) {
+            $output = explode("\r\n", $output);
+            foreach ($output as $value) {
+                if (strpos(strtoupper($value), 'AUTHORIZATION') !== false) {
+                    $this->header[] = $value;
+                    return true;
+                }
             }
-
-        } finally{
-            curl_close($curl);
         }
-
-        return true;
+        
+        //se chegou ate aqui deu problema
+        throw new InfraException("Falha ao autenticar http code " . $info['http_code'] . ". Caso o http code seja 200 verifique se o token Authorization está presente " . print_r($output, false));
     }
 
 
