@@ -11,7 +11,7 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
     $resultado = 0;
 
     $fnPrint = function($strMensagem, $numIdentacao=0) {
-        DebugPen::getInstance()->gravar($strMensagem, $numIdentacao, false, false);
+        DebugEstatisticas::getInstance()->gravar($strMensagem, $numIdentacao, false, false);
     };
 
 
