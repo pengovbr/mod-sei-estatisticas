@@ -61,8 +61,7 @@ class MdEstatisticasColetarRN extends InfraRN
     private static function bolArrFindItem($arrNeedle, $strHaystack){
         $r=false;
         foreach ($arrNeedle as $v) {
-            $r=strpos($strHaystack, $v);
-            if($r === 0 || $r) return $r;
+            if(strstr($strHaystack, $v)) return true;            
         }
         return $r;
     }
