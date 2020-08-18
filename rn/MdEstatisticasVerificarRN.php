@@ -104,6 +104,7 @@ class MdEstatisticasVerificarRN extends InfraRN
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HEADER, true);
         $output = curl_exec($ch);
+        $erro = curl_error($ch);
         $info = curl_getinfo($ch);
         curl_close($ch);
         if ($info['http_code'] == 200) {
@@ -127,6 +128,7 @@ class MdEstatisticasVerificarRN extends InfraRN
                "Verifique a rota e se o seu php consegue acessar o servidor configurado no campo url. " . 
                "Caso o http code seja 200 verifique se o token Authorization esta presente. " .
                "Caso ele nao esteja presente significa que nao conseguiu fazer o login. Reveja a url, sigla e chave usadas. " . 
+               "Erro Curl: " . $erro . " " .
                "Output do Curl: " . print_r($output, true);
         throw new InfraException($msg);
     }
