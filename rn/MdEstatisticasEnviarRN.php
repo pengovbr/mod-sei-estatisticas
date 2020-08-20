@@ -13,6 +13,8 @@ class MdEstatisticasEnviarRN extends InfraRN
         $this->urllogin = $url . '/login';
         $this->orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla', false, '');
         $this->orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave', false, '');
+        $this->connectProxy = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxy', false, '');
+        $this->connectProxyPort = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxyPort', false, '8080');
         $this->header = array('Content-Type: application/json');
     }
 
@@ -115,6 +117,13 @@ class MdEstatisticasEnviarRN extends InfraRN
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->header);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HEADER, true);
+        
+        if($this->connectProxy){
+            curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxy);
+            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxyPort);
+        }
+        
         $output = curl_exec($ch);
         $info = curl_getinfo($ch);
         curl_close($ch);
@@ -138,6 +147,13 @@ class MdEstatisticasEnviarRN extends InfraRN
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->header);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        
+        if($this->connectProxy){
+            curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxy);
+            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxyPort);
+        }
+        
         $output = curl_exec($ch);
         curl_close($ch);
 
@@ -152,6 +168,13 @@ class MdEstatisticasEnviarRN extends InfraRN
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->header);
         curl_setopt($ch, CURLOPT_URL, $url);
+        
+        if($this->connectProxy){
+            curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxy);
+            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxyPort);
+        }
+        
         $output = curl_exec($ch);
         curl_close($ch);
 

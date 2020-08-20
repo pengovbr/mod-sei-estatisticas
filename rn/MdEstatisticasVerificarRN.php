@@ -89,6 +89,8 @@ class MdEstatisticasVerificarRN extends InfraRN
         $urllogin = $url . '/login';
         $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla');
         $orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave');
+        $connectProxy = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxy', false, '');
+        $connectProxyPort = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxyPort', false, '8080');
         $header = array('Content-Type: application/json');
         
         $json = array(
@@ -103,6 +105,13 @@ class MdEstatisticasVerificarRN extends InfraRN
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HEADER, true);
+        
+        if($connectProxy){
+            curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $connectProxy);
+            curl_setopt($ch, CURLOPT_PROXY, $connectProxyPort);
+        }
+        
         $output = curl_exec($ch);
         $erro = curl_error($ch);
         $info = curl_getinfo($ch);
