@@ -108,8 +108,8 @@ class MdEstatisticasVerificarRN extends InfraRN
         
         if($connectProxy){
             curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
-            curl_setopt($ch, CURLOPT_PROXYPORT, $connectProxy);
-            curl_setopt($ch, CURLOPT_PROXY, $connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXY, $connectProxy);
         }
         
         $output = curl_exec($ch);

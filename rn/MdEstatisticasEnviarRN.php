@@ -120,8 +120,8 @@ class MdEstatisticasEnviarRN extends InfraRN
         
         if($this->connectProxy){
             curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
-            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxy);
-            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxy);
         }
         
         $output = curl_exec($ch);
@@ -150,8 +150,8 @@ class MdEstatisticasEnviarRN extends InfraRN
         
         if($this->connectProxy){
             curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
-            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxy);
-            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxy);
         }
         
         $output = curl_exec($ch);
@@ -171,8 +171,8 @@ class MdEstatisticasEnviarRN extends InfraRN
         
         if($this->connectProxy){
             curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
-            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxy);
-            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $this->connectProxyPort);
+            curl_setopt($ch, CURLOPT_PROXY, $this->connectProxy);
         }
         
         $output = curl_exec($ch);
