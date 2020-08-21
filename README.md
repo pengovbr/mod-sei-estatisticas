@@ -58,6 +58,8 @@ Detalhes sobre o campo **ignorar_arquivos**:
 ...
   ```
 
+PS: caso a saída para a internet do servidor use proxy, e você encontre problema de conexão [clique aqui](READMEproxy.md) 
+
 Em seguida basta criar um agendamento definindo-se a periodicidade do envio. O agendamento deverá executar o seguinte comando:
 
  ```
