@@ -574,7 +574,7 @@ class MdEstatisticasColetarRN extends InfraRN
         $lista = array();
         if ($query) {
           $query = sprintf($query, $ultimadata, $current_month);
-          echo $query;
+          //echo $query;
           $rs = BancoSEI::getInstance()->consultarSql($query);
           foreach ($rs as $r) {
               $result = array(
