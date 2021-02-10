@@ -98,6 +98,7 @@ A partir da versão 1.1.0, disponibilizamos um script para ser executado via lin
 - testa se os atributos url, sigla e chave estão preenchidos
 - executa um teste de conexão usando as credenciais acima
 - executa um teste de leitura do hash usando as configurações do módulo 
+- executa uma coleta e envio dos dados passo a passo
 
 Para executar o script basta acessar a pasta do sei e rodar o script q fica na pasta script do módulo, por exemplo:
 ```
@@ -106,21 +107,49 @@ php sei/web/modulos/mod-sei-estatisticas/scripts/verifica_instalacao.php
 ```
 o resultado deverá ser algo como:
 ```
-00001 - [02/07/2020 16:00:43]   INICIANDO VERIFICACAO DA INSTALACAO DO MODULO MOD-SEI-ESTATISTICAS:
-00002 - [02/07/2020 16:00:44]       - Modulo corretamente ativado no arquivo de configuracao do sistema
-00003 - [02/07/2020 16:00:45]       - Chaves obrigatorias no arquivo de configuracao estao preenchidas (url,sigla e chave)
-00004 - [02/07/2020 16:00:46]       - Conexao com o WebService realizada com sucesso
-00005 - [02/07/2020 16:00:47]       - Vamos agora iniciar a leitura dos hashs.
-00006 - [02/07/2020 16:00:47]         Se necessario, certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos,
-00007 - [02/07/2020 16:00:47]         caso junto do sei voce tenha na pasta do Apache outros diretorios ou sistemas.
-00008 - [02/07/2020 16:00:47]             Ressalva: prestar atencao ao usuario que esta executando esse script pois ao ler os arquivos via agendamento quem
-00009 - [02/07/2020 16:00:47]             executa sera o user do crontab e via web sera o apache
-00010 - [02/07/2020 16:00:47]       - Aguardando 20 segs antes de iniciar a leitura. Aguarde...
-00011 - [02/07/2020 16:01:07]       - Iniciando leitura agora, aguarde...
-00012 - [02/07/2020 16:01:10]       - Leitura de Hashs realizada
-00013 - [02/07/2020 16:01:10]       - Foi calculado o hash de 6167 arquivos.
-00014 - [02/07/2020 16:01:10]
-00015 - [02/07/2020 16:01:10]   ** VERIFICACAO DA INSTALACAO DO MODULO DE ESTATISTICAS FINALIZADA COM SUCESSO **
+00001 -     INICIANDO VERIFICACAO DA INSTALACAO DO MODULO MOD-SEI-ESTATISTICAS:
+00002 -         - Modulo corretamente ativado no arquivo de configuracao do sistema
+00003 -         - Chaves obrigatorias no arquivo de configuracao estao preenchidas (url,sigla e chave)
+00004 -         - Conexao com o WebService realizada com sucesso
+00005 -         - Vamos agora iniciar a leitura dos hashs.
+00006 -           Se necessario, certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos,
+00007 -           caso junto do sei voce tenha na pasta do Apache outros diretorios ou sistemas.
+00008 -               Ressalva: prestar atencao ao usuario que esta executando esse script pois ao ler os arquivos via agendamento quem
+00009 -               executa sera o user do crontab e via web sera o apache
+00010 -         - Aguardando 20 segs antes de iniciar a leitura. Aguarde...
+00011 -         - Iniciando leitura agora, aguarde...
+00012 -         - Leitura de Hashs realizada
+00013 -         - Foi calculado o hash de 6942 arquivos.
+00014 -
+00015 -     ** VERIFICACAO INICIAL DA INSTALACAO DO MODULO DE ESTATISTICAS FINALIZADA **
+00016 -
+00017 -
+00018 -
+00019 -
+00020 -     AGORA VAMOS TENTAR ENVIAR UMA LEITURA COMPLETA PARA O WEB SERVICE COLETOR:
+00021 -         Autenticar no WebService
+00022 -         Autenticado. Coletando indicadores
+00023 -         Indicadores coletados, enviando
+00024 -         Indicadores recebidos. Coletar indicadores do tipo lista
+00025 -         Obter a data do ultimo envio das quantidades de acessos
+00026 -         Ultima data das quantidades de acessos: 2021-02-10. Coletar quantidade de acessos
+00027 -         Coletado. Enviar quantidade de acessos:
+00028 -         Enviado. Coletar velocidades por cidade:
+00029 -         Coletado. Enviar:
+00030 -         Enviado. Obter a data do ultimo envio das quantidades de navegadores
+00031 -         Ultima data das quantidades de navegadores: 2016-11-30. Coletar quantidade de navegadores
+00032 -         Coletado. Enviar:
+00033 -         Enviado. Coletar a quantidade de logs de erro:
+00034 -         Coletado. Enviar:
+00035 -         Enviado. Obter a ultima data que foi enviado a quantidade de recursos
+00036 -         Ultima data das quantidades de recursos: 2016-10-31. Coletar quantidade de recursos
+00037 -         Coletado. Enviar:
+00038 -         Enviado. Coletar o hash dos arquivos do SEI:
+00039 -         Coletado. Enviar:
+00040 -         Enviado:
+00041 -         Apenas Coletar velocidades por cidade novamente
+00042 -         Coletado
+00043 -     FINALIZADO COM SUCESSO. NAO ESQUECA DE AGENDAR NO MENU INFRA -> AGENDAMENTO DO SEI E VERIFICAR SE O AGENDAMENTO ESTA RODANDO
 ```
 
 IMPORTANTE:
