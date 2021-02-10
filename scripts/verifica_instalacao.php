@@ -140,7 +140,7 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
         $velocidades = $coletor->obterVelocidadePorCidade();
         $fnPrint('Coletado ', 1);
 
-        $fnPrint('FINALIZADO', 0);
+        $fnPrint('FINALIZADO COM SUCESSO. NAO ESQUECA DE AGENDAR NO MENU INFRA -> AGENDAMENTO DO SEI E VERIFICAR SE O AGENDAMENTO ESTA RODANDO', 0);
 
         exit(0);
     } finally {
