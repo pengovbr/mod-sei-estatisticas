@@ -58,13 +58,38 @@ Detalhes sobre o campo **ignorar_arquivos**:
 ...
   ```
 
-PS: caso a saída para a internet do servidor use proxy, e você encontre problema de conexão [clique aqui](READMEproxy.md) 
+Abaixo seguem algumas campos (chaves) opcionais que possam ser necessárias ao seu ambiente:
+
+- **Proxy:**
+	caso a saída para a internet do servidor use proxy, e você encontre problema de conexão [clique aqui](READMEproxy.md) 
+
+- **Diretório de Arquivos Externos muito grande**
+	caso o seu diretório de arquivos externos seja muito grande, ou tenha permissões especiais, pode ser que o php demore muito tempo para calcular o seu tamanho ou simplesmente não consiga calcular usando suas funções nativas. Nesse caso basta ativar uma chave ao arquivo de configuração informando para o php executar um comando nativo do linux. Dessa forma ele usará o comando "du -s -b caminhododirexterno" para calcular o tamanho. Abaixo exemplo dessa chave ativada ( ver abaixo a chave filesystemdu)
+```
+...
+  'SEI' => array(
+      'URL' => getenv('SEI_HOST_URL').'/sei',
+      'Producao' => false,
+      'RepositorioArquivos' => '/var/sei/arquivos',
+      'Modulos' => array('MdEstatisticas' => 'mod-sei-estatisticas')),
+...
+  'MdEstatisticas' => array(
+      'url' => 'https://estatistica.processoeletronico.gov.br',
+      'sigla' => 'MPOG',
+      'chave' => '123456',
+      'filesystemdu' => true,
+      'ignorar_arquivos' => array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git')),
+
+...
+```
 
 Em seguida basta criar um agendamento definindo-se a periodicidade do envio. O agendamento deverá executar o seguinte comando:
 
  ```
 MdEstatisticasAgendamentoRN::coletarIndicadores
  ```
+
+
 
 ### Script de Validação do Módulo
 

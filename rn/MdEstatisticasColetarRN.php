@@ -173,10 +173,21 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterTamanhoFileSystem() {
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+        
         if ($objConfiguracaoSEI->isSetValor('SEI', 'RepositorioArquivos')) {
             $diretorio = $objConfiguracaoSEI->getValor('SEI', 'RepositorioArquivos');
-            $tamanho = $this->getDirectorySize($diretorio);
-        }
+            $usarDuLinux = $objConfiguracaoSEI->getValor('MdEstatisticas', 'filesystemdu', false, '');
+            
+            if($usarDuLinux){
+                $tamanho = shell_exec ("du -s -b " . $diretorio);
+                preg_match_all('!\d+!', $tamanho, $arrSize);
+                $tamanho = $arrSize[0];
+            }else{
+                $tamanho = $this->getDirectorySize($diretorio);
+            }
+            
+        }        
+        
         return $tamanho;
     }
 
