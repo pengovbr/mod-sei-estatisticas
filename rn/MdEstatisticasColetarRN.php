@@ -181,7 +181,8 @@ class MdEstatisticasColetarRN extends InfraRN
             if($usarDuLinux){
                 $tamanho = shell_exec ("du -s -b " . $diretorio);
                 preg_match_all('!\d+!', $tamanho, $arrSize);
-                $tamanho = $arrSize[0];
+                $tamanho = $arrSize[0][0];
+                if(!is_numeric($tamanho)) $tamanho = 0;
             }else{
                 $tamanho = $this->getDirectorySize($diretorio);
             }
@@ -538,7 +539,7 @@ class MdEstatisticasColetarRN extends InfraRN
         if ($sgbd == 'Oracle') {
             $query = "select distinct to_char(user_agent) as nome from infra_auditoria where user_agent is not null";
         } else {
-            $query = "select distinct user_agent as nome from infra_auditoria where user_agent is not null";
+            $query = "select distinct STR(user_agent) as nome from infra_auditoria where user_agent is not null";
         }
         try{
             $sistemas = BancoSEI::getInstance()->consultarSql($query);

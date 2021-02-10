@@ -54,11 +54,6 @@ class MdEstatisticasAgendamentoRN extends InfraRN
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarVelocidades($velocidades, $id);
 
-            $this->gravarLog('Enviado. Coletar os sistemas operacionais dos usuarios: ');
-            $sistemasOperacionaisUsuarios = $coletor->obterSistemasOperacionaisUsuarios();
-            $this->gravarLog('Coletado. Enviar: ');
-            $enviar->enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id);
-
             $this->gravarLog('Enviado. Obter a data do ultimo envio das quantidades de navegadores ');
             $data = $enviar->obterUltimoNavegador();
             $this->gravarLog('Ultima data das quantidades de navegadores: ' . $data . '. Coletar quantidade de navegadores');
@@ -83,7 +78,12 @@ class MdEstatisticasAgendamentoRN extends InfraRN
             $filesHash = $coletor->obterHashs();
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarHashs($filesHash, $id);
-
+            
+            $this->gravarLog('Enviado. Coletar os sistemas operacionais dos usuarios: ');
+            $sistemasOperacionaisUsuarios = $coletor->obterSistemasOperacionaisUsuarios();
+            $this->gravarLog('Coletado. Enviar: ');
+            $enviar->enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id);
+            
             $this->gravarLog('Enviado: ');
 
             $this->gravarLog('Finalizado');
