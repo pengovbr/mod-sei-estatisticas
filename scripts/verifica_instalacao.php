@@ -136,9 +136,9 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
 
         $fnPrint('Enviado: ', 1);
         
-        $fnPrint('Enviado. Coletar velocidades por cidade: ', 1);
+        $fnPrint('Apenas Coletar velocidades por cidade novamente ', 1);
         $velocidades = $coletor->obterVelocidadePorCidade();
-        
+        $fnPrint('Coletado ', 1);
 
         $fnPrint('FINALIZADO', 0);
 
