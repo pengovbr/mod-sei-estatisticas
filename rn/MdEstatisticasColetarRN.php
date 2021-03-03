@@ -177,15 +177,29 @@ class MdEstatisticasColetarRN extends InfraRN
         if ($objConfiguracaoSEI->isSetValor('SEI', 'RepositorioArquivos')) {
             $diretorio = $objConfiguracaoSEI->getValor('SEI', 'RepositorioArquivos');
             $usarDuLinux = $objConfiguracaoSEI->getValor('MdEstatisticas', 'filesystemdu', false, '');
+            $usarDfLinux = $objConfiguracaoSEI->getValor('MdEstatisticas', 'filesystemdf', false, '');
             
             if($usarDuLinux){
                 $tamanho = shell_exec ("du -s -b " . $diretorio);
                 preg_match_all('!\d+!', $tamanho, $arrSize);
                 $tamanho = $arrSize[0][0];
-                if(!is_numeric($tamanho)) $tamanho = 0;
+                
+            }elseif($usarDfLinux){
+                
+                try{
+                    $tamanho = shell_exec ("df -B1 -P " . $diretorio . " | tail -n1");
+                    $tamanho = explode(" ", $tamanho);
+                    $tamanho = $tamanho[2];
+                }catch(Exception $e){
+                    $tamanho = 0;
+                }                
+                
             }else{
+                
                 $tamanho = $this->getDirectorySize($diretorio);
+                
             }
+            if(!is_numeric($tamanho)) $tamanho = 0;
             
         }        
         

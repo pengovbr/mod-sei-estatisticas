@@ -49,8 +49,7 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
         $fnPrint("  caso junto do sei voce tenha na pasta do Apache outros diretorios ou sistemas. ", 1);
         $fnPrint("  Ressalva: prestar atencao ao usuario que esta executando esse script pois ao ler os arquivos via agendamento quem", 2);
         $fnPrint("  executa sera o user do crontab e via web sera o apache ", 2);
-        $fnPrint("- Aguardando 20 segs antes de iniciar a leitura. Aguarde...", 1);
-        sleep(20);
+        $fnPrint("- Iniciando a leitura do hash dos arquivos. Caso demore muito tempo configure a chave ignorar_arquivos de acordo com o manual...", 1);
         $fnPrint("- Iniciando leitura agora, aguarde... ", 1);
         
         $r = $objMdEstatisticasVerificarRN->verificarLeituraHashs();        
