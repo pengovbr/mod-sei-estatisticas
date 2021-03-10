@@ -1,6 +1,8 @@
 <?php
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
+ini_set('memory_limit', '-1');
+
 // Garante que codigo abaixo foi executado unicamente via linha de comando
 if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
     InfraDebug::getInstance()->setBolLigado(true);
