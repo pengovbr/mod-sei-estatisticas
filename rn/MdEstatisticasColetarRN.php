@@ -6,10 +6,18 @@ class MdEstatisticasColetarRN extends InfraRN
 
     public function __construct() {
         parent::__construct();
+        
+        //Qd SqlServer, vamos tentar setar o timeout
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+        $sgbd = $objConfiguracaoSEI->getValor('BancoSEI', 'Tipo', false, '');
+        if ($sgbd == 'SqlServer') {
+            ini_set('mssql.timeout', 60 * 10);
+        }
     }
 
     protected function inicializarObjInfraIBanco() {
         return BancoSEI::getInstance();
+        
     }
 
     public function coletarIndicadores() {
