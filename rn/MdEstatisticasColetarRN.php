@@ -59,7 +59,7 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['servidorAplicacao'] = $this->obterServidorAplicacao();
             $ind['sistemaOperacional'] = $this->obterSistemaOperacional();
             $ind['sistemaOperacionalDetalhado'] = $this->obterSistemaOperacionalDetalhado();
-            InfraDebug::getInstance()->gravar("Obtendo Tamanho FileSystem. Pode demorar varios minutos. Caso o tempo esteja muito exagerado leia o README sobre como pular esta verficacao ou usar um comando alternativo", InfraLog::$INFORMACAO);
+            InfraDebug::getInstance()->gravar("Obtendo Tamanho FileSystem. Pode demorar varios minutos. Caso o tempo esteja muito exagerado leia o README sobre como pular este indicador ou como usar um comando alternativo para a leitura", InfraLog::$INFORMACAO);
             $ind['tamanhoFilesystem'] = $this->obterTamanhoFileSystem();
             InfraDebug::getInstance()->gravar("Obtendo Tamanho Tables", InfraLog::$INFORMACAO);
             $ind['tabelasTamanhos'] = $this->obterTamanhoTabelas();

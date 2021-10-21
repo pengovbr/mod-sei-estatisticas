@@ -46,6 +46,14 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
             $fnPrint("- Conexao com o WebService realizada com sucesso", 1);
         }
 
+        $ignoreReading = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorarLeituraAnexos', false, '');
+        $tamanhofs = $objConfiguracaoSEI->getValor('MdEstatisticas', 'tamanhoFs', false, '');
+        if($ignoreReading){
+          if(!is_numeric($tamanhofs)){
+              throw new InfraException('Você setou a variavel ignorarLeituraAnexos como true, mas nao setou a variavel tamanhoFs com o tamanho em bytes');
+          }
+        }
+
         sleep(1);
         $fnPrint("- Vamos agora iniciar a leitura dos hashs." , 1);
         $fnPrint("  Se necessario, certifique-se de ler e entender na documentacao do repositorio sobre a variavel opcional ignorar_arquivos, ", 1);
