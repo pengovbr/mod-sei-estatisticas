@@ -27,33 +27,47 @@ class MdEstatisticasColetarRN extends InfraRN
             $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla', false, '');
 
             $ind = array();
-
+            InfraDebug::getInstance()->gravar("Obtendo Data de Coleta", InfraLog::$INFORMACAO);
             $ind['dataColeta'] = $this->obterDataColeta();
             $ind['orgaoSigla'] = $orgaoSigla;
+            InfraDebug::getInstance()->gravar("Obtendo Versoes", InfraLog::$INFORMACAO);
             $ind['seiVersao'] = $this->obterVersaoSEI();
             $ind['phpVersao'] = $this->obterVersaoPHP();
             $ind['memcachedVersao'] = $this->obterVersaoMemcached();
             $ind['solrVersao'] = $this->obterVersaoSolr();
+            InfraDebug::getInstance()->gravar("Obtendo Protocolo", InfraLog::$INFORMACAO);
             $ind['protocolo'] = $this->obterProtocolo();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd de Unidades", InfraLog::$INFORMACAO);
             $ind['quantidadeUnidades'] = $this->obterQuantidadeUnidades();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd de Procs", InfraLog::$INFORMACAO);
             $ind['quantidadeProcedimentos'] = $this->obterQuantidadeProcessosAdministrativos();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd de Usuarios", InfraLog::$INFORMACAO);
             $ind['quantidadeUsuarios'] = $this->obterQuantidadeUsuarios();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd de DocsInternos", InfraLog::$INFORMACAO);
             $ind['quantidadeDocumentosInternos'] = $this->obterQuantidadeDocumentosInternos();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd de DocsExternos", InfraLog::$INFORMACAO);
             $ind['quantidadeDocumentosExternos'] = $this->obterQuantidadeDocumentosExternos();
             $ind['quantidadeMemoria'] = $this->obterUsoMemoria();
             $ind['porcentagemCPU'] = $this->obterUsoCPU();
+            InfraDebug::getInstance()->gravar("Obtendo Espaco Disco", InfraLog::$INFORMACAO);
             $ind['espacoDiscoUsado'] = $this->obterEspacoDisco();
             $ind['estrategiaCessao'] = $this->obterEstrategiaCessao();
+            InfraDebug::getInstance()->gravar("Obtendo Dados DB", InfraLog::$INFORMACAO);
             $ind['tamanhoDatabase'] = $this->obterTamanhoDataBase();
             $ind['bancoSei'] = $this->obterTipoSGBD();
             $ind['bancoVersao'] = $this->obterBancoVersao();
             $ind['servidorAplicacao'] = $this->obterServidorAplicacao();
             $ind['sistemaOperacional'] = $this->obterSistemaOperacional();
             $ind['sistemaOperacionalDetalhado'] = $this->obterSistemaOperacionalDetalhado();
+            InfraDebug::getInstance()->gravar("Obtendo Tamanho FileSystem. Pode demorar varios minutos. Caso o tempo esteja muito exagerado leia o README sobre como pular esta verficacao ou usar um comando alternativo", InfraLog::$INFORMACAO);
             $ind['tamanhoFilesystem'] = $this->obterTamanhoFileSystem();
+            InfraDebug::getInstance()->gravar("Obtendo Tamanho Tables", InfraLog::$INFORMACAO);
             $ind['tabelasTamanhos'] = $this->obterTamanhoTabelas();
+            InfraDebug::getInstance()->gravar("Obtendo Modulos", InfraLog::$INFORMACAO);
             $ind['modulos'] = $this->obterPlugins();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd Docs Extensao - Pode demorar alguns minutos", InfraLog::$INFORMACAO);
             $ind['extensoes'] = $this->obterQuantidadeDocumentosExternosPorExtensao();
+            InfraDebug::getInstance()->gravar("Obtendo Tamanho Docs Externos", InfraLog::$INFORMACAO);
             $ind['anexosTamanhos'] = $this->obterTamanhoDocumentosExternos();
             $ind['isMonoOrgao'] = $this->obterSeMonoOrgao();
 
@@ -185,8 +199,13 @@ class MdEstatisticasColetarRN extends InfraRN
         if ($objConfiguracaoSEI->isSetValor('SEI', 'RepositorioArquivos')) {
             $diretorio = $objConfiguracaoSEI->getValor('SEI', 'RepositorioArquivos');
             $usarDuLinux = $objConfiguracaoSEI->getValor('MdEstatisticas', 'filesystemdu', false, '');
+            $ignoreReading = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorarLeituraAnexos', false, '');
+            $tamanhofs = $objConfiguracaoSEI->getValor('MdEstatisticas', 'tamanhoFs', false, '');
             
-            if($usarDuLinux){
+            if($ignoreReading=="true"){
+                if(!is_numeric($tamanhofs)) $tamanhofs = 0;
+                $tamanho = $tamanhofs;
+            }elseif($usarDuLinux){
                 $tamanho = shell_exec ("du -s -b " . $diretorio);
                 preg_match_all('!\d+!', $tamanho, $arrSize);
                 $tamanho = $arrSize[0][0];
@@ -413,7 +432,7 @@ class MdEstatisticasColetarRN extends InfraRN
     private function obterTamanhoDocumentosExternos() {
         $resultado = array();
         // 0MB - !MB
-        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 0 AND tamanho < 1000";
+        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 0 AND tamanho < 1048576";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $resultado[0] = array(
             'tamanho' => '0MB - 1MB',
@@ -421,7 +440,7 @@ class MdEstatisticasColetarRN extends InfraRN
         );
 
         // 1MB - 10MB
-        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 1000 AND tamanho < 10000";
+        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 1048576 AND tamanho < 10485760";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $resultado[1] = array(
             'tamanho' => '1MB - 10MB',
@@ -429,7 +448,7 @@ class MdEstatisticasColetarRN extends InfraRN
         );
 
         // 10MB - 100MB
-        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 10000 AND tamanho < 100000";
+        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 10485760 AND tamanho < 104857600";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $resultado[2] = array(
             'tamanho' => '10MB - 100MB',
@@ -437,7 +456,7 @@ class MdEstatisticasColetarRN extends InfraRN
         );
 
         // > 100MB
-        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 100000";
+        $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 104857600";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $resultado[3] = array(
             'tamanho' => 'Maior que 100MB',

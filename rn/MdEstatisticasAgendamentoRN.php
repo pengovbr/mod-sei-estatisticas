@@ -2,6 +2,7 @@
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
 ini_set('memory_limit', '-1');
+ini_set('max_execution_time', 0);
 
 class MdEstatisticasAgendamentoRN extends InfraRN
 {
@@ -67,22 +68,26 @@ class MdEstatisticasAgendamentoRN extends InfraRN
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarLogsErro($logs, $id);
 
+            /*
             $this->gravarLog('Enviado. Obter a ultima data que foi enviado a quantidade de recursos ');
             $dataultimorecurso = $enviar->obterUltimoRecurso();
             $this->gravarLog('Ultima data das quantidades de recursos: ' . $dataultimorecurso . '. Coletar quantidade de recursos');
             $recursos = $coletor->obterQuantidadeRecursos($dataultimorecurso);
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarRecursos($recursos, $id);
+            */
 
             $this->gravarLog('Enviado. Coletar o hash dos arquivos do SEI: ');
             $filesHash = $coletor->obterHashs();
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarHashs($filesHash, $id);
             
+            /*
             $this->gravarLog('Enviado. Coletar os sistemas operacionais dos usuarios: ');
             $sistemasOperacionaisUsuarios = $coletor->obterSistemasOperacionaisUsuarios();
             $this->gravarLog('Coletado. Enviar: ');
             $enviar->enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id);
+            */
             
             $this->gravarLog('Enviado: ');
 

@@ -2,6 +2,7 @@
 require_once dirname(__FILE__) . '/../../../SEI.php';
 
 ini_set('memory_limit', '-1');
+ini_set('max_execution_time', 0);
 
 // Garante que codigo abaixo foi executado unicamente via linha de comando
 if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
@@ -126,12 +127,14 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
         $fnPrint('Coletado. Enviar: ', 1);
         $enviar->enviarLogsErro($logs, $id);
 
+        /*
         $fnPrint('Enviado. Obter a ultima data que foi enviado a quantidade de recursos ', 1);
         $dataultimorecurso = $enviar->obterUltimoRecurso();
         $fnPrint('Ultima data das quantidades de recursos: ' . $dataultimorecurso . '. Coletar quantidade de recursos', 1);
         $recursos = $coletor->obterQuantidadeRecursos($dataultimorecurso);
         $fnPrint('Coletado. Enviar: ', 1);
         $enviar->enviarRecursos($recursos, $id);
+        */
 
         $fnPrint('Enviado. Coletar o hash dos arquivos do SEI: ', 1);
         $filesHash = $coletor->obterHashs();
