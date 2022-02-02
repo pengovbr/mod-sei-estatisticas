@@ -291,20 +291,28 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 
     private function obterQuantidadeDocumentosExternosPorExtensao() {
-        $query = "SELECT nome FROM anexo WHERE sin_ativo = 'S'";
+        $sgbd = $this->obterTipoSGBD();
+        $query = '';
+        if ($sgbd == 'Oracle') {
+            $query = "SELECT SUBSTR(nome,LENGTH(nome)-4+1,4) nome, count(*) quantidade FROM anexo WHERE sin_ativo = 'S' group by SUBSTR(nome,LENGTH(nome)-4+1,4)";
+        }else{
+            $query = "SELECT right(nome,4) nome, count(*) quantidade FROM anexo WHERE sin_ativo = 'S' group by right(nome, 4)";
+        }
+
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $extensoes = array();
-        foreach ($rs as $r) {
+        foreach ($rs as $r)  {
             $extensao = $this->extrairExtensao($r['nome']);
             $qtd = $extensoes[$extensao];
             if (! $qtd) {
                 $qtd = 0;
             }
-            $extensoes[$extensao] = $qtd + 1;
+            $extensoes[$extensao] = $qtd + $r['quantidade'];
         }
         // Calculando na aplicacao para funcionar independente do banco
         $lista = array();
-        foreach ($extensoes as $key => $value) {
+
+         foreach ($extensoes as $key => $value) {
             $result = array(
                 'extensao' => $key,
                 'quantidade' => $value
