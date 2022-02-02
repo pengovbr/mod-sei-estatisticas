@@ -17,7 +17,7 @@ class MdEstatisticas extends SeiIntegracao{
   }
 
   public function getVersao() {
-    return '2.0.1';
+    return '1.2.1';
   }
 
   public function getInstituicao(){
