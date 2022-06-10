@@ -6,6 +6,11 @@ Este módulo, ao ser executado, via agendamento ou manualmente:
 - os dados públicos de estatísticas aparecem em https://paineis.processoeletronico.gov.br/?view=governancagestor - há um delay na atualização do painel, que ocorre todos os dias por volta de 6h.
 - os dados de hash serão disponibilizados aos gestores do SEI através de um acesso controlado que será oportunamente divulgado.
 
+## Compatibilidade
+
+Este módulo é compatível com o SEI3.x; SEI4.x e Super1.x 
+
+
 ## Instalação
 Faça o download desse projeto no seguinte diretório do SEI:
 ```
