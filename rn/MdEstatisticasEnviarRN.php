@@ -44,8 +44,8 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function enviarAcessos($acessos, $id) { 
         $url = $this->url . '/acessos';
         $obj = array(
-            id => $id,
-            acessosUsuarios => $acessos
+            'id' => $id,
+            'acessosUsuarios' => $acessos
         );
         return $this->doPost($url, $obj, false);
     }
@@ -53,8 +53,8 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function enviarVelocidades($velocidades, $id) {
         $url = $this->url . '/velocidades';
         $obj = array(
-            id => $id,
-            velocidades => $velocidades
+            'id' => $id,
+            'velocidades' => $velocidades
         );
         return $this->doPost($url, $obj, false);
     }
@@ -62,8 +62,8 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id) {
         $url = $this->url . '/sistemasoperacionais';
         $obj = array(
-            id => $id,
-            sistemasOperacionaisUsuarios => $sistemasOperacionaisUsuarios
+            'id' => $id,
+            'sistemasOperacionaisUsuarios' => $sistemasOperacionaisUsuarios
         );
         return $this->doPost($url, $obj, false);
     }
@@ -71,8 +71,8 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function enviarNavegadores($navegadores, $id) {
         $url = $this->url . '/navegadores';
         $obj = array(
-            id => $id,
-            navegadores => $navegadores
+            'id' => $id,
+            'navegadores' => $navegadores
         );
         return $this->doPost($url, $obj, false);
     }
@@ -80,8 +80,8 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function enviarLogsErro($logs, $id) {
         $url = $this->url . '/logserro';
         $obj = array(
-            id => $id,
-            logsErro => $logs
+            'id' => $id,
+            'logsErro' => $logs
         );
         return $this->doPost($url, $obj, false);
     }
@@ -89,8 +89,8 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function enviarRecursos($recursos, $id) {
         $url = $this->url . '/recursos';
         $obj = array(
-            id => $id,
-            recursos => $recursos
+            'id' => $id,
+            'recursos' => $recursos
         );
         return $this->doPost($url, $obj, false);
     }
@@ -98,16 +98,16 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function enviarHashs($hashs, $id) {
       $url = $this->url . '/fileshashs';
       $obj = array(
-          id => $id,
-          filesHashs => $hashs
+          'id' => $id,
+          'filesHashs' => $hashs
       );
       return $this->doPost($url, $obj, false);
   }
 
     public function autenticar() {
         $json = array(
-            username => $this->orgaoSigla,
-            password => $this->orgaoSenha
+            'username' => $this->orgaoSigla,
+            'password' => $this->orgaoSenha
         );
         $data = json_encode($json);
         $ch = curl_init();

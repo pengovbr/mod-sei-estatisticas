@@ -94,8 +94,8 @@ class MdEstatisticasVerificarRN extends InfraRN
         $header = array('Content-Type: application/json');
         
         $json = array(
-            username => $orgaoSigla,
-            password => $orgaoSenha
+            'username' => $orgaoSigla,
+            'password' => $orgaoSenha
         );
         $data = json_encode($json);
         $ch = curl_init();
