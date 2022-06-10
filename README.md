@@ -33,7 +33,7 @@ Ainda editando o arquivo */sei/config/ConfiguracaoSEI.php*, adicione uma nova ch
       'sigla' => 'MPOG', 
       'chave' => '123456', 
       'filesystemdu' => false,  //chave opcional ver detalhes abaixo
-      'ignorarLeituraAnexos' => false //chave opcional ver detalhes abaixo
+      'ignorarLeituraAnexos' => false, //chave opcional ver detalhes abaixo
       'tamanhoFs' => '', //chave opcional ver detalhes abaixo
       'proxy' => '',  //chave opcional ver detalhes abaixo
       'proxyPort'=> '',  //chave opcional ver detalhes abaixo
