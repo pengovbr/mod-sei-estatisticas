@@ -21,7 +21,7 @@ class MdEstatisticas extends SeiIntegracao{
   }
 
   public function getInstituicao(){
-    return 'MPDG - Ministério do Planejamento, Desenvolvimento e Gestão';
+    return 'Ministério da Gestão e da Inovação em Serviços Públicos - MGI';
   }
 
   public function inicializar($strVersaoSEI){
