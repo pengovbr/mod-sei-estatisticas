@@ -6,7 +6,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     public function __construct() {
         parent::__construct();
-        
+
         //Qd SqlServer, vamos tentar setar o timeout
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
         $sgbd = $objConfiguracaoSEI->getValor('BancoSEI', 'Tipo', false, '');
@@ -17,7 +17,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     protected function inicializarObjInfraIBanco() {
         return BancoSEI::getInstance();
-        
+
     }
 
     public function coletarIndicadores() {
@@ -25,6 +25,9 @@ class MdEstatisticasColetarRN extends InfraRN
 
             $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
             $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla', false, '');
+
+            $objUsuarioRN = new UsuarioRN();
+            $objUsuarioRN->setStrStaTipo(array(UsuarioRN::$TU_EXTERNO, UsuarioRN::$TU_SIP));
 
             $ind = array();
             InfraDebug::getInstance()->gravar("Obtendo Data de Coleta", InfraLog::$INFORMACAO);
@@ -43,6 +46,10 @@ class MdEstatisticasColetarRN extends InfraRN
             $ind['quantidadeProcedimentos'] = $this->obterQuantidadeProcessosAdministrativos();
             InfraDebug::getInstance()->gravar("Obtendo Qtd de Usuarios", InfraLog::$INFORMACAO);
             $ind['quantidadeUsuarios'] = $this->obterQuantidadeUsuarios();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd de Usuarios Interno", InfraLog::$INFORMACAO);
+            $ind['quantidadeUsuariosInterno'] = $this->obterQuantidadeUsuariosInterno();
+            InfraDebug::getInstance()->gravar("Obtendo Qtd de Usuarios Externo", InfraLog::$INFORMACAO);
+            $ind['quantidadeUsuariosExterno'] = $this->obterQuantidadeUsuariosExterno();
             InfraDebug::getInstance()->gravar("Obtendo Qtd de DocsInternos", InfraLog::$INFORMACAO);
             $ind['quantidadeDocumentosInternos'] = $this->obterQuantidadeDocumentosInternos();
             InfraDebug::getInstance()->gravar("Obtendo Qtd de DocsExternos", InfraLog::$INFORMACAO);
@@ -83,7 +90,7 @@ class MdEstatisticasColetarRN extends InfraRN
     private static function bolArrFindItem($arrNeedle, $strHaystack){
         $r=false;
         foreach ($arrNeedle as $v) {
-            if(strstr($strHaystack, $v)) return true;            
+            if(strstr($strHaystack, $v)) return true;
         }
         return $r;
     }
@@ -95,9 +102,9 @@ class MdEstatisticasColetarRN extends InfraRN
         $files = scandir($dir);
 
         foreach($files as $key => $value){
-            
+
             if($value == "." || $value == "..") continue;
-            
+
             $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
             if(!MdEstatisticasColetarRN::bolArrFindItem($ignorar, $path)){
                 if(!is_dir($path)) {
@@ -113,8 +120,8 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 
     public function obterHashs(){
-        
-        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();        
+
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
         try{
             //buscar arquivos a ignorar na elaboracao do hash
             $ignore_files = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorar_arquivos');
@@ -122,9 +129,9 @@ class MdEstatisticasColetarRN extends InfraRN
         }catch(Exception $e){
             $ignore_files = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git');
         }
-        
+
         $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../', $ignore_files);
-        
+
         if ($objConfiguracaoSEI->isSetValor('SEI','Modulos')){
 
             foreach($objConfiguracaoSEI->getValor('SEI','Modulos') as $strModulo => $strPathModulo){
@@ -152,8 +159,8 @@ class MdEstatisticasColetarRN extends InfraRN
             if($pos !== false){
                 $novo_valor = substr($novo_valor, $pos);
             }
-            
-            $hash = ''; 
+
+            $hash = '';
             if($value) $hash = hash_file('sha256', $value);
             $b[] = array('file' => $novo_valor,
                          'hash' => $hash,
@@ -195,13 +202,13 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterTamanhoFileSystem() {
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-        
+
         if ($objConfiguracaoSEI->isSetValor('SEI', 'RepositorioArquivos')) {
             $diretorio = $objConfiguracaoSEI->getValor('SEI', 'RepositorioArquivos');
             $usarDuLinux = $objConfiguracaoSEI->getValor('MdEstatisticas', 'filesystemdu', false, '');
             $ignoreReading = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorarLeituraAnexos', false, '');
             $tamanhofs = $objConfiguracaoSEI->getValor('MdEstatisticas', 'tamanhoFs', false, '');
-            
+
             if($ignoreReading=="true"){
                 if(!is_numeric($tamanhofs)) $tamanhofs = 0;
                 $tamanho = $tamanhofs;
@@ -213,9 +220,9 @@ class MdEstatisticasColetarRN extends InfraRN
             }else{
                 $tamanho = $this->getDirectorySize($diretorio);
             }
-            
-        }        
-        
+
+        }
+
         return $tamanho;
     }
 
@@ -246,10 +253,24 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 
     private function obterQuantidadeUsuarios() {
-        $query = "SELECT COUNT(*) as quantidade FROM usuario WHERE sin_ativo = 'S'";
+        $query = "SELECT COUNT(*) as quantidade FROM usuario WHERE sin_ativo = 'S' AND sta_tipo = '".UsuarioRN::$TU_SIP."' OR sta_tipo = '".UsuarioRN::$TU_EXTERNO."'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
         $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
         return $quantidade;
+    }
+
+    private function obterQuantidadeUsuariosInterno() {
+      $query = "SELECT COUNT(*) as quantidade FROM usuario WHERE sin_ativo = 'S' AND sta_tipo = '".UsuarioRN::$TU_SIP."'";
+      $rs = BancoSEI::getInstance()->consultarSql($query);
+      $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+      return $quantidade;
+    }
+
+    private function obterQuantidadeUsuariosExterno() {
+      $query = "SELECT COUNT(*) as quantidade FROM usuario WHERE sin_ativo = 'S' AND sta_tipo = '".UsuarioRN::$TU_EXTERNO."'";
+      $rs = BancoSEI::getInstance()->consultarSql($query);
+      $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
+      return $quantidade;
     }
 
     private function obterProtocolo() {
@@ -371,27 +392,27 @@ class MdEstatisticasColetarRN extends InfraRN
             $query = "" . " SELECT t.name as tabela,  SUM(ISNULL(Total_Pages,0) * 8 * 1024) As tamanho " . " FROM sys.partitions As P " . "   INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id " . "   INNER JOIN sys.tables t on t.object_id = p.object_id " . " GROUP BY t.name ORDER BY t.name";
         } elseif ($sgbd == 'Oracle') {
             $query =    "select tabela, sum(tamanho_tabela) + sum(tamanho_indice) as tamanho
-                        from 
+                        from
                         (
-                            SELECT  
-                            segment_name as tabela,  
+                            SELECT
+                            segment_name as tabela,
                             SUM(nvl(bytes,0)) as tamanho_tabela,
                             0 as tamanho_indice
                             from
-                            USER_SEGMENTS 
-                            WHERE SEGMENT_TYPE='TABLE'  
+                            USER_SEGMENTS
+                            WHERE SEGMENT_TYPE='TABLE'
                             GROUP BY segment_name
 
                             union all
 
-                            select 
-                            ui.table_name as tabela, 
+                            select
+                            ui.table_name as tabela,
                             0 as tamanho_tabela,
                             sum(nvl(bytes,0)) as tamanho_indice
                             from
-                            user_segments us inner join 
+                            user_segments us inner join
                             user_indexes ui on ui.index_name = us.segment_name
-                            group by 
+                            group by
                             ui.table_name
 
                         ) tudo
