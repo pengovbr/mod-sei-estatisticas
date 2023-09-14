@@ -15,10 +15,10 @@ Este módulo é compatível com o SEI3.x; SEI4.x e Super1.x
 Faça o download desse projeto no seguinte diretório do SEI:
 ```
 cd sei/web/modulos
-git clone https://github.com/spbgovbr/mod-sei-estatisticas.git
+git clone https://github.com/pengovbr/mod-sei-estatisticas.git
 ```
 
-Ou, se preferir baixe o zip da release desejada: https://github.com/spbgovbr/mod-sei-estatisticas/releases
+Ou, se preferir baixe o zip da release desejada: https://github.com/pengovbr/mod-sei-estatisticas/releases
 
 Ao final, os códigos do módulo deverão estar localizados na pasta **/sei/web/modulos/mod-sei-estatisticas**.
 
@@ -151,6 +151,7 @@ O resultado deverá ser algo como:
 {"sistema":"WebService Estatísticas do SEI","versao":"1.0.0"}
  ```
 ## Suporte
-Para solicitar a sua chave de conexão ou caso precise de ajuda, favor abrir Chamado em nossa Central de Atendimento:
-https://www.gov.br/economia/pt-br/assuntos/processo-eletronico-nacional/suporte-do-processo-eletronico-nacional.
+Para solicitar a sua chave de conexão ou caso precise de ajuda, favor [abrir chamado em nossa Central de Atendimento](https://www.gov.br/economia/pt-br/assuntos/processo-eletronico-nacional/suporte-do-processo-eletronico-nacional).
+Por favor enviar sua chave pública para que possamos enviar de forma segura as credenciais. [Como criar seu par de chaves pública/privada](https://manual-roteiro-integracao-login-unico.servicos.gov.br/pt/stable/chavepgp.html).
+
 - A categoria do chamado é **PEN - MODULO ESTATISTICAS - INSTALAÇÃO**.
