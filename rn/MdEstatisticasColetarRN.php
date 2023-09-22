@@ -520,7 +520,7 @@ class MdEstatisticasColetarRN extends InfraRN
     private function obterBancoVersao() {
         $sgbd = $this->obterTipoSGBD();
         $query = '';
-        if ($sgbd == 'MySql') {
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
             $query = "SELECT version() as versao";
         } elseif ($sgbd == 'SqlServer') {
             $query = "SELECT SERVERPROPERTY('productversion') as versao";
