@@ -276,6 +276,11 @@ class MdEstatisticasColetarRN extends InfraRN
         return $objConfiguracaoSEI->getValor('BancoSEI', 'Tipo', false, '');
     }
 
+    private function obterNomeBancoSEI() {
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+        return $objConfiguracaoSEI->getValor('BancoSEI', 'Banco', false, '');
+    }
+
     private function obterQuantidadeDocumentosInternos() {
         $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'I'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
