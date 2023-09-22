@@ -351,6 +351,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterTamanhoDatabase() {
         $sgbd = $this->obterTipoSGBD();
+        $bancosei = $this->obterNomeBancoSEI();
         $query = '';
         if ($sgbd == 'MySql') {
             $query = "SELECT table_schema, SUM(data_length + index_length) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei' GROUP BY table_schema";
@@ -358,6 +359,8 @@ class MdEstatisticasColetarRN extends InfraRN
             $query = "SELECT SUM(Total_Pages * 8 * 1000) As tamanho FROM sys.partitions As P INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id  INNER JOIN sys.tables t on t.object_id = p.object_id";
         } elseif ($sgbd == 'Oracle') {
             $query = "";
+        } elseif ($sgbd == 'PostgreSql') {
+            $query = "SELECT pg_database_size('" . $bancosei . "') AS tamanho";
         }
         $rs = array();
         if ($query) {
