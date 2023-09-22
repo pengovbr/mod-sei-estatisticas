@@ -372,6 +372,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterTamanhoTabelas() {
         $sgbd = $this->obterTipoSGBD();
+        $bancosei = $this->obterNomeBancoSEI();
         $query = '';
         if ($sgbd == 'MySql') {
             $query = "SELECT table_name as tabela, coalesce(data_length,0) + coalesce(index_length,0) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
@@ -404,6 +405,14 @@ class MdEstatisticasColetarRN extends InfraRN
 
                         ) tudo
                         group by tabela";
+        } elseif ($sgbd == 'PostgreSql') {
+            $query = "SELECT 
+                        table_name AS tabela,
+                        pg_total_relation_size(table_schema || '.' || table_name) AS tamanho
+                    FROM information_schema.tables
+                    WHERE
+                        table_schema NOT IN ('pg_catalog', 'information_schema')
+                        AND table_catalog = '" . $bancosei . "'";
         }
         $tabelas = array();
         if ($query) {
