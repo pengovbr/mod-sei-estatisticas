@@ -590,6 +590,8 @@ class MdEstatisticasColetarRN extends InfraRN
         $sgbd = $this->obterTipoSGBD();
         if ($sgbd == 'Oracle') {
             $query = "select distinct to_char(user_agent) as nome from infra_auditoria where user_agent is not null";
+        } elseif ($sgbd == 'PostgreSql') {
+            $query = "select distinct user_agent::varchar as nome from infra_auditoria where user_agent is not null";
         } else {
             $query = "select distinct STR(user_agent) as nome from infra_auditoria where user_agent is not null";
         }
