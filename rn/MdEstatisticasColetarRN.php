@@ -570,7 +570,7 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         $sgbd = $this->obterTipoSGBD();
         $query = '';
-        if ($sgbd == 'MySql') {
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
             $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador where date(dth_acesso) > '%s' group by date(dth_acesso)";
         } elseif ($sgbd == 'SqlServer') {
             $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador where dth_acesso >= '%s' group by CONVERT(date, dth_acesso)";
