@@ -678,8 +678,8 @@ class MdEstatisticasColetarRN extends InfraRN
 
     public function obterQuantidadeLogErro() {
         $sgbd = $this->obterTipoSGBD();
-        if ($sgbd == 'MySql') {
-            $query = "select year(dth_log) ano, month(dth_log) mes, week(dth_log) + 1 semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by 1, 2, 3";
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
+            $query = "SELECT EXTRACT(year from dth_log) as ano, EXTRACT(month from dth_log) as mes, EXTRACT(week from dth_log) as semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by 1, 2, 3";
         } elseif ($sgbd == 'SqlServer') {
             $query = "select year(dth_log) ano, month(dth_log) mes, datepart(week, dth_log) semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by year(dth_log), month(dth_log), datepart(week, dth_log)";
         } elseif ($sgbd == 'Oracle'){
