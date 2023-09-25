@@ -630,8 +630,8 @@ class MdEstatisticasColetarRN extends InfraRN
         $current_month = date("Y-m-01");
         $sgbd = $this->obterTipoSGBD();
         $query = '';
-        if ($sgbd == 'MySql') {
-            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3, 4 order by 1,2,3,4";
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
+            $query = "SELECT EXTRACT(year from dth_acesso) as ano, EXTRACT(month from dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3, 4 order by 1,2,3,4";
         } elseif ($sgbd == 'SqlServer') {
             $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where dth_acesso > '%s' and dth_acesso < '%s' group by year(dth_acesso), month(dth_acesso), identificacao, versao order by 1,2,3,4";
         } elseif ($sgbd == 'Oracle'){
