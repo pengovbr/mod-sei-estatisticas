@@ -3,7 +3,7 @@
 Este módulo, ao ser executado, via agendamento ou manualmente:
 - coleta informações estatísticas diversas como: quantidade de documentos e processos, quantidade de unidades, quantidade de usuários, percentual de tipos de documentos, etc.
 - coleta o hash dos arquivos fontes do SEI e módulos instalados - o intuito aqui é segurança. Para que o órgão tenha ciência dos arquivos que possam ter sido alterados ou adicionados sem a sua autorização. Importante! Esses dados são tratados como privados.
-- os dados públicos de estatísticas aparecem em https://paineis.processoeletronico.gov.br/?view=governancagestor - há um delay na atualização do painel, que ocorre todos os dias por volta de 6h.
+- os dados públicos de estatísticas aparecem no [painel de estatísticas do gestor](https://paineis.processoeletronico.gov.br/painel.php?type=1&panel=db4326ef-2a08-4c09-aebb-e723bc7e0e0c&sheet=eefee2bf-b092-4d66-a7ab-8e738e06c9ac) - há um delay na atualização do painel, que ocorre todos os dias por volta de 6h.
 - os dados de hash serão disponibilizados aos gestores do SEI através de um acesso controlado que será oportunamente divulgado.
 
 ## Compatibilidade
@@ -151,7 +151,8 @@ O resultado deverá ser algo como:
 {"sistema":"WebService Estatísticas do SEI","versao":"1.0.0"}
  ```
 ## Suporte
-Para solicitar a sua chave de conexão ou caso precise de ajuda, favor [abrir chamado em nossa Central de Atendimento](https://www.gov.br/economia/pt-br/assuntos/processo-eletronico-nacional/suporte-do-processo-eletronico-nacional).
-Por favor enviar sua chave pública para que possamos enviar de forma segura as credenciais. [Como criar seu par de chaves pública/privada](https://manual-roteiro-integracao-login-unico.servicos.gov.br/pt/stable/chavepgp.html).
+1. Por favor enviar sua chave pública para que possamos enviar de forma segura as credenciais. [Como criar seu par de chaves pública/privada](https://manual-roteiro-integracao-login-unico.servicos.gov.br/pt/stable/chavepgp.html).
+2.  Para solicitar a sua chave de conexão ou caso precise de ajuda, favor [abrir chamado em nossa Central de Atendimento](https://portaldeservicos.gestao.gov.br/pt#/).
 
-- A categoria do chamado é **PEN - MODULO ESTATISTICAS - INSTALAÇÃO**.
+> [!IMPORTANT]
+> A categoria do chamado é **PEN - MODULO ESTATISTICAS - INSTALAÇÃO**.
