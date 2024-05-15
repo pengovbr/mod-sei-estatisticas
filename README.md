@@ -8,7 +8,7 @@ Este módulo, ao ser executado, via agendamento ou manualmente:
 
 ## Compatibilidade
 
-Este módulo é compatível com o SEI3.x; SEI4.x e Super1.x 
+Este módulo é compatível com o SEI4.0.x, SEI4.1.x, SEI5.0.x e Super1.x 
 
 
 ## Instalação
