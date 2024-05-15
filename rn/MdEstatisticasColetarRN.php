@@ -523,28 +523,30 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 
     public function obterVelocidadePorCidade() {
-        $query = "
-      select d.nome as cidade, e.nome as uf, avg(velocidade) as velocidade
-      from velocidade_transferencia a
-        join unidade b on b.id_unidade = a.id_unidade
-        join contato c on b.id_contato = c.id_contato
-        join cidade d on c.id_cidade = d.id_cidade
-        join uf e on d.id_uf = e.id_uf
-      group by
-        d.nome, e.nome
-    ";
-        $rs = BancoSEI::getInstance()->consultarSql($query);
-        $lista = array();
-        foreach ($rs as $r) {
-            $result = array(
-                'cidade' => utf8_encode($r['cidade']),
-                'uf' => utf8_encode($r['uf']),
-                'velocidade' => $r['velocidade']
-            );
+        if (InfraUtil::compararVersoes(SEI_VERSAO, "<", "4.1.0")) {
+                $query = "
+            select d.nome as cidade, e.nome as uf, avg(velocidade) as velocidade
+            from velocidade_transferencia a
+                join unidade b on b.id_unidade = a.id_unidade
+                join contato c on b.id_contato = c.id_contato
+                join cidade d on c.id_cidade = d.id_cidade
+                join uf e on d.id_uf = e.id_uf
+            group by
+                d.nome, e.nome
+            ";
+                $rs = BancoSEI::getInstance()->consultarSql($query);
+                $lista = array();
+                foreach ($rs as $r) {
+                    $result = array(
+                        'cidade' => utf8_encode($r['cidade']),
+                        'uf' => utf8_encode($r['uf']),
+                        'velocidade' => $r['velocidade']
+                    );
 
-            array_push($lista, $result);
+                    array_push($lista, $result);
+                }
+                return $lista;
         }
-        return $lista;
     }
 
     public function obterAcessosUsuarios($ultimadata = null) {
