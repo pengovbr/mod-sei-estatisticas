@@ -155,4 +155,4 @@ O resultado deverá ser algo como:
 2.  Para solicitar a sua chave de conexão ou caso precise de ajuda, favor [abrir chamado em nossa Central de Atendimento](https://portaldeservicos.gestao.gov.br/pt#/).
 
 > [!IMPORTANT]
-> A categoria do chamado é **PEN - MODULO ESTATISTICAS - INSTALAÇÃO**.
+> A categoria do chamado é **Processo Eletrônico Nacional -> Módulo de Estatística -> Solicitação**.
