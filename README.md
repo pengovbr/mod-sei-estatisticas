@@ -3,7 +3,7 @@
 Este módulo, ao ser executado, via agendamento ou manualmente:
 - coleta informações estatísticas diversas como: quantidade de documentos e processos, quantidade de unidades, quantidade de usuários, percentual de tipos de documentos, etc.
 - coleta o hash dos arquivos fontes do SEI e módulos instalados - o intuito aqui é segurança. Para que o órgão tenha ciência dos arquivos que possam ter sido alterados ou adicionados sem a sua autorização. Importante! Esses dados são tratados como privados.
-- os dados públicos de estatísticas aparecem no [painel de estatísticas do gestor](https://paineis.processoeletronico.gov.br/painel.php?type=1&panel=db4326ef-2a08-4c09-aebb-e723bc7e0e0c&sheet=eefee2bf-b092-4d66-a7ab-8e738e06c9ac) - há um delay na atualização do painel, que ocorre todos os dias por volta de 6h.
+- os dados públicos de estatísticas aparecem no [painel de estatísticas do gestor](https://paineis.processoeletronico.gov.br/?view=governanca) - há um delay na atualização do painel, que ocorre todos os dias por volta de 6h.
 - os dados de hash serão disponibilizados aos gestores do SEI através de um acesso controlado que será oportunamente divulgado.
 
 ## Compatibilidade
