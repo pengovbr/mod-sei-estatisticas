@@ -8,6 +8,11 @@
 
 
 class MdEstatisticas extends SeiIntegracao{
+  const VERSAO_MODULO = "2.0.1";
+
+  const COMPATIBILIDADE_MODULO_SEI = [
+    '4.0.12','4.0.12.15','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','5.0.0'
+  ];
 
   public function __construct(){
   }
@@ -17,7 +22,7 @@ class MdEstatisticas extends SeiIntegracao{
   }
 
   public function getVersao() {
-    return '2.0.1';
+    return $this::VERSAO_MODULO;
   }
 
   public function getInstituicao(){
