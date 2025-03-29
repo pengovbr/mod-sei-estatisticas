@@ -276,6 +276,11 @@ class MdEstatisticasColetarRN extends InfraRN
         return $objConfiguracaoSEI->getValor('BancoSEI', 'Tipo', false, '');
     }
 
+    private function obterNomeBancoSEI() {
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+        return $objConfiguracaoSEI->getValor('BancoSEI', 'Banco', false, '');
+    }
+
     private function obterQuantidadeDocumentosInternos() {
         $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'I'";
         $rs = BancoSEI::getInstance()->consultarSql($query);
@@ -346,6 +351,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterTamanhoDatabase() {
         $sgbd = $this->obterTipoSGBD();
+        $bancosei = $this->obterNomeBancoSEI();
         $query = '';
         if ($sgbd == 'MySql') {
             $query = "SELECT table_schema, SUM(data_length + index_length) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei' GROUP BY table_schema";
@@ -353,6 +359,8 @@ class MdEstatisticasColetarRN extends InfraRN
             $query = "SELECT SUM(Total_Pages * 8 * 1000) As tamanho FROM sys.partitions As P INNER JOIN sys.allocation_units As A ON P.hobt_id = A.container_id  INNER JOIN sys.tables t on t.object_id = p.object_id";
         } elseif ($sgbd == 'Oracle') {
             $query = "";
+        } elseif ($sgbd == 'PostgreSql') {
+            $query = "SELECT pg_database_size('" . $bancosei . "') AS tamanho";
         }
         $rs = array();
         if ($query) {
@@ -364,6 +372,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterTamanhoTabelas() {
         $sgbd = $this->obterTipoSGBD();
+        $bancosei = $this->obterNomeBancoSEI();
         $query = '';
         if ($sgbd == 'MySql') {
             $query = "SELECT table_name as tabela, coalesce(data_length,0) + coalesce(index_length,0) as tamanho FROM information_schema.TABLES WHERE table_schema = 'sei'";
@@ -396,6 +405,14 @@ class MdEstatisticasColetarRN extends InfraRN
 
                         ) tudo
                         group by tabela";
+        } elseif ($sgbd == 'PostgreSql') {
+            $query = "SELECT 
+                        table_name AS tabela,
+                        pg_total_relation_size(table_schema || '.' || table_name) AS tamanho
+                    FROM information_schema.tables
+                    WHERE
+                        table_schema NOT IN ('pg_catalog', 'information_schema')
+                        AND table_catalog = '" . $bancosei . "'";
         }
         $tabelas = array();
         if ($query) {
@@ -503,7 +520,7 @@ class MdEstatisticasColetarRN extends InfraRN
     private function obterBancoVersao() {
         $sgbd = $this->obterTipoSGBD();
         $query = '';
-        if ($sgbd == 'MySql') {
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
             $query = "SELECT version() as versao";
         } elseif ($sgbd == 'SqlServer') {
             $query = "SELECT SERVERPROPERTY('productversion') as versao";
@@ -555,7 +572,7 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         $sgbd = $this->obterTipoSGBD();
         $query = '';
-        if ($sgbd == 'MySql') {
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
             $query = "select count(*) as quantidade, date(dth_acesso) as data from infra_navegador where date(dth_acesso) > '%s' group by date(dth_acesso)";
         } elseif ($sgbd == 'SqlServer') {
             $query = "select count(*) as quantidade, CONVERT(date, dth_acesso) as data from infra_navegador where dth_acesso >= '%s' group by CONVERT(date, dth_acesso)";
@@ -575,6 +592,8 @@ class MdEstatisticasColetarRN extends InfraRN
         $sgbd = $this->obterTipoSGBD();
         if ($sgbd == 'Oracle') {
             $query = "select distinct to_char(user_agent) as nome from infra_auditoria where user_agent is not null";
+        } elseif ($sgbd == 'PostgreSql') {
+            $query = "select distinct user_agent::varchar as nome from infra_auditoria where user_agent is not null";
         } else {
             $query = "select distinct STR(user_agent) as nome from infra_auditoria where user_agent is not null";
         }
@@ -613,8 +632,8 @@ class MdEstatisticasColetarRN extends InfraRN
         $current_month = date("Y-m-01");
         $sgbd = $this->obterTipoSGBD();
         $query = '';
-        if ($sgbd == 'MySql') {
-            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3, 4 order by 1,2,3,4";
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
+            $query = "SELECT EXTRACT(year from dth_acesso) as ano, EXTRACT(month from dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3, 4 order by 1,2,3,4";
         } elseif ($sgbd == 'SqlServer') {
             $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador where dth_acesso > '%s' and dth_acesso < '%s' group by year(dth_acesso), month(dth_acesso), identificacao, versao order by 1,2,3,4";
         } elseif ($sgbd == 'Oracle'){
@@ -646,8 +665,8 @@ class MdEstatisticasColetarRN extends InfraRN
         }
         $current_month = date("Y-m-01");
         $sgbd = $this->obterTipoSGBD();
-        if ($sgbd == 'MySql') {
-            $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM infra_auditoria where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3 order by 1, 2, 3";
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
+            $query = "SELECT EXTRACT(year from dth_acesso) as ano, EXTRACT(month from dth_acesso) as mes, recurso, count(*) as quantidade FROM infra_auditoria where date(dth_acesso) > '%s' and date(dth_acesso) < '%s' group by 1, 2, 3 order by 1, 2, 3";
         } elseif ($sgbd == 'SqlServer') {
             $query = "SELECT year(dth_acesso) as ano, month(dth_acesso) as mes, recurso, count(*) as quantidade FROM infra_auditoria where dth_acesso > '%s' and dth_acesso < '%s' group by year(dth_acesso), month(dth_acesso), recurso order by 1, 2, 3";
         } elseif ($sgbd == 'Oracle'){
@@ -661,8 +680,8 @@ class MdEstatisticasColetarRN extends InfraRN
 
     public function obterQuantidadeLogErro() {
         $sgbd = $this->obterTipoSGBD();
-        if ($sgbd == 'MySql') {
-            $query = "select year(dth_log) ano, month(dth_log) mes, week(dth_log) + 1 semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by 1, 2, 3";
+        if (($sgbd == 'MySql') || ($sgbd == 'PostgreSql')) {
+            $query = "SELECT EXTRACT(year from dth_log) as ano, EXTRACT(month from dth_log) as mes, EXTRACT(week from dth_log) as semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by 1, 2, 3";
         } elseif ($sgbd == 'SqlServer') {
             $query = "select year(dth_log) ano, month(dth_log) mes, datepart(week, dth_log) semana, count(*) as quantidade from infra_log where sta_tipo = 'E' group by year(dth_log), month(dth_log), datepart(week, dth_log)";
         } elseif ($sgbd == 'Oracle'){
