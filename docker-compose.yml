@@ -1,62 +1,78 @@
-version: '2'
 services:
   jod:
-    image: guilhermeadc/sei3_jod-2.2.2
-    container_name: jod
-    ports:
-      - "8080:8080"
+    image: processoeletronico/jod:${ENVIRONMENT_VERSION}
 
   smtp:
-      image: guilhermeadc/sei3_mailcatcher
-      container_name: smtp
-      ports:
-        - "1080:1080"
+    image: processoeletronico/mailcatcher:${ENVIRONMENT_VERSION}
+    ports:
+      - "1080:1080"
 
   memcached:
-    image: guilhermeadc/sei3_memcached
-    container_name: memcached
+    image: processoeletronico/memcached:${ENVIRONMENT_VERSION}
     ports:
       - "11211:11211"
 
-  mysql:
-    image: guilhermeadc/sei3_mysql-5.6
-    container_name: mysql
+  database:
+    image: ${DATABASE_IMAGE}:${ENVIRONMENT_VERSION}
+    environment:
+      MYSQL_ROOT_PASSWORD: P@ssword
+    volumes:
+      - ${DATABASE_TYPE}:${DATABASE_DATA_DIR}
     ports:
-      - "3306:3306"
-
-  oracle:
-    image: guilhermeadc/sei3_oracle-11g
-    container_name: oracle
-    ports:
-      - "1521:1521"
-
-  sqlserver:
-    image: guilhermeadc/sei3_sqlserver-2017
-    container_name: sqlserver
-    ports:
-      - "1433:1433"
+      - ${DATABASE_PORT}:${DATABASE_PORT}
 
   solr:
-    image: guilhermeadc/sei3_solr-6.1
-    container_name: solr
+    image: processoeletronico/solr9.6.1:${ENVIRONMENT_VERSION}
     ports:
       - "8983:8983"
 
-  http:
-    image: guilhermeadc/sei3_httpd-2.4
-    container_name: httpd
-    dns: "8.8.8.8"
+  httpd:
+    image: ${HTTPD_IMAGE}:${ENVIRONMENT_VERSION}
+    restart: always
     ports:
-      - "80:80"
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - database
     volumes:
-      - ../../../..:/opt
+      - .:/project
+      - ${SEI_PATH}/sei:/opt/sei
+      - ${SEI_PATH}/sip:/opt/sip
+      - ${SEI_PATH}/infra:/opt/infra
+      - ./src:/opt/sei/web/modulos/mod-sei-estatisticas
+      - ./src/scripts:/opt/sei/scripts/mod-sei-estatisticas
+      - ./src/scripts:/opt/sip/scripts/mod-sei-estatisticas
+      - ./src/config/ConfiguracaoSEI.php:/opt/sei/config/ConfiguracaoSEI.php
+      - ./src/config/ConfiguracaoSip.php:/opt/sip/config/ConfiguracaoSip.php
     environment:
-      - SEI_HOST_URL=http://localhost
+      - LANG=pt_BR.ISO-8859-1
+      - XDEBUG_CONFIG=idekey=default client_port=9003 remote_autostart=0 remote_host=host.docker.internal
+      - XDEBUG_SESSION=default
+      - XDEBUG_MODE=debug
+      - HOST_URL=${SEI_HOST}
+      - DATABASE_TYPE=${DATABASE_TYPE}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+
+      - SEI_CHAVE_ACESSO=${SEI_CHAVE_ACESSO}
+      - SEI_DATABASE_NAME=${SEI_DATABASE_NAME}
+      - SEI_DATABASE_USER=${SEI_DATABASE_USER}
+      - SEI_DATABASE_PASSWORD=${SEI_DATABASE_PASSWORD}
+
+      - SIP_CHAVE_ACESSO=${SIP_CHAVE_ACESSO}
+      - SIP_DATABASE_NAME=${SIP_DATABASE_NAME}
+      - SIP_DATABASE_USER=${SIP_DATABASE_USER}
+      - SIP_DATABASE_PASSWORD=${SIP_DATABASE_PASSWORD}
     links:
-      # - mysql:mysql
-      - oracle:oracle
-#      - sqlserver:sqlserver
+      - database:${DATABASE_HOST}
       - memcached:memcached
       - solr:solr
       - smtp:smtp
       - jod:jod
+
+volumes:
+  MySql:
+  Oracle:
+  SqlServer:
+  PostgreSql:
