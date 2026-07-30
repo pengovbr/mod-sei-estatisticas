@@ -6,7 +6,7 @@ class MdEstatisticasEnviarRN extends InfraRN
     public function __construct() {
         parent::__construct();
 
-        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+        $objConfiguracaoSEI = ConfiguracaoModEstatisticas::getInstance();
         $url = $objConfiguracaoSEI->getValor('MdEstatisticas', 'url', false, 'http://estatisticas.planejamento.gov.br');
         $this->url = $url . '/api/estatisticas';
         $this->urllogin = $url . '/login';

@@ -22,8 +22,8 @@ class MdEstatisticasColetarRN extends InfraRN
     public function coletarIndicadores() {
         try {
 
-            $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-            $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla', false, '');
+            $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
+            $orgaoSigla = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'sigla', false, '');
 
             $ind = array();
             InfraDebug::getInstance()->gravar("Obtendo Data de Coleta", InfraLog::$INFORMACAO);
@@ -113,10 +113,11 @@ class MdEstatisticasColetarRN extends InfraRN
 
     public function obterHashs(){
         
-        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();        
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();     
+        $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
         try{
             //buscar arquivos a ignorar na elaboracao do hash
-            $ignore_files = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorar_arquivos');
+            $ignore_files = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'ignorar_arquivos');
             if(!is_array($ignore_files)) throw new Exception('nao array');
         }catch(Exception $e){
             $ignore_files = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git');
@@ -194,12 +195,13 @@ class MdEstatisticasColetarRN extends InfraRN
 
     private function obterTamanhoFileSystem() {
         $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+        $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
         
         if ($objConfiguracaoSEI->isSetValor('SEI', 'RepositorioArquivos')) {
             $diretorio = $objConfiguracaoSEI->getValor('SEI', 'RepositorioArquivos');
-            $usarDuLinux = $objConfiguracaoSEI->getValor('MdEstatisticas', 'filesystemdu', false, '');
-            $ignoreReading = $objConfiguracaoSEI->getValor('MdEstatisticas', 'ignorarLeituraAnexos', false, '');
-            $tamanhofs = $objConfiguracaoSEI->getValor('MdEstatisticas', 'tamanhoFs', false, '');
+            $usarDuLinux = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'filesystemdu', false, '');
+            $ignoreReading = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'ignorarLeituraAnexos', false, '');
+            $tamanhofs = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'tamanhoFs', false, '');
             
             if($ignoreReading=="true"){
                 if(!is_numeric($tamanhofs)) $tamanhofs = 0;

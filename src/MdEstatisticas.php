@@ -29,12 +29,23 @@ class MdEstatisticas extends SeiIntegracao{
     return 'Ministério da Gestão e da Inovação em Serviços Públicos - MGI';
   }
 
-  public function inicializar($strVersaoSEI){
-    /*
-    if (substr($strVersaoSEI, 0, 2) != '3.'){
-      die('Módulo "'.$this->getNome().'" ('.$this->getVersao().') não é compatível com esta versão do SEI ('.$strVersaoSEI.').');
+  public function inicializar($strVersaoSEI)
+  {      
+    if (!defined('DIR_SEI_WEB')) {
+      define('DIR_SEI_WEB', realpath(DIR_SEI_CONFIG.'/../web'));
     }
-     */
+
+    $this->carregarArquivoConfiguracaoModulo(DIR_SEI_CONFIG);
+    return true;
+  }
+
+  private function carregarArquivoConfiguracaoModulo($strDiretorioSeiWeb){
+    try{
+        $strArquivoConfiguracao = $strDiretorioSeiWeb . '/mod-sei-estatisticas/ConfiguracaoModEstatisticas.php';
+        include_once $strArquivoConfiguracao;       
+    } catch(Exception $e){
+        LogSEI::getInstance()->gravar("Arquivo de configuração do módulo Estatisticas não pode ser localizado em " . $strArquivoConfiguracao);
+    }
   }
 }
 ?>

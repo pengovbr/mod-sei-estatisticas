@@ -87,18 +87,6 @@ class ConfiguracaoSEI extends InfraConfiguracao {
         'MaxTamAnexosMb' => 15,
         'Protegido' => '',
       ),
-
-      'MdEstatisticas' => array(
-        'url' => 'https://estatistica.processoeletronico.gov.br',
-        'sigla' => 'MPOG',
-        'chave' => '123456',
-        'filesystemdu' => false,
-        'ignorarLeituraAnexos' => false,
-        'tamanhoFs' => '',
-        'proxy' => '',
-        'proxyPort'=> '',
-        'ignorar_arquivos' => array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git'),
-      ),
     );
   }
 }

@@ -20,7 +20,7 @@ class ExecutaAgendamentoTest extends CenarioBaseTestCase
         $this->acessarSistema(self::$remetente['URL'], self::$remetente['SIGLA_UNIDADE'], self::$remetente['LOGIN'], self::$remetente['SENHA']);
 
         $this->paginaAgendamentos->navegarAgendamento();
-        $bolExecutouAgendamento = $this->paginaAgendamentos->executarAgendamento('MdEstatisticasAgendamentoRN::coletarIndicadores');
+        $bolExecutouAgendamento = $this->paginaAgendamentos->executarAgendamento('MdEstatisticasAgendamentoRN :: coletarIndicadores');
         sleep(5);
         $this->assertTrue($bolExecutouAgendamento);
     }

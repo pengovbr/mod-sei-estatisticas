@@ -54,7 +54,7 @@ class MdEstatisticasVerificarRN extends InfraRN
     {
 
         // Valida se todos os parametros de configuracao estao presentes no arquivo de configuracao
-        $arrStrChavesConfiguracao = ConfiguracaoSEI::getInstance()->getArrConfiguracoes();
+        $arrStrChavesConfiguracao = ConfiguracaoModEstatisticas::getInstance()->getArrConfiguracoes();
         if(!array_key_exists("MdEstatisticas", $arrStrChavesConfiguracao)){
             $strMensagem = "Grupo de parametrizacao MdEstatisticas nao pode ser localizado no arquivo de configuracao do SEI. Verifique se o arquivo de configuracao esta de acordo com o manual";
             $strDetalhes = "Verifique se o arquivo de configuracao encontra-se integro.";
@@ -82,14 +82,14 @@ class MdEstatisticasVerificarRN extends InfraRN
     */
     public function verificarConexao()
     {
-        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-        $url = $objConfiguracaoSEI->getValor('MdEstatisticas', 'url');        
+        $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
+        $url = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'url');        
         $urlApi = $url . '/api/estatisticas';
         $urllogin = $url . '/login';
-        $orgaoSigla = $objConfiguracaoSEI->getValor('MdEstatisticas', 'sigla');
-        $orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave');
-        $connectProxy = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxy', false, '');
-        $connectProxyPort = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxyPort', false, '8080');
+        $orgaoSigla = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'sigla');
+        $orgaoSenha = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'chave');
+        $connectProxy = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxy', false, '');
+        $connectProxyPort = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxyPort', false, '8080');
         $header = array('Content-Type: application/json');
         
         $json = array(
