@@ -38,8 +38,8 @@ jobs:
              sudo echo "127.0.0.1 org-http" | sudo tee -a /etc/hosts
              cd sei/src/sei/web/modulos/mod-sei-estatisticas
              make config base=${{ matrix.banco }}; make up; sleep 30s; make update; make install
-            
+
       - name: Run headless test
         run: |
           cd sei/src/sei/web/modulos/mod-sei-estatisticas
-          xvfb-run -s "-screen 0 1920x1080x24" make tests-functional-estatisticas
+          xvfb-run -s "-screen 0 1920x1080x24" make test-functional-estatisticas

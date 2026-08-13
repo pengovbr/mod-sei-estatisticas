@@ -34,16 +34,31 @@ class CenarioBaseTestCase extends Selenium2TestCase
         $this->setPort(intval(PHPUNIT_PORT));
         $this->setBrowser(PHPUNIT_BROWSER);
         $this->setBrowserUrl(PHPUNIT_TESTS_URL);
+        $chromeArgs = [
+        '--no-sandbox',
+        // O SEI monta os links absolutos a partir de HOST_URL, que aponta
+        // para localhost:8000 -- endereco valido para o navegador do
+        // desenvolvedor, mas nao para o Chrome dentro do container, onde
+        // nada escuta nessa porta. Sem este mapeamento toda navegacao morre
+        // em ERR_CONNECTION_REFUSED. Vale so' para o navegador de teste.
+        '--host-resolver-rules=MAP localhost org-http',
+        '--profile-directory=' . uniqid(),
+        '--disable-features=TranslateUI',
+        '--disable-translate',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--window-size=1920,1080',
+        ];
+
+        if (getenv('GITHUB_ACTIONS') === 'true') {
+            $chromeArgs[] = '--headless';
+        }
         $this->setDesiredCapabilities(
             array(
                 'platform' => 'LINUX',
                 'chromeOptions' => array(
                     'w3c' => false,
-                    'args' => [
-                        '--profile-directory=' . uniqid(),
-                        '--disable-features=TranslateUI',
-                        '--disable-translate',
-                    ],
+                    'args' => $chromeArgs,
                 )
             )
         );
