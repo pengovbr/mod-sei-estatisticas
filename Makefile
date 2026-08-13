@@ -1,4 +1,4 @@
-.PHONY: up down help config cria_agendamento verifica_instalacao install update check-super-isalive .env .modulo.env prerequisites-up prepare-upload-tmp test-functional-estatisticas install-phpunit-vendor vendor
+.PHONY: up down help config cria_agendamento verifica_instalacao install update check-super-isalive .env .modulo.env prerequisites-up prepare-upload-tmp test-functional-estatisticas install-phpunit-vendor vendor dist all clean
 
 base=mysql
 TESTS_FUNC_DIR=tests_estatisticas
@@ -22,13 +22,14 @@ else
  CMD_DOCKER_SUDO=
 endif
 
-ifeq (, $(shell which docker-compose))
- CMD_DOCKER_COMPOSE=$(CMD_DOCKER_SUDO) docker compose
- CMD_COMPOSE_FUNC = $(CMD_DOCKER_COMPOSE) -f $(TESTS_FUNC_DIR)/docker-compose.yml --env-file $(TESTS_FUNC_DIR)/.env
-else
- CMD_DOCKER_COMPOSE=$(CMD_DOCKER_SUDO) docker-compose
- CMD_COMPOSE_FUNC = $(CMD_DOCKER_COMPOSE) -f $(TESTS_FUNC_DIR)/docker-compose.yml --env-file $(TESTS_FUNC_DIR)/.env
-endif
+CMD_DOCKER_COMPOSE=$(CMD_DOCKER_SUDO) docker compose
+CMD_COMPOSE_FUNC = $(CMD_DOCKER_COMPOSE) -f $(TESTS_FUNC_DIR)/docker-compose.yml --env-file $(TESTS_FUNC_DIR)/.env
+VERSAO_MODULO := $(shell grep 'const VERSAO_MODULO' ./src/MdEstatisticas.php | cut -d'"' -f2)
+SEI_SCRIPTS_DIR = dist/sei/scripts/$(MODULO_PASTAS_CONFIG)
+SEI_CONFIG_DIR = dist/sei/config/$(MODULO_PASTAS_CONFIG)
+SEI_MODULO_DIR = dist/sei/web/modulos/$(MODULO_NOME)
+SIP_SCRIPTS_DIR = dist/sip/scripts/$(MODULO_PASTAS_CONFIG)
+MODULO_COMPACTADO = mod-sei-$(MODULO_NOME)-v$(VERSAO_MODULO).zip
 
 FILE_VENDOR_FUNCIONAL=$(TESTS_FUNC_DIR)/vendor/autoload.php
 
@@ -47,7 +48,7 @@ NC=\033[0m
 
 prepare-upload-tmp:
 	@if [ ! -d "$(TESTS_FUNC_DIR)/.tmp" ]; then \
-		echo "Criando diret�rio .tmp..."; \
+		echo "Criando diret�rio .tmp..."; \
 		mkdir -p "$(TESTS_FUNC_DIR)/.tmp"; \
 		chmod -R 777 "$(TESTS_FUNC_DIR)/.tmp"; \
 	fi
@@ -57,7 +58,7 @@ up: prepare-upload-tmp prerequisites-up
 
 prerequisites-up: .env .modulo.env
 
-down: 
+down:
 	$(CMD_COMPOSE_FUNC) down
 
 destroy:
@@ -67,7 +68,32 @@ help:
 	@echo "Usage: make [target] ... \n"
 	@grep -E '^[a-zA-Z_-]+[[:space:]]*:.*?## .*$$' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-verifica_instalacao: 
+all: clean dist
+
+clean:   ## Limpa o diretório contendo arquivos temporários de construção do pacote de distribuição
+	@rm -rf dist
+	@echo "Limpeza do diretório de distribuição do realizada com sucesso"
+
+dist:
+	@mkdir -p $(SEI_SCRIPTS_DIR)
+	@mkdir -p $(SEI_CONFIG_DIR)
+	@mkdir -p $(SEI_MODULO_DIR)
+	@mkdir -p $(SIP_SCRIPTS_DIR)
+	@cp -Rf src/* $(SEI_MODULO_DIR)/
+	@cp docs/INSTALL.md dist/INSTALACAO.md
+	@cp docs/UPGRADE.md dist/ATUALIZACAO.md
+	@cp docs/changelogs/CHANGELOG-$(VERSAO_MODULO).md dist/NOTAS_VERSAO.md
+	@cp compatibilidade.json dist/compatibilidade.json
+	@mv $(SEI_MODULO_DIR)/scripts/sei_atualizar_versao_modulo_estatisticas.php $(SEI_SCRIPTS_DIR)/
+	@mv $(SEI_MODULO_DIR)/scripts/sip_atualizar_versao_modulo_estatisticas.php $(SIP_SCRIPTS_DIR)/
+	@mv $(SEI_MODULO_DIR)/config/ConfiguracaoModEstatisticas.exemplo.php $(SEI_CONFIG_DIR)/
+	@rm -rf $(SEI_MODULO_DIR)/config
+	@rm -rf $(SEI_MODULO_DIR)/scripts
+	@cd dist/ && zip -r $(MODULO_COMPACTADO) INSTALACAO.md ATUALIZACAO.md NOTAS_VERSAO.md compatibilidade.json sei/ sip/
+	@rm -rf dist/sei dist/sip dist/INSTALACAO.md dist/ATUALIZACAO.md
+	@echo "Construção do pacote de distribuição finalizada com sucesso"
+
+verifica_instalacao:
 	$(CMD_COMPOSE_FUNC) exec httpd /bin/bash -c "php -c /etc/php.ini /opt/sei/web/modulos/mod-sei-estatisticas/scripts/verifica_instalacao.php"
 
 check-super-isalive: ## Aguarda o SEI responder na tela de login
