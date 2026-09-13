@@ -1,0 +1,30 @@
+name: Publish Release
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build
+        run: make dist
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
+          body_path: dist/NOTAS_VERSAO.md
+          draft: false
+          prerelease: true
+          files: |
+            dist/${{github.event.repository.name}}-${{ github.ref_name }}.zip
+            compatibilidade.json
