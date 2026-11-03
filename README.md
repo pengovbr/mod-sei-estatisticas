@@ -1,5 +1,7 @@
 # Módulo Estatísticas do SEI
 
+[![Testes para SEI main e 5.1.0 Bancos oracle, mysql, sqlserver e postgres](https://github.com/pengovbr/mod-sei-estatisticas/actions/workflows/tests5.yml/badge.svg)](https://github.com/pengovbr/mod-sei-estatisticas/actions/workflows/tests5.yml)
+
 Este módulo, ao ser executado, via agendamento ou manualmente:
 - coleta informações estatísticas diversas como: quantidade de documentos e processos, quantidade de unidades, quantidade de usuários, percentual de tipos de documentos, etc.
 - coleta o hash dos arquivos fontes do SEI e módulos instalados - o intuito aqui é segurança. Para que o órgão tenha ciência dos arquivos que possam ter sido alterados ou adicionados sem a sua autorização. Importante! Esses dados são tratados como privados.
