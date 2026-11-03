@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/../../../../web/SEI.php';
+require_once __DIR__ . '/../../../../web/SEI.php';
 
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', 0);
@@ -13,7 +13,7 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
 
     $resultado = 0;
 
-    $fnPrint = function($strMensagem, $numIdentacao=0) {
+    $fnPrint = function($strMensagem, $numIdentacao=0): void {
         DebugEstatisticas::getInstance()->gravar($strMensagem, $numIdentacao, false, false);
     };
 
@@ -26,7 +26,7 @@ if ($argv && $argv[0] && realpath($argv[0]) === __FILE__) {
 
         try{
             $objMdEstatisticasVerificarRN = new MdEstatisticasVerificarRN();
-        }catch(Exception $e){
+        }catch(Exception){
             $fnPrint("- Nao foi possivel instanciar a classe, verifique se o modulo esta configurado no ConfiguracaoSEI.php. Maiores detalhes do erro abaixo", 1);
         }
 

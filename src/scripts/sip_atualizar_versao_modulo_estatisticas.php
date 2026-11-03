@@ -1,7 +1,7 @@
 <?php
 define('VERSAO_MODULO_ESTATISTICAS', '2.0.2');
 
-require_once dirname(__FILE__) . '/../../web/Sip.php';
+require_once __DIR__ . '/../../web/Sip.php';
 
 class VersaoSipRN extends InfraScriptVersao
 {
@@ -67,13 +67,13 @@ try {
   $objVersaoSipRN->setStrVersaoAtual(VERSAO_MODULO_ESTATISTICAS);
   $objVersaoSipRN->setStrParametroVersao(VersaoSipRN::PARAMETRO_VERSAO_MODULO);
   $objVersaoSipRN->setArrVersoes(
-    array(
+    [
       '0.0.0' => 'versao_0_0_0',
       '1.0.0' => 'versao_1_0_0',
       '2.0.0' => 'versao_2_0_0',
       '2.0.1' => 'versao_2_0_1',
       '2.0.2' => 'versao_sem_alteracao',
-    )
+    ]
   );
 
   $objVersaoSipRN->setStrVersaoInfra('1.595.1');
@@ -87,7 +87,7 @@ try {
   echo (InfraException::inspecionar($e));
   try {
     LogSip::getInstance()->gravar(InfraException::inspecionar($e));
-  } catch (Exception $e) {
+  } catch (Exception) {
   }
   exit(1);
 }

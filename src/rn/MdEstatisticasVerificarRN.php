@@ -63,7 +63,7 @@ class MdEstatisticasVerificarRN extends InfraRN
 
         // Valida se todas as chaves de configuracao obrigatorias foram atribuídas
         $arrStrChavesConfiguracao = $arrStrChavesConfiguracao["MdEstatisticas"];
-        $arrStrParametrosExperados = array("url", "sigla", "chave");
+        $arrStrParametrosExperados = ["url", "sigla", "chave"];
         foreach ($arrStrParametrosExperados as $strChaveConfiguracao) {
             if(!array_key_exists($strChaveConfiguracao, $arrStrChavesConfiguracao)){
                 $strMensagem = "Parametro 'MdEstatisticas > $strChaveConfiguracao' nao pode ser localizado no arquivo de configuracao";
@@ -83,19 +83,18 @@ class MdEstatisticasVerificarRN extends InfraRN
     public function verificarConexao()
     {
         $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
-        $url = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'url');        
-        $urlApi = $url . '/api/estatisticas';
+        $url = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'url');
         $urllogin = $url . '/login';
         $orgaoSigla = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'sigla');
         $orgaoSenha = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'chave');
         $connectProxy = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxy', false, '');
         $connectProxyPort = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxyPort', false, '8080');
-        $header = array('Content-Type: application/json');
+        $header = ['Content-Type: application/json'];
         
-        $json = array(
+        $json = [
             'username' => $orgaoSigla,
             'password' => $orgaoSenha
-        );
+        ];
         $data = json_encode($json);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $urllogin);
@@ -114,11 +113,10 @@ class MdEstatisticasVerificarRN extends InfraRN
         $output = curl_exec($ch);
         $erro = curl_error($ch);
         $info = curl_getinfo($ch);
-        curl_close($ch);
         if ($info['http_code'] == 200) {
             $output = explode("\r\n", $output);
             foreach ($output as $value) {
-                if (strpos(strtoupper($value), 'AUTHORIZATION') !== false) {
+                if (str_contains(strtoupper($value), 'AUTHORIZATION')) {
                     $this->header[] = $value;
                     return true;
                 }
@@ -149,10 +147,9 @@ class MdEstatisticasVerificarRN extends InfraRN
     */
     public function verificarLeituraHashs()
     {
-        $coletor = new MdEstatisticasColetarRN();
-        $filesHash = $coletor->obterHashs(); 
+        $coletor = new MdEstatisticasColetarRN(); 
         
-        return $filesHash;
+        return $coletor->obterHashs();
     }
 
 }
