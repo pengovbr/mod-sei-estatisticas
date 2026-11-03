@@ -1,5 +1,5 @@
 <?php
-define('VERSAO_MODULO_ESTATISTICAS', '2.0.1');
+define('VERSAO_MODULO_ESTATISTICAS', '2.0.2');
 
 require_once dirname(__FILE__) . '/../../web/Sip.php';
 
@@ -48,6 +48,11 @@ class VersaoSipRN extends InfraScriptVersao
   {
     $this->logar('VERSÃO 2.0.1 atualizada.');
   }
+  
+  public function versao_sem_alteracao($strVersaoAtual)
+  {
+    $this->logar("VERSÃO $strVersaoAtual atualizada.");
+  }
 }
 
 try {
@@ -67,6 +72,7 @@ try {
       '1.0.0' => 'versao_1_0_0',
       '2.0.0' => 'versao_2_0_0',
       '2.0.1' => 'versao_2_0_1',
+      '2.0.2' => 'versao_sem_alteracao',
     )
   );
 

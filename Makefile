@@ -1,4 +1,4 @@
-.PHONY: up down help config cria_agendamento verifica_instalacao install update check-super-isalive .env .modulo.env prerequisites-up prepare-upload-tmp test-functional-estatisticas install-phpunit-vendor vendor dist all clean
+.PHONY: up down help config cria_agendamento verifica_instalacao install update check-super-isalive .env .modulo.env prerequisites-up prepare-upload-tmp test-functional-estatisticas install-phpunit-vendor vendor dist all clean cria_json_compatibilidade
 
 base=mysql
 TESTS_FUNC_DIR=tests_estatisticas
@@ -74,7 +74,7 @@ clean:   ## Limpa o diretório contendo arquivos temporários de construção do
 	@rm -rf dist
 	@echo "Limpeza do diretório de distribuição do realizada com sucesso"
 
-dist:
+dist: cria_json_compatibilidade
 	@mkdir -p $(SEI_SCRIPTS_DIR)
 	@mkdir -p $(SEI_CONFIG_DIR)
 	@mkdir -p $(SEI_MODULO_DIR)
@@ -152,3 +152,6 @@ install-phpunit-vendor:
 
 vendor: $(TESTS_FUNC_DIR)/composer.json
 	$(CMD_COMPOSE_FUNC) run --rm -w /tests php-test-functional bash -c './composer.phar install'
+
+cria_json_compatibilidade:
+	$(shell ./scripts/gerar_json_compatibilidade.sh)
