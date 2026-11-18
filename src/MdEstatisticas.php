@@ -11,7 +11,7 @@ class MdEstatisticas extends SeiIntegracao{
   const VERSAO_MODULO = "2.0.2";
 
   const COMPATIBILIDADE_MODULO_SEI = [
-    '5.0.0', '5.0.1', '5.0.2', '5.0.3', '5.0.4', '5.0.5'
+    '5.0.0', '5.0.1', '5.0.2', '5.0.3', '5.0.4', '5.0.5', '5.0.6'
   ];
 
   public function __construct(){
