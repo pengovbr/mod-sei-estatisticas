@@ -29,7 +29,7 @@ class MdEstatisticas extends SeiIntegracao{
     return 'Ministério da Gestão e da Inovação em Serviços Públicos - MGI';
   }
 
-  public function inicializar()
+  public function inicializar($strVersaoSEI)
   {      
     if (!defined('DIR_SEI_WEB')) {
       define('DIR_SEI_WEB', realpath(DIR_SEI_CONFIG.'/../web'));
