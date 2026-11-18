@@ -45,7 +45,7 @@ jobs:
 
       - name: Verificar sintaxe PHP
         run: |
-          find src tests -type f -name '*.php' -print0 |
+          find src tests_estatisticas -type f -name '*.php' -print0 |
             xargs -0 -r -n1 php -l
       
       - name: Install dependencies
