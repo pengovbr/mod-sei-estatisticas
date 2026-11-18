@@ -1,4 +1,4 @@
-<?
+<?php
 
 class ConfiguracaoSEI extends InfraConfiguracao {
 

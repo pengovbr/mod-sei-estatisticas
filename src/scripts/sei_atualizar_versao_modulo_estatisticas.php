@@ -1,12 +1,13 @@
-<?
+<?php
+//phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 require_once dirname(__FILE__) . '/../../web/SEI.php';
 
 try {
 
   class MdEstatisticasVersaoScriptRN extends InfraScriptVersao
   {
-    const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_ESTATISTICAS';
-    const NOME_MODULO = 'Módulo de Estatísticas do SEI';
+    public const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_ESTATISTICAS';
+    public const NOME_MODULO = 'Módulo de Estatísticas do SEI';
 
     public function __construct()
     {
@@ -38,22 +39,22 @@ try {
       }
     }
 
-    public function versao_0_0_0($strVersaoAtual)
+    public function versao_0_0_0()
     {
       $this->logar('VERSÃO 0.0.0 atualizada.');
     }
 
-    public function versao_1_0_0($strVersaoAtual)
+    public function versao_1_0_0()
     {
       $this->logar('VERSÃO 1.0.0 atualizada.');
     }
 
-    public function versao_2_0_0($strVersaoAtual)
+    public function versao_2_0_0()
     {
       $this->logar('VERSÃO 2.0.0 atualizada.');
     }
 
-    public function versao_2_0_1($strVersaoAtual)
+    public function versao_2_0_1()
     {
       $this->logar('CRIANDO AGENDAMENTO DE COLETA DE INDICADORES.');
 
@@ -98,6 +99,7 @@ try {
       '2.0.0' => 'versao_2_0_0',
       '2.0.1' => 'versao_2_0_1',
       '2.0.2' => 'versao_sem_alteracao',
+      '2.0.3' => 'versao_sem_alteracao',
     )
   );
 
@@ -109,7 +111,11 @@ try {
   $objVersaoSeiRN->setBolErroVersaoInexistente(true);
   $objVersaoSeiRN->atualizarVersao();
 } catch (Exception $e) {
-  echo (InfraException::inspecionar($e));
+  echo htmlspecialchars(
+    InfraException::inspecionar($e),
+    ENT_QUOTES | ENT_SUBSTITUTE,
+    'UTF-8'
+  );
   try {
     LogSEI::getInstance()->gravar(InfraException::inspecionar($e));
   } catch (Exception $e) {

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * TRIBUNAL REGIONAL FEDERAL DA 4ª REGIÃO
  *
@@ -8,9 +8,9 @@
 
 
 class MdEstatisticas extends SeiIntegracao{
-  const VERSAO_MODULO = "2.0.2";
+  public const VERSAO_MODULO = "2.0.3";
 
-  const COMPATIBILIDADE_MODULO_SEI = [
+  public const COMPATIBILIDADE_MODULO_SEI = [
     '5.0.0', '5.0.1', '5.0.2', '5.0.3', '5.0.4', '5.0.5', '5.0.6'
   ];
 
@@ -25,11 +25,11 @@ class MdEstatisticas extends SeiIntegracao{
     return $this::VERSAO_MODULO;
   }
 
-  public function getInstituicao(){
+  public function getInstituicao()     {
     return 'Ministério da Gestão e da Inovação em Serviços Públicos - MGI';
   }
 
-  public function inicializar($strVersaoSEI)
+  public function inicializar()
   {      
     if (!defined('DIR_SEI_WEB')) {
       define('DIR_SEI_WEB', realpath(DIR_SEI_CONFIG.'/../web'));
@@ -42,9 +42,10 @@ class MdEstatisticas extends SeiIntegracao{
   private function carregarArquivoConfiguracaoModulo($strDiretorioSeiWeb){
     try{
         $strArquivoConfiguracao = $strDiretorioSeiWeb . '/mod-sei-estatisticas/ConfiguracaoModEstatisticas.php';
-        include_once $strArquivoConfiguracao;       
+        include_once $strDiretorioSeiWeb . '/mod-sei-estatisticas/ConfiguracaoModEstatisticas.php';       
     } catch(Exception $e){
-        LogSEI::getInstance()->gravar("Arquivo de configuração do módulo Estatisticas não pode ser localizado em " . $strArquivoConfiguracao);
+        LogSEI::getInstance()->gravar("Arquivo de configuração do módulo Estatisticas
+          não pode ser localizado em $strArquivoConfiguracao");
     }
   }
 }

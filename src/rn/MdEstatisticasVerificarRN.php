@@ -7,42 +7,45 @@
 class MdEstatisticasVerificarRN extends InfraRN
 {
 
-    public function __construct() {
-        parent::__construct();
-    }
+  public function __construct() {
+      parent::__construct();
+  }
 
-    protected function inicializarObjInfraIBanco() {
-        return BancoSEI::getInstance();
-    }
+  protected function inicializarObjInfraIBanco() {
+      return BancoSEI::getInstance();
+  }
 
     /**
      * Verifica se o modulo foi devidamente ativado nas configuracoes do sistema
      *
      * @return bool
      */
-    public function verificarAtivacaoModulo()
+  public function verificarAtivacaoModulo()
     {
-        global $SEI_MODULOS;
+      global $SEI_MODULOS;
 
-        if(!array_key_exists("MdEstatisticas", $SEI_MODULOS)){
-            throw new InfraException("Chave de ativacao do modulo mod-sei-estatisticas (MdEstatisticas) nao definido nas configuracoes de modulos do SEI");
-        }
-
-        if(is_null($SEI_MODULOS['MdEstatisticas'])){
-            $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
-
-            if (!$objConfiguracaoSEI->isSetValor('SEI','Modulos')){
-                throw new InfraException("Chave de configuracao de Modulos nao definida nas configuracoes do sistema. (ConfiguracaoSEI.php | SEI > Modulos)");
-            }
-
-            $arrModulos = $objConfiguracaoSEI->getValor('SEI','Modulos');
-            $strDiretorioModEstatisticas = basename($arrModulos['MdEstatisticas']);
-            $strDiretorioModulos = dirname ($arrModulos['MdEstatisticas']);
-            throw new InfraException("Diretorio do modulo ($strDiretorioModEstatisticas) nao pode ser localizado em $strDiretorioModulos");
-        }
-
-        return true;
+    if(!array_key_exists("MdEstatisticas", $SEI_MODULOS)){
+        throw new InfraException("Chave de ativacao do modulo mod-sei-estatisticas (MdEstatisticas)
+         nao definido nas configuracoes de modulos do SEI");
     }
+
+    if(is_null($SEI_MODULOS['MdEstatisticas'])){
+        $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
+
+      if (!$objConfiguracaoSEI->isSetValor('SEI', 'Modulos')){
+          throw new InfraException("Chave de configuracao de Modulos nao definida nas configuracoes do sistema.
+           (ConfiguracaoSEI.php | SEI > Modulos)");
+      }
+
+        $arrModulos = $objConfiguracaoSEI->getValor('SEI', 'Modulos');
+        $strDiretorioModEstatisticas = basename($arrModulos['MdEstatisticas']);
+        $strDiretorioModulos = dirname ($arrModulos['MdEstatisticas']);
+        throw new InfraException("Diretorio do modulo ($strDiretorioModEstatisticas) 
+          nao pode ser localizado em $strDiretorioModulos");
+    }
+
+      return true;
+  }
 
 
     /**
@@ -50,94 +53,98 @@ class MdEstatisticasVerificarRN extends InfraRN
     *
     * @return bool
     */
-    public function verificarArquivoConfiguracao()
+  public function verificarArquivoConfiguracao()
     {
 
-        // Valida se todos os parametros de configuracao estao presentes no arquivo de configuracao
-        $arrStrChavesConfiguracao = ConfiguracaoModEstatisticas::getInstance()->getArrConfiguracoes();
-        if(!array_key_exists("MdEstatisticas", $arrStrChavesConfiguracao)){
-            $strMensagem = "Grupo de parametrizacao MdEstatisticas nao pode ser localizado no arquivo de configuracao do SEI. Verifique se o arquivo de configuracao esta de acordo com o manual";
-            $strDetalhes = "Verifique se o arquivo de configuracao encontra-se integro.";
-            throw new InfraException($strMensagem, null, $strDetalhes);
-        }
-
-        // Valida se todas as chaves de configuracao obrigatorias foram atribuídas
-        $arrStrChavesConfiguracao = $arrStrChavesConfiguracao["MdEstatisticas"];
-        $arrStrParametrosExperados = ["url", "sigla", "chave"];
-        foreach ($arrStrParametrosExperados as $strChaveConfiguracao) {
-            if(!array_key_exists($strChaveConfiguracao, $arrStrChavesConfiguracao)){
-                $strMensagem = "Parametro 'MdEstatisticas > $strChaveConfiguracao' nao pode ser localizado no arquivo de configuracao";
-                $strDetalhes = "Verifique se o arquivo de configuracao  encontra-se integro.";
-                throw new InfraException($strMensagem, null, $strDetalhes);
-            }
-        }
-
-        return true;
+      // Valida se todos os parametros de configuracao estao presentes no arquivo de configuracao
+      $arrStrChavesConfiguracao = ConfiguracaoModEstatisticas::getInstance()->getArrConfiguracoes();
+    if(!array_key_exists("MdEstatisticas", $arrStrChavesConfiguracao)){
+        $strMensagem = "Grupo de parametrizacao MdEstatisticas nao pode ser 
+          localizado no arquivo de configuracao do SEI. Verifique se o
+          arquivo de configuracao esta de acordo com o manual";
+        $strDetalhes = "Verifique se o arquivo de configuracao encontra-se integro.";
+        throw new InfraException($strMensagem, null, $strDetalhes);
     }
+
+      // Valida se todas as chaves de configuracao obrigatorias foram atribuídas
+      $arrStrChavesConfiguracao = $arrStrChavesConfiguracao["MdEstatisticas"];
+      $arrStrParametrosExperados = ["url", "sigla", "chave"];
+    foreach ($arrStrParametrosExperados as $strChaveConfiguracao) {
+      if(!array_key_exists($strChaveConfiguracao, $arrStrChavesConfiguracao)){
+        $strMensagem = "Parametro 'MdEstatisticas > $strChaveConfiguracao' nao pode ser 
+          localizado no arquivo de configuracao";
+        $strDetalhes = "Verifique se o arquivo de configuracao  encontra-se integro.";
+        throw new InfraException($strMensagem, null, $strDetalhes);
+      }
+    }
+
+    return true;
+  }
 
     /**
     * Verifica a conexao com o WebService Rest, utilizando o endereco e certificados informados
     *
     * @return bool
     */
-    public function verificarConexao()
+  public function verificarConexao()
     {
-        $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
-        $url = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'url');
-        $urllogin = $url . '/login';
-        $orgaoSigla = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'sigla');
-        $orgaoSenha = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'chave');
-        $connectProxy = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxy', false, '');
-        $connectProxyPort = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxyPort', false, '8080');
-        $header = ['Content-Type: application/json'];
+      $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
+      $url = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'url');
+      $urllogin = $url . '/login';
+      $orgaoSigla = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'sigla');
+      $orgaoSenha = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'chave');
+      $connectProxy = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxy', false, '');
+      $connectProxyPort = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'proxyPort', false, '8080');
+      $header = ['Content-Type: application/json'];
         
-        $json = [
-            'username' => $orgaoSigla,
-            'password' => $orgaoSenha
-        ];
-        $data = json_encode($json);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $urllogin);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_HEADER, true);
+      $json = [
+          'username' => $orgaoSigla,
+          'password' => $orgaoSenha
+      ];
+      $data = json_encode($json);
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $urllogin);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_POST, true);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+      curl_setopt($ch, CURLOPT_HEADER, true);
         
-        if($connectProxy){
-            curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
-            curl_setopt($ch, CURLOPT_PROXYPORT, $connectProxyPort);
-            curl_setopt($ch, CURLOPT_PROXY, $connectProxy);
+      if($connectProxy){
+          curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, true);
+          curl_setopt($ch, CURLOPT_PROXYPORT, $connectProxyPort);
+          curl_setopt($ch, CURLOPT_PROXY, $connectProxy);
+      }
+        
+      $output = curl_exec($ch);
+      $erro = curl_error($ch);
+      $info = curl_getinfo($ch);
+      if ($info['http_code'] == 200) {
+          $output = explode("\r\n", $output);
+        foreach ($output as $value) {
+          if (str_contains(strtoupper($value), 'AUTHORIZATION')) {
+            $this->header[] = $value;
+            return true;
+          }
         }
+      }
         
-        $output = curl_exec($ch);
-        $erro = curl_error($ch);
-        $info = curl_getinfo($ch);
-        if ($info['http_code'] == 200) {
-            $output = explode("\r\n", $output);
-            foreach ($output as $value) {
-                if (str_contains(strtoupper($value), 'AUTHORIZATION')) {
-                    $this->header[] = $value;
-                    return true;
-                }
-            }
-        }
-        
-        //se chegou ate aqui deu problema
-        $msg = "Falha ao autenticar. " . 
-               "Url: " . $urllogin . 
-               " Sigla: " . $orgaoSigla . 
-               " Chave: " . $orgaoSenha . 
-               " Valor do Http code: " . $info['http_code'] . 
-               "Caso o http code seja 403, significa que foi barrado no webservice. Verifique url, sigla e chave. " . 
-               ". Caso o http code seja diferente de 200 houve alguma falha na conexao. " .
-               "Verifique a rota e se o seu php consegue acessar o servidor configurado no campo url. " . 
-               "Caso o http code seja 200 verifique se o token Authorization esta presente. " .
-               "Caso ele nao esteja presente significa que nao conseguiu fazer o login. Reveja a url, sigla e chave usadas. " . 
-               "Erro Curl: " . $erro . " " .
-               "Output do Curl: " . print_r($output, true);
-        throw new InfraException($msg);
-    }
+      //se chegou ate aqui deu problema
+      $msg = "Falha ao autenticar. " . 
+             "Url: " . $urllogin . 
+             " Sigla: " . $orgaoSigla . 
+             " Chave: " . $orgaoSenha . 
+             " Valor do Http code: " . $info['http_code'] . 
+             "Caso o http code seja 403, significa que foi barrado no webservice. Verifique url, sigla e chave. " . 
+             ". Caso o http code seja diferente de 200 houve alguma falha na conexao. " .
+             "Verifique a rota e se o seu php consegue acessar o servidor configurado no campo url. " . 
+             "Caso o http code seja 200 verifique se o token Authorization esta presente. " .
+             "Caso ele nao esteja presente significa que nao conseguiu fazer o login. ".
+             "Reveja a url, sigla e chave usadas. " . 
+             "Erro Curl: " . $erro . " " .
+             "Output do Curl: " . print_r($output, true);
+      throw new InfraException($msg);
+  }
 
 
     /**
@@ -145,11 +152,11 @@ class MdEstatisticasVerificarRN extends InfraRN
     *
     * @return bool
     */
-    public function verificarLeituraHashs()
+  public function verificarLeituraHashs()
     {
-        $coletor = new MdEstatisticasColetarRN(); 
+      $coletor = new MdEstatisticasColetarRN(); 
         
-        return $coletor->obterHashs();
-    }
+      return $coletor->obterHashs();
+  }
 
 }

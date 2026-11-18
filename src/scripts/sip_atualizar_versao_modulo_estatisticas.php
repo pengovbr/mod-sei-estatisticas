@@ -1,12 +1,13 @@
 <?php
-define('VERSAO_MODULO_ESTATISTICAS', '2.0.2');
+define('VERSAO_MODULO_ESTATISTICAS', '2.0.3');
 
+//phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 require_once __DIR__ . '/../../web/Sip.php';
 
 class VersaoSipRN extends InfraScriptVersao
 {
-  const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_ESTATISTICAS';
-  const NOME_MODULO = 'Módulo de Estatísticas - SIP';
+  public const PARAMETRO_VERSAO_MODULO = 'VERSAO_MODULO_ESTATISTICAS';
+  public const NOME_MODULO = 'Módulo de Estatísticas - SIP';
 
   public function __construct()
   {
@@ -29,22 +30,22 @@ class VersaoSipRN extends InfraScriptVersao
     }
   }
 
-  public function versao_0_0_0($strVersaoAtual)
+  public function versao_0_0_0()
   {
     $this->logar('VERSÃO 0.0.0 atualizada.');
   }
 
-  public function versao_1_0_0($strVersaoAtual)
+  public function versao_1_0_0()
   {
     $this->logar('VERSÃO 1.0.0 atualizada.');
   }
 
-  public function versao_2_0_0($strVersaoAtual)
+  public function versao_2_0_0()
   {
     $this->logar('VERSÃO 2.0.0 atualizada.');
   }
 
-  public function versao_2_0_1($strVersaoAtual)
+  public function versao_2_0_1()
   {
     $this->logar('VERSÃO 2.0.1 atualizada.');
   }
@@ -73,6 +74,7 @@ try {
       '2.0.0' => 'versao_2_0_0',
       '2.0.1' => 'versao_2_0_1',
       '2.0.2' => 'versao_sem_alteracao',
+      '2.0.3' => 'versao_sem_alteracao',
     ]
   );
 
@@ -84,7 +86,7 @@ try {
   $objVersaoSipRN->setBolErroVersaoInexistente(true);
   $objVersaoSipRN->atualizarVersao();
 } catch (Exception $e) {
-  echo (InfraException::inspecionar($e));
+  print_r(InfraException::inspecionar($e));
   try {
     LogSip::getInstance()->gravar(InfraException::inspecionar($e));
   } catch (Exception) {

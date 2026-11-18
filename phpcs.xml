@@ -9,9 +9,8 @@
     <file>src</file>
     <file>tests_estatisticas</file>
 
+    <exclude-pattern>*/tests/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
-    <exclude-pattern>/infra_php/*</exclude-pattern>
-    <exclude-pattern>/modulos/*</exclude-pattern>
     <exclude-pattern>*/src/Standards/*/Tests/*\.(inc|css|js)$</exclude-pattern>
     <exclude-pattern>*/tests/Core/*/*\.(inc|css|js)$</exclude-pattern>
 
@@ -23,7 +22,7 @@
     <!-- Configuração de regras de auditoria de segurança -->
     <rule ref="vendor/pheromone/phpcs-security-audit/example_base_ruleset.xml"/>
 
-    <!-- Configuração de regras de compatibilidade do código PHP, versão 7.3.x -->
+    <!-- Configuração de regras de compatibilidade do código PHP, versão 8.2.x -->
     <rule ref="PHPCompatibility"/>
 
     <!-- Inclui o padrão PSR12 como um todo, removendo regras incompatíveis com o padrão adotado pelo SEI -->
@@ -132,8 +131,7 @@
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName">
-        <exclude-pattern>src/sei/scripts/*</exclude-pattern>
-        <exclude-pattern>src/sip/scripts/*</exclude-pattern>
+        <exclude-pattern>src/scripts/*</exclude-pattern>
     </rule>
 
     <rule ref="PSR12.ControlStructures.ControlStructureSpacing">

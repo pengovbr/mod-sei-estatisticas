@@ -1,4 +1,4 @@
-<?
+<?php
 
 class ConfiguracaoModEstatisticas extends InfraConfiguracao {
 
@@ -23,7 +23,8 @@ class ConfiguracaoModEstatisticas extends InfraConfiguracao {
         'tamanhoFs' => '',
         'proxy' => '',
         'proxyPort'=> '',
-        'ignorar_arquivos' => array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git'),
+        'ignorar_arquivos' => array('sei/temp', 'sei/config/ConfiguracaoSEI.php',
+          'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git'),
       ),
     );
   }
