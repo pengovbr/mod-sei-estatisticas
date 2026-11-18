@@ -1,15 +1,18 @@
 name: PHP_CodeSniffer
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "master"
     paths:
         - 'src/**'
+        - 'composer.lock'
         - '.github/workflows/phpcs.yml'
   pull_request:
     paths:
         - 'src/**'
+        - 'composer.lock'
         - '.github/workflows/phpcs.yml'
 
 jobs:
