@@ -2,7 +2,7 @@
 
 class ConfiguracaoSip extends InfraConfiguracao {
 
-  private static $instance = null;
+  private static $instance;
 
   public static function getInstance(){
     if (ConfiguracaoSip::$instance == null) {
@@ -12,28 +12,28 @@ class ConfiguracaoSip extends InfraConfiguracao {
   }
 
   public function getArrConfiguracoes(){
-    return array(
-      'Sip' => array(
+    return [
+      'Sip' => [
         'URL' => getenv('HOST_URL').'/sip',
         'Producao' => false,
         'NumLoginSemCaptcha' => 3,
-      ),
+      ],
 
-      'PaginaSip' => array(
+      'PaginaSip' => [
         'NomeSistema' => 'SIP',
         'NomeSistemaComplemento' => '',
-      ),
+      ],
 
-      'SessaoSip' => array(
+      'SessaoSip' => [
         'SiglaOrgaoSistema' => 'ABC',
         'SiglaSistema' => 'SIP',
         'PaginaLogin' => getenv('HOST_URL') . '/sip/login.php',
         'SipWsdl' => getenv('HOST_URL') . '/sip/controlador_ws.php?servico=sip',
         'ChaveAcesso' => getenv('SIP_CHAVE_ACESSO'),
         'https' => false,
-      ),
+      ],
 
-      'BancoSip'  => array(
+      'BancoSip'  => [
         'Servidor' => getenv('DATABASE_HOST'),
         'Porta' => getenv('DATABASE_PORT'),
         'Banco' => getenv('SIP_DATABASE_NAME'),
@@ -41,16 +41,16 @@ class ConfiguracaoSip extends InfraConfiguracao {
         'Senha' => getenv('SIP_DATABASE_PASSWORD'),
         'Tipo' => getenv('DATABASE_TYPE'),
         'PesquisaCaseInsensitive' => false,
-      ),
+      ],
 
-      'CacheSip' => array(
+      'CacheSip' => [
         'Servidor' => 'memcached',
         'Porta' => '11211',
         'Timeout' => 2,
         'Tempo' => 3600,
-      ),
+      ],
 
-      'InfraMail' => array(
+      'InfraMail' => [
         'Tipo' => '2',
         'Servidor' => 'smtp',
         'Porta' => '1025',
@@ -62,8 +62,8 @@ class ConfiguracaoSip extends InfraConfiguracao {
         'MaxDestinatarios' => 25,
         'MaxTamAnexosMb' => 15,
         'Protegido' => '',
-      ),
-    );
+      ],
+    ];
   }
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 //phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-require_once dirname(__FILE__) . '/../../web/SEI.php';
+require_once __DIR__ . '/../../web/SEI.php';
 
 try {
 
@@ -93,14 +93,14 @@ try {
   $objVersaoSeiRN->setStrVersaoAtual(MdEstatisticas::VERSAO_MODULO);
   $objVersaoSeiRN->setStrParametroVersao(MdEstatisticasVersaoScriptRN::PARAMETRO_VERSAO_MODULO);
   $objVersaoSeiRN->setArrVersoes(
-    array(
+    [
       '0.0.0' => 'versao_0_0_0',
       '1.0.0' => 'versao_1_0_0',
       '2.0.0' => 'versao_2_0_0',
       '2.0.1' => 'versao_2_0_1',
       '2.0.2' => 'versao_sem_alteracao',
       '2.0.3' => 'versao_sem_alteracao',
-    )
+    ]
   );
 
   $objVersaoSeiRN->setStrVersaoInfra('1.595.1');
@@ -118,7 +118,7 @@ try {
   );
   try {
     LogSEI::getInstance()->gravar(InfraException::inspecionar($e));
-  } catch (Exception $e) {
+  } catch (Exception) {
   }
   exit(1);
 }

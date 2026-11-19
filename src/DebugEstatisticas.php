@@ -5,9 +5,8 @@
 class DebugEstatisticas
 {
     private $objInfraDebug;
-    private $strDebugTag;
     private $numTempoUltimoLog;
-  private static $instance = array();
+  private static $instance = [];
 
   public static function getInstance($parStrDebugTag = null)
     {
@@ -18,10 +17,9 @@ class DebugEstatisticas
       return self::$instance[$parStrDebugTag];
   }
 
-  public function __construct($parStrDebugTag)
+  public function __construct(private $strDebugTag)
     {
       $this->objInfraDebug = InfraDebug::getInstance();
-      $this->strDebugTag = $parStrDebugTag;
   }
 
   public function gravar($str, $numIdentacao = 0, $bolLogTempoProcessamento = true, $bolLogDataHora = true)
@@ -43,6 +41,6 @@ class DebugEstatisticas
       }
     }
 
-      $this->objInfraDebug->gravar(utf8_encode($strLog));
+      $this->objInfraDebug->gravar(mb_convert_encoding($strLog, 'UTF-8', 'ISO-8859-1'));
   }
 }

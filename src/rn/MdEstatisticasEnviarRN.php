@@ -14,7 +14,7 @@ class MdEstatisticasEnviarRN extends InfraRN
       $this->orgaoSenha = $objConfiguracaoSEI->getValor('MdEstatisticas', 'chave', false, '');
       $this->connectProxy = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxy', false, '');
       $this->connectProxyPort = $objConfiguracaoSEI->getValor('MdEstatisticas', 'proxyPort', false, '8080');
-      $this->header = array('Content-Type: application/json');
+      $this->header = ['Content-Type: application/json'];
   }
 
   protected function inicializarObjInfraIBanco() {
@@ -42,72 +42,72 @@ class MdEstatisticasEnviarRN extends InfraRN
 
   public function enviarAcessos($acessos, $id) { 
       $url = $this->url . '/acessos';
-      $obj = array(
+      $obj = [
           'id' => $id,
           'acessosUsuarios' => $acessos
-      );
+      ];
       return $this->doPost($url, $obj, false);
   }
 
   public function enviarVelocidades($velocidades, $id) {
       $url = $this->url . '/velocidades';
-      $obj = array(
+      $obj = [
           'id' => $id,
           'velocidades' => $velocidades
-      );
+      ];
       return $this->doPost($url, $obj, false);
   }
 
   public function enviarSistemasUsuarios($sistemasOperacionaisUsuarios, $id) {
       $url = $this->url . '/sistemasoperacionais';
-      $obj = array(
+      $obj = [
           'id' => $id,
           'sistemasOperacionaisUsuarios' => $sistemasOperacionaisUsuarios
-      );
+      ];
       return $this->doPost($url, $obj, false);
   }
 
   public function enviarNavegadores($navegadores, $id) {
       $url = $this->url . '/navegadores';
-      $obj = array(
+      $obj = [
           'id' => $id,
           'navegadores' => $navegadores
-      );
+      ];
       return $this->doPost($url, $obj, false);
   }
 
   public function enviarLogsErro($logs, $id) {
       $url = $this->url . '/logserro';
-      $obj = array(
+      $obj = [
           'id' => $id,
           'logsErro' => $logs
-      );
+      ];
       return $this->doPost($url, $obj, false);
   }
 
   public function enviarRecursos($recursos, $id) {
       $url = $this->url . '/recursos';
-      $obj = array(
+      $obj = [
           'id' => $id,
           'recursos' => $recursos
-      );
+      ];
       return $this->doPost($url, $obj, false);
   }
 
   public function enviarHashs($hashs, $id) {
     $url = $this->url . '/fileshashs';
-    $obj = array(
+    $obj = [
         'id' => $id,
         'filesHashs' => $hashs
-    );
+    ];
     return $this->doPost($url, $obj, false);
   }
 
   public function autenticar() {
-      $json = array(
+      $json = [
           'username' => $this->orgaoSigla,
           'password' => $this->orgaoSenha
-      );
+      ];
       $data = json_encode($json);
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $this->urllogin);
@@ -125,11 +125,10 @@ class MdEstatisticasEnviarRN extends InfraRN
         
       $output = curl_exec($ch);
       $info = curl_getinfo($ch);
-      curl_close($ch);
       if ($info['http_code'] == 200) {
           $output = explode("\r\n", $output);
         foreach ($output as $value) {
-          if (strpos(strtoupper($value), 'AUTHORIZATION') !== false) {
+          if (str_contains(strtoupper($value), 'AUTHORIZATION')) {
             $this->header[] = $value;
             return true;
           }
@@ -154,7 +153,6 @@ class MdEstatisticasEnviarRN extends InfraRN
     }
         
       $output = curl_exec($ch);
-      curl_close($ch);
 
     if ($isjson) {
         return json_decode($output, true);
@@ -175,7 +173,6 @@ class MdEstatisticasEnviarRN extends InfraRN
     }
         
       $output = curl_exec($ch);
-      curl_close($ch);
 
     if ($isjson) {
         return json_decode($output, true);

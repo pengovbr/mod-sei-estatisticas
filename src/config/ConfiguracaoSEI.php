@@ -2,7 +2,7 @@
 
 class ConfiguracaoSEI extends InfraConfiguracao {
 
-  private static $instance = null;
+  private static $instance;
 
   public static function getInstance(){
     if (ConfiguracaoSEI::$instance == null) {
@@ -12,8 +12,8 @@ class ConfiguracaoSEI extends InfraConfiguracao {
   }
 
   public function getArrConfiguracoes(){
-    return array(
-      'SEI' => array(
+    return [
+      'SEI' => [
         'URL' => getenv('HOST_URL').'/sei',
         'Producao' => false,
         'DigitosDocumento' => 7,
@@ -22,28 +22,28 @@ class ConfiguracaoSEI extends InfraConfiguracao {
         'TamSenhaUsuarioExterno' => 8,
         'DebugWebServices' => 0,
         'RepositorioArquivos' => '/var/sei/arquivos',
-        'Modulos' => array(
+        'Modulos' => [
           'MdEstatisticas' => 'mod-sei-estatisticas'
-        ),
-      ),
+        ],
+      ],
 
-      'PaginaSEI' => array(
+      'PaginaSEI' => [
           'NomeSistema' => 'SUPER',
           'NomeSistemaComplemento' => SEI_VERSAO,
           'LogoMenu' => '',
           'OrgaoTopoJanela' => 'S',
-      ),
+      ],
 
-      'SessaoSEI' => array(
+      'SessaoSEI' => [
         'SiglaOrgaoSistema' => 'ABC',
         'SiglaSistema' => 'SEI',
         'PaginaLogin' => getenv('HOST_URL') . '/sip/login.php',
         'SipWsdl' => getenv('HOST_URL') . '/sip/controlador_ws.php?servico=sip',
         'ChaveAcesso' => getenv('SEI_CHAVE_ACESSO'),
         'https' => false,
-      ),
+      ],
 
-      'BancoSEI'  => array(
+      'BancoSEI'  => [
         'Servidor' => getenv('DATABASE_HOST'),
         'Porta' => getenv('DATABASE_PORT'),
         'Banco' => getenv('SEI_DATABASE_NAME'),
@@ -51,16 +51,16 @@ class ConfiguracaoSEI extends InfraConfiguracao {
         'Senha' => getenv('SEI_DATABASE_PASSWORD'),
         'Tipo' => getenv('DATABASE_TYPE'),
         'PesquisaCaseInsensitive' => false,
-      ),
+      ],
 
-      'CacheSEI' => array(
+      'CacheSEI' => [
         'Servidor' => 'memcached',
         'Porta' => '11211',
         'Timeout' => 1,
         'Tempo' => 3600,
-      ),
+      ],
 
-      'Solr' => array(
+      'Solr' => [
         'Servidor' => 'http://solr:8983/solr',
         'CoreProtocolos' => 'sei-protocolos',
         'CoreBasesConhecimento' => 'sei-bases-conhecimento',
@@ -68,13 +68,13 @@ class ConfiguracaoSEI extends InfraConfiguracao {
         'TempoCommitProtocolos' => 10,
         'TempoCommitBasesConhecimento' => 60,
         'TempoCommitPublicacoes' => 60,
-      ),
+      ],
 
-      'JODConverter' => array(
+      'JODConverter' => [
         'Servidor' => 'http://jod/converter/service'
-      ),
+      ],
 
-      'InfraMail' => array(
+      'InfraMail' => [
         'Tipo' => '2',
         'Servidor' => 'smtp',
         'Porta' => '1025',
@@ -86,8 +86,8 @@ class ConfiguracaoSEI extends InfraConfiguracao {
         'MaxDestinatarios' => 25,
         'MaxTamAnexosMb' => 15,
         'Protegido' => '',
-      ),
-    );
+      ],
+    ];
   }
 }
 ?>

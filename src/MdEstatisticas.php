@@ -14,9 +14,6 @@ class MdEstatisticas extends SeiIntegracao{
     '5.0.0', '5.0.1', '5.0.2', '5.0.3', '5.0.4', '5.0.5', '5.0.6'
   ];
 
-  public function __construct(){
-  }
-
   public function getNome(){
     return 'Módulo de Estatisticas do SEI';
   }
@@ -43,7 +40,7 @@ class MdEstatisticas extends SeiIntegracao{
     try{
         $strArquivoConfiguracao = $strDiretorioSeiWeb . '/mod-sei-estatisticas/ConfiguracaoModEstatisticas.php';
         include_once $strDiretorioSeiWeb . '/mod-sei-estatisticas/ConfiguracaoModEstatisticas.php';       
-    } catch(Exception $e){
+    } catch(Exception){
         LogSEI::getInstance()->gravar("Arquivo de configuração do módulo Estatisticas
           não pode ser localizado em $strArquivoConfiguracao");
     }

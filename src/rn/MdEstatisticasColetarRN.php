@@ -24,7 +24,7 @@ class MdEstatisticasColetarRN extends InfraRN
         $objConfiguracaoModEstatisticas = ConfiguracaoModEstatisticas::getInstance();
         $orgaoSigla = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'sigla', false, '');
 
-        $ind = array();
+        $ind = [];
         InfraDebug::getInstance()->gravar("Obtendo Data de Coleta", InfraLog::$INFORMACAO);
         $ind['dataColeta'] = $this->obterDataColeta();
         $ind['orgaoSigla'] = $orgaoSigla;
@@ -81,20 +81,18 @@ class MdEstatisticasColetarRN extends InfraRN
   private static function bolArrFindItem($arrNeedle, $strHaystack){
       $r=false;
     foreach ($arrNeedle as $v) {
-      if(strstr($strHaystack, $v)) { return true;
+      if(strstr($strHaystack, (string) $v)) { return true;
       }            
     }
       return $r;
   }
 
-    private $IG = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php');
-
-  private static function getDirContents($dir, $ignorar = array(), &$results = array()){
+  private static function getDirContents($dir, $ignorar = [], &$results = []){
 
       $files = scandir($dir);
 
-    foreach($files as $key => $value){
-      if($value == "." || $value == "..") { continue;
+    foreach($files as $value){
+      if($value === "." || $value === "..") { continue;
       }
             
         $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
@@ -119,8 +117,8 @@ class MdEstatisticasColetarRN extends InfraRN
         $ignore_files = $objConfiguracaoModEstatisticas->getValor('MdEstatisticas', 'ignorar_arquivos');
       if(!is_array($ignore_files)) { throw new Exception('nao array');
       }
-    }catch(Exception $e){
-        $ignore_files = array('sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git');
+    }catch(Exception){
+        $ignore_files = ['sei/temp', 'sei/config/ConfiguracaoSEI.php', 'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git'];
     }
         
       $a = MdEstatisticasColetarRN::getDirContents(DIR_SEI_CONFIG . '/../../', $ignore_files);
@@ -129,16 +127,16 @@ class MdEstatisticasColetarRN extends InfraRN
       foreach($objConfiguracaoSEI->getValor('SEI', 'Modulos') as $strModulo => $strPathModulo){
           $reflectionClass = new ReflectionClass($strModulo);
           $classe = $reflectionClass->newInstance();
-          $arrModulos[$strModulo] = array('modulo' => $strModulo, 'path' => $strPathModulo, 'versao' => $classe->getVersao());
+          $arrModulos[$strModulo] = ['modulo' => $strModulo, 'path' => $strPathModulo, 'versao' => $classe->getVersao()];
       }
     }
 
-    foreach ($a as $key => $value) {
+    foreach ($a as $value) {
         $m="";
         $version="";
 
       foreach ($arrModulos as $k => $v) {
-        if(strpos($value, 'web/modulos/'.$arrModulos[$k]['path']) !== false){
+        if(str_contains($value, 'web/modulos/'.$arrModulos[$k]['path'])){
           $m = $k;
           $version = $arrModulos[$k]['versao'];
           break;
@@ -147,7 +145,7 @@ class MdEstatisticasColetarRN extends InfraRN
 
         //vamos retirar a parte inicial do dir que nao interessa
         $novo_valor = $value;
-        $pos=MdEstatisticasColetarRN::bolArrFindItem(array('infra/infra', 'sei/', 'sip/'), $novo_valor);
+        $pos=MdEstatisticasColetarRN::bolArrFindItem(['infra/infra', 'sei/', 'sip/'], $novo_valor);
       if($pos !== false){
           $novo_valor = substr($novo_valor, $pos);
       }
@@ -155,11 +153,11 @@ class MdEstatisticasColetarRN extends InfraRN
         $hash = ''; 
       if($value) { $hash = hash_file('sha256', $value);
       }
-        $b[] = array('file' => $novo_valor,
+        $b[] = ['file' => $novo_valor,
                      'hash' => $hash,
                      'modulo' => $m,
                      'versaoModulo' => $version,
-                     'versaoSei' => SEI_VERSAO);
+                     'versaoSei' => SEI_VERSAO];
     }
 
       return $b;
@@ -182,11 +180,11 @@ class MdEstatisticasColetarRN extends InfraRN
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object) {
           try{
             $bytestotal += $object->getSize();
-          }catch(Exception $e1){
+          }catch(Exception){
                 $bytestotal += 0;
           }
         }
-      }catch(Exception $e2){
+      }catch(Exception){
           $bytestotal = 0;
       }
     }
@@ -223,13 +221,13 @@ class MdEstatisticasColetarRN extends InfraRN
 
   private function obterPlugins() {
       global $SEI_MODULOS;
-      $lista = array();
+      $lista = [];
     foreach ($SEI_MODULOS as $strModulo => $seiModulo) {
-        $result = array(
+        $result = [
             'nome' => $strModulo,
             'versao' => $seiModulo->getVersao()
-        );
-        array_push($lista, $result);
+        ];
+        $lista[] = $result;
     }
 
       return $lista;
@@ -240,37 +238,28 @@ class MdEstatisticasColetarRN extends InfraRN
       return $objUnidadeRN->contarRN0128(new UnidadeDTO());
   }
 
-  private function obterTamanhoTotalDocumentosExternos() {
-      $query = "select sum(tamanho) as tamanho from anexo where sin_ativo = 'S'";
-      $rs = BancoSEI::getInstance()->consultarSql($query);
-      $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
-      return $tamanho;
-  }
-
   private function obterQuantidadeUsuarios() {
       $query = "SELECT COUNT(*) as quantidade FROM usuario WHERE sin_ativo = 'S'";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-      return $quantidade;
+      return (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
   }
 
   private function obterProtocolo() {
       $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
     if ($objConfiguracaoSEI->isSetValor('SessaoSEI', 'https')) {
         $temHTTPS = $objConfiguracaoSEI->getValor('SessaoSEI', 'https');
-        $protocolo = 'HTTP';
       if ($temHTTPS) {
-        $protocolo = 'HTTPS';
+        return 'HTTPS';
       }
-        return $protocolo;
+        return 'HTTP';
     }
+    return null;
   }
 
   private function obterQuantidadeProcessosAdministrativos() {
       $query = "select count(*) as quantidade from procedimento";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-      return $quantidade;
+      return (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
   }
 
   private function obterTipoSGBD() {
@@ -281,20 +270,17 @@ class MdEstatisticasColetarRN extends InfraRN
   private function obterQuantidadeDocumentosInternos() {
       $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'I'";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-      return $quantidade;
+      return (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
   }
 
   private function obterQuantidadeDocumentosExternos() {
       $query = "SELECT COUNT(*) as quantidade FROM documento WHERE STA_DOCUMENTO = 'X'";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $quantidade = (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
-      return $quantidade;
+      return (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0;
   }
 
   private function obterQuantidadeDocumentosExternosPorExtensao() {
       $sgbd = $this->obterTipoSGBD();
-      $query = '';
     if ($sgbd == 'Oracle') {
         $query = "SELECT SUBSTR(nome,LENGTH(nome)-4+1,4) nome, count(*) quantidade FROM anexo WHERE sin_ativo = 'S' group by SUBSTR(nome,LENGTH(nome)-4+1,4)";
     }else{
@@ -302,7 +288,7 @@ class MdEstatisticasColetarRN extends InfraRN
     }
 
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $extensoes = array();
+      $extensoes = [];
     foreach ($rs as $r)  {
         $extensao = $this->extrairExtensao($r['nome']);
         $qtd = $extensoes[$extensao];
@@ -312,14 +298,14 @@ class MdEstatisticasColetarRN extends InfraRN
         $extensoes[$extensao] = $qtd + $r['quantidade'];
     }
       // Calculando na aplicacao para funcionar independente do banco
-      $lista = array();
+      $lista = [];
 
     foreach ($extensoes as $key => $value) {
-        $result = array(
+        $result = [
             'extensao' => $key,
             'quantidade' => $value
-        );
-        array_push($lista, $result);
+        ];
+        $lista[] = $result;
     }
         return $lista;
   }
@@ -327,7 +313,7 @@ class MdEstatisticasColetarRN extends InfraRN
   private function extrairExtensao($filename) {
       $listaarq = explode('.', $filename);
       $extensao = end($listaarq);
-      return utf8_encode($extensao);
+      return mb_convert_encoding($extensao, 'UTF-8', 'ISO-8859-1');
   }
 
   private function obterEstrategiaCessao() {
@@ -341,9 +327,8 @@ class MdEstatisticasColetarRN extends InfraRN
 
       $memcache = new Memcache();
       $memcache->connect($host, $porta);
-      $versao = $memcache->getVersion();
 
-      return $versao;
+      return $memcache->getVersion();
   }
 
   private function obterTamanhoDatabase() {
@@ -356,12 +341,11 @@ class MdEstatisticasColetarRN extends InfraRN
     } elseif ($sgbd == 'Oracle') {
         $query = "";
     }
-      $rs = array();
+      $rs = [];
     if ($query) {
         $rs = BancoSEI::getInstance()->consultarSql($query);
     }
-      $tamanho = (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
-      return $tamanho;
+      return (count($rs) && isset($rs[0]['tamanho'])) ? $rs[0]['tamanho'] : 0;
   }
 
   private function obterTamanhoTabelas() {
@@ -399,12 +383,12 @@ class MdEstatisticasColetarRN extends InfraRN
                         ) tudo
                         group by tabela";
     }
-      $tabelas = array();
+      $tabelas = [];
     if ($query) {
       try{
           $tabelas = BancoSEI::getInstance()->consultarSql($query);
-      }catch(Exception $e){
-          $tabelas = array();
+      }catch(Exception){
+          $tabelas = [];
       }
     }
       return $tabelas;
@@ -413,7 +397,7 @@ class MdEstatisticasColetarRN extends InfraRN
   private function obterVersaoSolr() {
       $objConfiguracaoSEI = ConfiguracaoSEI::getInstance();
       $url = $objConfiguracaoSEI->getValor('Solr', 'Servidor', false, 'http://localhost:8983/solr');
-      $url = $url . '/admin/info/system?wt=json';
+      $url .= '/admin/info/system?wt=json';
 
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $url);
@@ -440,38 +424,38 @@ class MdEstatisticasColetarRN extends InfraRN
   }
 
   private function obterTamanhoDocumentosExternos() {
-      $resultado = array();
+      $resultado = [];
       // 0MB - !MB
       $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 0 AND tamanho < 1048576";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $resultado[0] = array(
+      $resultado[0] = [
           'tamanho' => '0MB - 1MB',
           'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
-      );
+      ];
 
       // 1MB - 10MB
       $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 1048576 AND tamanho < 10485760";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $resultado[1] = array(
+      $resultado[1] = [
           'tamanho' => '1MB - 10MB',
           'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
-      );
+      ];
 
       // 10MB - 100MB
       $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 10485760 AND tamanho < 104857600";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $resultado[2] = array(
+      $resultado[2] = [
           'tamanho' => '10MB - 100MB',
           'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
-      );
+      ];
 
       // > 100MB
       $query = "SELECT count(*) as quantidade FROM anexo WHERE sin_ativo = 'S' AND tamanho >= 104857600";
       $rs = BancoSEI::getInstance()->consultarSql($query);
-      $resultado[3] = array(
+      $resultado[3] = [
           'tamanho' => 'Maior que 100MB',
           'quantidade' => (count($rs) && isset($rs[0]['quantidade'])) ? $rs[0]['quantidade'] : 0
-      );
+      ];
       return $resultado;
   }
 
@@ -481,15 +465,14 @@ class MdEstatisticasColetarRN extends InfraRN
 
   private function obterUsoCPU() {
       $load = sys_getloadavg();
-      $uso = null;
     if ($load) {
-        $uso = $load[0];
+        return $load[0];
     }
-      return $uso;
+      return null;
   }
 
   private function obterEspacoDisco() {
-    if (php_uname('s') == 'Windows NT') {
+    if (php_uname('s') === 'Windows NT') {
         $unidade = substr($_SERVER['DOCUMENT_ROOT'], 0, 2);
       if (! $unidade) {
         $unidade = 'C:';
@@ -512,16 +495,15 @@ class MdEstatisticasColetarRN extends InfraRN
     } elseif ($sgbd == 'Oracle') {
         $query = "select version AS versao from product_component_version WHERE product LIKE 'Oracle%'";
     }
-      $rs = array();
+      $rs = [];
     if ($query) {
       try{
           $rs = BancoSEI::getInstance()->consultarSql($query);
-      }catch(Exception $e){
-          $rs = array(array('versao' => 'Undefined'));
+      }catch(Exception){
+          $rs = [['versao' => 'Undefined']];
       }
     }
-      $versao = (count($rs) && isset($rs[0]['versao'])) ? $rs[0]['versao'] : null;
-      return $versao;
+      return (count($rs) && isset($rs[0]['versao'])) ? $rs[0]['versao'] : null;
   }
 
   public function obterVelocidadePorCidade() {
@@ -537,18 +519,19 @@ class MdEstatisticasColetarRN extends InfraRN
                 d.nome, e.nome
             ";
             $rs = BancoSEI::getInstance()->consultarSql($query);
-            $lista = array();
+            $lista = [];
       foreach ($rs as $r) {
-        $result = array(
-        'cidade' => utf8_encode($r['cidade']),
-        'uf' => utf8_encode($r['uf']),
+        $result = [
+        'cidade' => mb_convert_encoding($r['cidade'], 'UTF-8', 'ISO-8859-1'),
+        'uf' => mb_convert_encoding($r['uf'], 'UTF-8', 'ISO-8859-1'),
         'velocidade' => $r['velocidade']
-        );
+        ];
 
-        array_push($lista, $result);
+        $lista[] = $result;
       }
             return $lista;
     }
+    return null;
   }
 
   public function obterAcessosUsuarios($ultimadata = null) {
@@ -565,7 +548,7 @@ class MdEstatisticasColetarRN extends InfraRN
         $query = "select count(*) as quantidade, to_char(dth_acesso,'YYYY-MM-DD') AS data from infra_navegador where dth_acesso >= date '%s' group by to_char(dth_acesso,'YYYY-MM-DD')";
     }
 
-      $rs = array();
+      $rs = [];
     if ($query) {
         $query = sprintf($query, $ultimadata);
         $rs = BancoSEI::getInstance()->consultarSql($query);
@@ -582,28 +565,28 @@ class MdEstatisticasColetarRN extends InfraRN
     }
     try{
         $sistemas = BancoSEI::getInstance()->consultarSql($query);
-    } catch (Exception $e) {
-        $sistemas = array(array('nome'=>'(XX)'));
+    } catch (Exception) {
+        $sistemas = [['nome'=>'(XX)']];
     }
 
-      $lista = array();
+      $lista = [];
     foreach ($sistemas as $r) {
         $texto = $r['nome'];
         $inicio = strpos($texto, '(');
       if ($inicio !== false) {
           $fim = strpos($texto, ')', $inicio);
           $nome = substr($texto, $inicio + 1, $fim - $inicio - 1);
-          array_push($lista, $nome);
+          $lista[] = $nome;
       }
     }
       $lista = array_unique($lista);
 
-      $sistemas = array();
+      $sistemas = [];
     foreach ($lista as $n) {
-        $result = array(
+        $result = [
             'nome' => $n
-        );
-        array_push($sistemas, $result);
+        ];
+        $sistemas[] = $result;
     }
       return $sistemas;
   }
@@ -622,20 +605,20 @@ class MdEstatisticasColetarRN extends InfraRN
     } elseif ($sgbd == 'Oracle'){
         $query = "SELECT to_char(dth_acesso, 'YYYY') AS ano, to_char(dth_acesso, 'MM') AS mes, identificacao as nome, versao, count(*) as quantidade from infra_navegador WHERE dth_acesso > date '%s'  AND dth_acesso < date '%s' group by to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), identificacao, versao order by to_char(dth_acesso, 'YYYY'), to_char(dth_acesso, 'MM'), identificacao, versao";
     }
-      $lista = array();
+      $lista = [];
     if ($query) {
       $query = sprintf($query, $ultimadata, $current_month);
       //echo $query;
       $rs = BancoSEI::getInstance()->consultarSql($query);
       foreach ($rs as $r) {
-          $result = array(
-              'nome' => utf8_encode($r['nome']),
+          $result = [
+              'nome' => mb_convert_encoding($r['nome'], 'UTF-8', 'ISO-8859-1'),
               'quantidade' => $r['quantidade'],
               'versao' => $r['versao'],
               'ano' => $r['ano'],
               'mes' => $r['mes'],
-          );
-          array_push($lista, $result);
+          ];
+          $lista[] = $result;
       }
     }
       return $lista;

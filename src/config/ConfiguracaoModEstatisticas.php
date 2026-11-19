@@ -2,7 +2,7 @@
 
 class ConfiguracaoModEstatisticas extends InfraConfiguracao {
 
-  private static $instance = null;
+  private static $instance;
 
   public static function getInstance(){
     if (ConfiguracaoModEstatisticas::$instance == null) {
@@ -12,9 +12,9 @@ class ConfiguracaoModEstatisticas extends InfraConfiguracao {
   }
 
   public function getArrConfiguracoes(){
-    return array(
+    return [
 
-      'MdEstatisticas' => array(
+      'MdEstatisticas' => [
         'url' => getenv('ESTATISTICAS_URL'),
         'sigla' => getenv('ESTATISTICAS_SIGLA'),
         'chave' => getenv('ESTATISTICAS_CHAVE'),
@@ -23,10 +23,10 @@ class ConfiguracaoModEstatisticas extends InfraConfiguracao {
         'tamanhoFs' => '',
         'proxy' => '',
         'proxyPort'=> '',
-        'ignorar_arquivos' => array('sei/temp', 'sei/config/ConfiguracaoSEI.php',
-          'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git'),
-      ),
-    );
+        'ignorar_arquivos' => ['sei/temp', 'sei/config/ConfiguracaoSEI.php',
+          'sei/config/ConfiguracaoSEI.exemplo.php', '.vagrant', '.git'],
+      ],
+    ];
   }
 }
 ?>
